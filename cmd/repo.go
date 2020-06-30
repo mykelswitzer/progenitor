@@ -2,10 +2,13 @@ package cmd
 
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"os"
 	"errors"
-	_"fmt"
-	_"strconv"
 )
+import "golang.org/x/oauth2"
 import "github.com/manifoldco/promptui"
 import "github.com/google/go-github/v32/github"
 
@@ -20,7 +23,7 @@ func promptReponame() (string, error) {
 
   
 	prompt := promptui.Prompt{
-		Label:    "What is your service named?",
+		Label:    "What is your project named?",
 		Validate: validate,
 	}
 
@@ -29,7 +32,7 @@ func promptReponame() (string, error) {
 
 }
 
-func createRepo(string name) {
+func createRepo(name string) {
 
 	token := os.Getenv("GITHUB_AUTH_TOKEN")
 	if token == "" {
@@ -44,7 +47,9 @@ func createRepo(string name) {
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
-	r := &github.Repository{Name: name, Private: true, Description: "Caring service for " + name}
+	var private bool = false
+	var description string = "Caring, LLC service for " + name;
+	r := &github.Repository{Name: &name, Private: &private, Description: &description}
 	repo, _, err := client.Repositories.Create(ctx, "", r)
 	if err != nil {
 		log.Fatal(err)
