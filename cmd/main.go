@@ -1,34 +1,45 @@
 package cmd
 
 import "fmt"
-import "github.com/spf13/cobra"
+import "github.com/urfave/cli/v2"
 import "os"
-import "github.com/manifoldco/prompui"
-
-func init() {
-	cobra.OnInitialize()
-}
 
 
-var rootCmd = &cobra.Command{
-  Use:   "progenitor",
-  Short: "Progenitor is an interactive service scaffolding system",
-  Long: `
-             .(/(             
-           (///////           
- ,##%.     (///////,     /###    Hello, I am Progrenitor!!!
- ######(     /////    *###### 
+func Execute() {
+	app := &cli.App{
+    Name: "progenitor",
+    Usage: `
+             @@@@,             
+           (@@@@@@@           
+ ,##%.     (@@@@@@@,     /###    Hello, I am the Progenitor!!!
+ ######(     @@@@@    *###### 
     ######          *#####       Please answer my questions, and
        ####/       ####(         I will set up a nice set of 
         ,####    .####           boilerplate code, so that you 
           ####  /###/            do not need to do that awful
-          .###  ####             copy and pasting you used to.
+          .###  ####             copy pasta you used to do.
            ###%,###           
            .###.###           
            ###/ ###.          
           .###  ####          
           ###,   ###,          `,
-  Run: func(cmd *cobra.Command, args []string) {
-    // Do Stuff Here
-  },
+   Action: func(c *cli.Context) error {
+
+   		reponame, err := promptReponame()
+   		if err != nil {
+   			fmt.Println(err.Error())
+   			return nil
+   		}
+
+   		fmt.Println(reponame)
+
+
+      return nil
+    },
+  }
+
+  err := app.Run(os.Args)
+  if err != nil {
+    fmt.Println(err)
+  }
 }
