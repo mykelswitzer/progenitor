@@ -16,8 +16,8 @@ func init() {
   var account_id string = "182565773517"
   var role string = "ops-mgmt-admin"
 
-  awsClient := aws.Client
-  client.SetConfig(&region, &account_id, &role)\
+  awsClient := aws.Client{}
+  awsClient.SetConfig(&region, &account_id, &role)
 
 }
 

@@ -2,14 +2,15 @@ package aws
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
-func (c *Client) GetSecret(secret string) (*GetSecretValueResponse, error) {
+func (c *Client) GetSecret(secret string) (*secretsmanager.GetSecretValueResponse, error) {
 
-	svc := secretsmanager.New(c.GetConfig())	
+	svc := secretsmanager.New(*c.GetConfig())	
 	input := &secretsmanager.GetSecretValueInput{
 	    SecretId: aws.String(secret),
 	}

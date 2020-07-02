@@ -1,13 +1,15 @@
 package aws
 
 import (
+	"context"
 	"log"
 	"fmt"
 	"errors"
 )
 import (
-	"github.com/aws/aws-sdk-go/"
-	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 type Client struct {
@@ -32,26 +34,49 @@ func (c Client) SetConfig(region *string, account_id *string, role *string) (*aw
 		*account_id,
 		*role,
 	)
-
-	// include region in cache key otherwise concurrency errors
-	key := fmt.Sprintf("%v::%v", *region, arn)
+	sessionName := *role+"-progenitor"
 
 	// check for cached config
-	if c.configs != nil && c.configs[key] != nil {
-		return c.configs[key]
+	if c.config != nil {
+		return c.config, nil
 	}
 
-	// new config
+	// new config	
 	config, err := external.LoadDefaultAWSConfig()
+	if err != nil {
+		return nil, err
+	}
 
 	// Create the credentials from AssumeRoleProvider to assume the role
 	// referenced by the "myRoleARN" ARN.
-	stsSvc := sts.New(cfg)
-	stsCredProvider := stscreds.NewAssumeRoleProvider(stsSvc, arn)
+	stsSvc := sts.New(config)
+	input := &sts.AssumeRoleInput{RoleArn: aws.String(arn), RoleSessionName: aws.String(sessionName)}
+	out, err := stsSvc.AssumeRoleRequest(input).Send(context.TODO())
+	if err != nil {
+		return nil, err
+	}
 
-	config.Credentials = aws.NewCredentials(stsCredProvider)
+	awsConfig := stsSvc.Config.Copy()
+	awsConfig.Credentials = CredentialsProvider{Credentials: out.Credentials}
 
-	c.config = config
+	c.config = &awsConfig
 
-	return config, nil
+	return &awsConfig, nil
+}
+
+type CredentialsProvider struct {
+	*sts.Credentials
+}
+
+func (s CredentialsProvider) Retrieve(ctx context.Context) (aws.Credentials, error) {
+	if s.Credentials == nil {
+		return aws.Credentials{}, errors.New("sts credentials are nil")
+	}
+
+	return aws.Credentials{
+		AccessKeyID:     aws.StringValue(s.AccessKeyId),
+		SecretAccessKey: aws.StringValue(s.SecretAccessKey),
+		SessionToken:    aws.StringValue(s.SessionToken),
+		Expires:         aws.TimeValue(s.Expiration),
+	}, nil
 }
