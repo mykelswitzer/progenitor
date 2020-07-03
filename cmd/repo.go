@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
+	_"os"
 	"errors"
 )
 import "golang.org/x/oauth2"
@@ -20,27 +20,19 @@ func promptReponame() (string, error) {
 		}
 		return nil
 	}
-
   
 	prompt := promptui.Prompt{
 		Label:    "What is your project named?",
 		Validate: validate,
 	}
 
-
 	return prompt.Run()
 
 }
 
-func createRepo(name string) {
+func createRepo(token string, name string) {
 
-	token := os.Getenv("GITHUB_AUTH_TOKEN")
-	if token == "" {
-		log.Fatal("Unauthorized: No token present")
-	}
-	if name == "" {
-		log.Fatal("No name: New repos must be given a name")
-	}
+
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -50,7 +42,7 @@ func createRepo(name string) {
 	var private bool = false
 	var description string = "Caring, LLC service for " + name;
 	r := &github.Repository{Name: &name, Private: &private, Description: &description}
-	repo, _, err := client.Repositories.Create(ctx, "", r)
+	repo, _, err := client.Repositories.Create(ctx, "caring", r)
 	if err != nil {
 		log.Fatal(err)
 	}
