@@ -32,11 +32,9 @@ func Execute() {
           ###,   ###,          `,
    Action: func(c *cli.Context) error {
 
-
-
-      var region string = "us-east-1"
+      var region string     = "us-east-1"
       var account_id string = "182565773517"
-      var role string = "ops-mgmt-admin"
+      var role string       = "ops-mgmt-admin"
 
       awsClient := aws.New()
       awsClient.SetConfig(&region, &account_id, &role)
@@ -44,17 +42,16 @@ func Execute() {
    		reponame, err := promptReponame()
    		if err != nil {
    			log.Println(err.Error())
-        os.Exit(1)
+        return err
    		}
 
       token, err := awsClient.GetSecret("github_token")
       if err != nil {
         log.Println(err.Error())
-        os.Exit(1)
+        return err
       }
 
    		createRepo(*token.SecretString, reponame)
-
 
       return nil
     },
