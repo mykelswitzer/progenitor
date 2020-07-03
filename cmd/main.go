@@ -1,26 +1,16 @@
 package cmd
 
-import "fmt"
-import "github.com/urfave/cli/v2"
-import "os"
+import (
+  "os"
+  "log"
+)
 
+import "github.com/urfave/cli/v2"
 import "github.com/caring/progenitor/pkg/aws"
 
 var (
-  awsClient    aws.Client
+  awsClient *aws.Client
 )
-
-func init() {
-
-  var region string = "us-east-1"
-  var account_id string = "182565773517"
-  var role string = "ops-mgmt-admin"
-
-  awsClient := aws.Client{}
-  awsClient.SetConfig(&region, &account_id, &role)
-
-}
-
 
 func Execute() {
 	app := &cli.App{
@@ -37,22 +27,31 @@ func Execute() {
           .###  ####             copy pasta you used to do.
            ###**###           
            .### ###           
-           ###* ###.          
+           ###* ###.
           .###  ####          
           ###,   ###,          `,
    Action: func(c *cli.Context) error {
 
+      var region string     = "us-east-1"
+      var account_id string = "182565773517"
+      var role string       = "ops-mgmt-admin"
 
-
+      awsClient := aws.New()
+      awsClient.SetConfig(&region, &account_id, &role)
 
    		reponame, err := promptReponame()
    		if err != nil {
-   			fmt.Println(err.Error())
-   			return nil
+   			log.Println(err.Error())
+        return err
    		}
 
-   		fmt.Println(reponame)
+      token, err := awsClient.GetSecret("github_token")
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
 
+   		createRepo(*token.SecretString, reponame)
 
       return nil
     },
@@ -60,6 +59,8 @@ func Execute() {
 
   err := app.Run(os.Args)
   if err != nil {
-    fmt.Println(err)
+    log.Println(err)
   }
+
 }
+

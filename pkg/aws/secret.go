@@ -10,7 +10,8 @@ import (
 
 func (c *Client) GetSecret(secret string) (*secretsmanager.GetSecretValueResponse, error) {
 
-	svc := secretsmanager.New(*c.GetConfig())	
+	config := c.GetConfig()
+	svc := secretsmanager.New(*config)	
 	input := &secretsmanager.GetSecretValueInput{
 	    SecretId: aws.String(secret),
 	}

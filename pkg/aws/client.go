@@ -16,11 +16,15 @@ type Client struct {
 	config *aws.Config
 }
 
-func (c Client) GetConfig() *aws.Config {
+func New() *Client {
+	return &Client{config:nil}
+}
+
+func (c *Client) GetConfig() *aws.Config {
 	return c.config
 }
 
-func (c Client) SetConfig(region *string, account_id *string, role *string) (*aws.Config, error) {
+func (c *Client) SetConfig(region *string, account_id *string, role *string) (*aws.Config, error) {
 
 	// return no config for nil inputs
 	if account_id == nil || region == nil || role == nil {
