@@ -26,8 +26,6 @@ func (c *Client) GetConfig() *aws.Config {
 
 func (c *Client) SetConfig(region *string, account_id *string, role *string) (*aws.Config, error) {
 
-	log.Println(c)
-
 	// return no config for nil inputs
 	if account_id == nil || region == nil || role == nil {
 		err := errors.New("Region, Account Id, and Role Name to assume are all required.");
@@ -66,9 +64,6 @@ func (c *Client) SetConfig(region *string, account_id *string, role *string) (*a
 	awsConfig.Credentials = CredentialsProvider{Credentials: out.Credentials}
 
 	c.config = &awsConfig
-
-
-	log.Println(c)
 
 	return &awsConfig, nil
 }

@@ -44,7 +44,7 @@ func Execute() {
    		reponame, err := promptReponame()
    		if err != nil {
    			log.Println(err.Error())
-   			return nil
+        os.Exit(1)
    		}
 
       token, err := awsClient.GetSecret("github_token")
