@@ -3,36 +3,15 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log"
-	_"os"
-	"errors"
+	"os"
+	"os/signal"
 )
 import "golang.org/x/oauth2"
-import "github.com/manifoldco/promptui"
 import "github.com/google/go-github/v32/github"
+import "github.com/go-git/go-git/v5"
 
-func promptReponame() (string, error) {
-
-	validate := func(input string) error {
-		if len(input) < 5 {
-			return errors.New("Project name must have more than 5 characters")
-		}
-		return nil
-	}
-  
-	prompt := promptui.Prompt{
-		Label:    "What is your project named?",
-		Validate: validate,
-	}
-
-	return prompt.Run()
-
-}
-
-func createRepo(token string, name string) {
-
-
+func createRepo(token string, name string)  *github.Repository {
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -45,7 +24,37 @@ func createRepo(token string, name string) {
 	repo, _, err := client.Repositories.Create(ctx, "caring", r)
 	if err != nil {
 		log.Fatal(err)
+		os.Exit(1)
 	}
-	fmt.Printf("Successfully created new repo: %v\n", repo.GetName())
+	log.Printf("Successfully created new repo: %v\n", repo.GetName())
+	return repo
+
+}
+
+func cloneRepo(directory string, repo *github.Repository)  {
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+
+	// The context is the mechanism used by go-git, to support deadlines and
+	// cancellation signals.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel() // cancel when we are finished consuming integers
+
+	go func() {
+		<-stop
+		log.Printf("\nSignal detected, canceling operation...")
+		cancel()
+	}()
+
+	_, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
+	    URL:      *repo.CloneURL,
+	    Progress: os.Stdout,
+	})
+
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 
 }
