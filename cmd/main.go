@@ -39,11 +39,17 @@ func Execute() {
       awsClient := aws.New()
       awsClient.SetConfig(&region, &account_id, &role)
 
-   		reponame, err := promptReponame()
+   		name, err := promptProjectName()
    		if err != nil {
    			log.Println(err.Error())
         return err
    		}
+
+      directory, err := promptProjectDir()
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
 
       token, err := awsClient.GetSecret("github_token")
       if err != nil {
@@ -51,7 +57,11 @@ func Execute() {
         return err
       }
 
-   		createRepo(*token.SecretString, reponame)
+   		repo := createRepo(*token.SecretString, name)
+
+      // next clone the repo
+      var projectDir string = directory
+      cloneRepo(projectDir, repo)
 
       return nil
     },
