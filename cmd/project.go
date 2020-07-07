@@ -38,7 +38,7 @@ func promptProjectDir() (string, error) {
 	}
   
 	prompt := promptui.Prompt{
-		Label:    "Where should we store this project (excluding the project folder)?",
+		Label:    "Where should we store this project?",
 		Validate: validate,
 	}
 

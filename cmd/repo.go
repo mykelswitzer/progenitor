@@ -20,7 +20,8 @@ func createRepo(token string, name string)  *github.Repository {
 
 	var private bool = false
 	var description string = "Caring, LLC service for " + name;
-	r := &github.Repository{Name: &name, Private: &private, Description: &description}
+	var autoInit bool = true
+	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit}
 	repo, _, err := client.Repositories.Create(ctx, "caring", r)
 	if err != nil {
 		log.Fatal(err)

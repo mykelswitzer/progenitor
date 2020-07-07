@@ -60,11 +60,8 @@ func Execute() {
    		repo := createRepo(*token.SecretString, name)
 
       // next clone the repo
-      var projectDir string = directory + "/" + name
+      var projectDir string = directory
       cloneRepo(projectDir, repo)
-
-
-
 
       return nil
     },
