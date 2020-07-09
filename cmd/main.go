@@ -63,6 +63,15 @@ func Execute() {
       var projectDir string = directory
       cloneRepo(projectDir, repo)
 
+
+      setupDb, err := promptDb()
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
+
+
+
       return nil
     },
   }
