@@ -1,16 +1,49 @@
 package scaffolding
 
+import "errors"
+import "github.com/caring/progenitor/internal/config"
+
 type scaffold interface {
-	setupStructure() error
-	cloneTemplates() error
+	Init(*config.Config) (*Scaffold, error)
+}
+
+type Dir struct {
+	Name string
+	SubDirs []Dir
+	Files []FileInfo
+}
+
+type FileInfo struct {
+	Template string
+	FileName string
 }
 
 type Scaffold struct {
-	Structure []Structure
-	TemplatePath string 
+	BaseDir Dir
+	TemplatePath string
 }
 
-type Structure struct {
-	Name string
-	SubStructure []Structure
+func (s *Scaffold) BuildStructure() error {
+	return nil
+}
+
+func (s *Scaffold) BuildFiles() error {
+	return nil
+}
+
+
+var scaffoldingTypes = map[string]scaffold {
+	"go-grpc": goGrpc{},
+}
+
+func New(cfg *config.Config) (*scaffold, error) {
+
+	projectType := cfg.GetString("projectType")
+	if scfld, ok := scaffoldingTypes["foo"]; ok {
+		scfld.Init(cfg)
+    return &scfld, nil
+	} 
+
+	return nil, errors.New("project scaffold missing: "+projectType)
+
 }
