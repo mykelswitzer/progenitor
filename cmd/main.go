@@ -6,10 +6,12 @@ import (
 )
 
 import "github.com/urfave/cli/v2"
+import "github.com/caring/progenitor/internal/config"
 import "github.com/caring/progenitor/pkg/aws"
 
 var (
   awsClient *aws.Client
+  cfg *config.Config
 )
 
 func Execute() {
@@ -32,24 +34,13 @@ func Execute() {
           ###,   ###,          `,
    Action: func(c *cli.Context) error {
 
-      var region string     = "us-east-1"
-      var account_id string = "182565773517"
-      var role string       = "ops-mgmt-admin"
 
-      awsClient := aws.New()
-      awsClient.SetConfig(&region, &account_id, &role)
+      awsClient = setupAwsClient()
 
-   		name, err := promptProjectName()
-   		if err != nil {
-   			log.Println(err.Error())
-        return err
-   		}
+      cfg = config.New()
 
-      directory, err := promptProjectDir()
-      if err != nil {
-        log.Println(err.Error())
-        return err
-      }
+   		promptProjectName(cfg)
+   		promptProjectDir(cfg)
 
       token, err := awsClient.GetSecret("github_token")
       if err != nil {
@@ -57,20 +48,14 @@ func Execute() {
         return err
       }
 
-   		repo := createRepo(*token.SecretString, name)
-
-      // next clone the repo
-      var projectDir string = directory
-      cloneRepo(projectDir, repo)
-
+   		createRepo(*token.SecretString, cfg)
 
       setupDb, err := promptDb()
       if err != nil {
         log.Println(err.Error())
         return err
       }
-
-
+      log.Print(setupDb)
 
       return nil
     },
@@ -83,3 +68,13 @@ func Execute() {
 
 }
 
+func setupAwsClient() *aws.Client {
+      var region string     = "us-east-1"
+      var account_id string = "182565773517"
+      var role string       = "ops-mgmt-admin"
+
+      awsClient := aws.New()
+      awsClient.SetConfig(&region, &account_id, &role)
+
+      return awsClient
+}

@@ -3,13 +3,17 @@ package cmd
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
+  "log"
 )
 import "github.com/manifoldco/promptui"
+import (
+	"github.com/caring/progenitor/internal/scaffolding"
+	"github.com/caring/progenitor/internal/config"
+)
 
 
-func promptProjectName() (string, error) {
+func promptProjectName(config *config.Config) {
 
 	validate := func(input string) error {
 		if len(input) < 5 {
@@ -23,11 +27,17 @@ func promptProjectName() (string, error) {
 		Validate: validate,
 	}
 
-	return prompt.Run()
+	name, err := prompt.Run()
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	config.Set("projectName", name)
 
 }
 
-func promptProjectDir() (string, error) {
+func promptProjectDir(config *config.Config) {
 
 	validate := func(input string) error {
 		if IsValid(input) == false {
@@ -41,22 +51,20 @@ func promptProjectDir() (string, error) {
 		Validate: validate,
 	}
 
-	return prompt.Run()
+	dir, err := prompt.Run()
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	config.Set("projectDir", dir)
 
 }
 
 func IsValid(fp string) bool {
-  // Check if file already exists
-  if _, err := os.Stat(fp); err == nil {
-    return true
-  }
+  
+  scaffolding.SetBasePath(fp)
 
-  // Attempt to create it
-  var d []byte
-  if err := ioutil.WriteFile(fp, d, 0644); err == nil {
-    os.Remove(fp) // And delete it
-    return true
-  }
+  return true
 
-  return false
 }

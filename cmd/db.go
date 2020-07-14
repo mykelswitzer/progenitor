@@ -2,9 +2,9 @@ package cmd
 
 
 import (
-	_"errors"
-	_"io/ioutil"
-	_"os"
+	_ "errors"
+	_ "io/ioutil"
+	_ "os"
 )
 import "github.com/manifoldco/promptui"
 
@@ -28,3 +28,20 @@ func promptDb() (bool, error) {
 	return output[result], err
 
 }
+
+// func setupDbMigrateDir(path string) {
+
+// 	  // Check if file already exists
+//   if _, err := os.Stat(path); err == nil {
+//     return true
+//   }
+
+//   // Attempt to create it
+//   var d []byte
+//   if err := ioutil.WriteFile(fp, d, 0644); err == nil {
+//     os.Remove(fp) // And delete it
+//     return true
+//   }
+
+//   return false
+// }
