@@ -1,11 +1,12 @@
 package scaffolding
 
 import (
+	"github.com/spf13/afero"
 	"io"
 	"os"
+	"log"
 	"path/filepath"
 	"strings"
-	"github.com/spf13/afero"
 )
 
 // FilePathSeparator as defined by os.Separator.
@@ -42,7 +43,6 @@ func OpenFileForWriting(fs afero.Fs, filename string) (afero.File, error) {
 	return f, err
 }
 
-
 func addTrailingFileSeparator(s string) string {
 	if !strings.HasSuffix(s, FilePathSeparator) {
 		s = s + FilePathSeparator
@@ -51,6 +51,16 @@ func addTrailingFileSeparator(s string) string {
 }
 
 func SetBasePath(path string) afero.Fs {
+
+	if path[:1] != "/" {
+		base, err := os.Getwd()
+		if err != nil {
+			log.Println("Relative path provided, unable to determine root.")
+			os.Exit(1)
+		}
+		path = filepath.Join(base, path)
+	}
+
 	return afero.NewBasePathFs(afero.NewOsFs(), path)
 }
 

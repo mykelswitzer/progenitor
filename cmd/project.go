@@ -1,17 +1,14 @@
 package cmd
 
-
 import (
 	"errors"
+	"log"
 	"os"
-  "log"
 )
 import "github.com/manifoldco/promptui"
 import (
-	"github.com/caring/progenitor/internal/scaffolding"
 	"github.com/caring/progenitor/internal/config"
 )
-
 
 func promptProjectName(config *config.Config) {
 
@@ -21,7 +18,7 @@ func promptProjectName(config *config.Config) {
 		}
 		return nil
 	}
-  
+
 	prompt := promptui.Prompt{
 		Label:    "What is your project named?",
 		Validate: validate,
@@ -45,7 +42,7 @@ func promptProjectDir(config *config.Config) {
 		}
 		return nil
 	}
-  
+
 	prompt := promptui.Prompt{
 		Label:    "Where should we store this project?",
 		Validate: validate,
@@ -53,7 +50,7 @@ func promptProjectDir(config *config.Config) {
 
 	dir, err := prompt.Run()
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
@@ -62,9 +59,20 @@ func promptProjectDir(config *config.Config) {
 }
 
 func IsValid(fp string) bool {
-  
-  scaffolding.SetBasePath(fp)
 
-  return true
+	if fp == "" {
+		log.Print("No project directory input")
+		return false
+	}
+
+	if fp[:1] != "/" {
+		_, err := os.Getwd()
+		if err != nil {
+			log.Println("Relative path provided, unable to determine root.")
+			return false
+		}
+	}
+
+	return true
 
 }

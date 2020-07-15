@@ -1,6 +1,5 @@
 package cmd
 
-
 import (
 	_ "errors"
 	_ "io/ioutil"
@@ -10,12 +9,12 @@ import "github.com/manifoldco/promptui"
 
 func promptDb() (bool, error) {
 
-	output := map[string]bool {"Yes":true,"No":false}
+	output := map[string]bool{"Yes": true, "No": false}
 	var keys []string
 	for k := range output {
-	    keys = append(keys, k)
+		keys = append(keys, k)
 	}
-  
+
 	prompt := promptui.Select{
 		Label: "Do you need a database?",
 		Items: keys,
@@ -28,20 +27,3 @@ func promptDb() (bool, error) {
 	return output[result], err
 
 }
-
-// func setupDbMigrateDir(path string) {
-
-// 	  // Check if file already exists
-//   if _, err := os.Stat(path); err == nil {
-//     return true
-//   }
-
-//   // Attempt to create it
-//   var d []byte
-//   if err := ioutil.WriteFile(fp, d, 0644); err == nil {
-//     os.Remove(fp) // And delete it
-//     return true
-//   }
-
-//   return false
-// }
