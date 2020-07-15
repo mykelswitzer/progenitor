@@ -1,0 +1,17 @@
+syntax = "proto3";
+package products;
+
+option go_package = "pb";
+
+service Products {}
+
+// #################################
+//          Shared Messages
+// #################################
+message GetByIDRequest {
+  string id = 1;
+}
+
+message PrimaryKeyLoadRequest {
+  repeated string keys = 1;
+}

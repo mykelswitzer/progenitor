@@ -10,15 +10,10 @@ type scaffold interface {
 type Dir struct {
 	Name string
 	SubDirs []Dir
-	Files []FileInfo
-}
-
-type FileInfo struct {
-	Template string
-	FileName string
 }
 
 type Scaffold struct {
+	Config *config.Config
 	BaseDir Dir
 	TemplatePath string
 }
