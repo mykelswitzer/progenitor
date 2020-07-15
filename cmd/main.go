@@ -34,7 +34,6 @@ func Execute() {
           ###,   ###,          `,
    Action: func(c *cli.Context) error {
 
-
       awsClient = setupAwsClient()
 
       cfg = config.New()

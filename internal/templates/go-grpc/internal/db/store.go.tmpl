@@ -1,0 +1,105 @@
+package db
+
+import (
+	"database/sql"
+
+	"github.com/caring/go-packages/pkg/errors"
+	// anonymous import so package exports are not exposed
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
+)
+
+// Store represents a connection and a collection
+// of statements that we will use to interface with
+// a backing store
+type Store struct {
+	db    *sql.DB
+	stmts map[string]*sql.Stmt
+}
+
+// NewStore will give a pointer to a MySQL instance ready to run queries against.
+func NewStore(dataSourceName string) (*Store, error) {
+	unprepared := statements
+
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	stmts, err := prepareStmts(db, unprepared)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	s := Store{
+		db:    db,
+		stmts: stmts,
+	}
+
+	return &s, nil
+}
+
+// prepareStmts will attempt to prepare each unprepared
+// query on the database. If one fails, the function returns
+// with an error.
+func prepareStmts(db *sql.DB, unprepared map[string]string) (map[string]*sql.Stmt, error) {
+	prepared := map[string]*sql.Stmt{}
+	for k, v := range unprepared {
+		stmt, err := db.Prepare(v)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		prepared[k] = stmt
+	}
+	return prepared, nil
+}
+
+// Close will close the connection to the underlying database
+func (s *Store) Close() error {
+	err := s.Close()
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
+}
+
+// GetTx initializes a db transaction
+func (s *Store) GetTx() (*sql.Tx, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return tx, nil
+}
+
+// ParseUUID parses a UUID string to a byte slice UUID. if the string is empty it return uuid.Nil
+func ParseUUID(s string) (uuid.UUID, error) {
+	if s == "" {
+		return uuid.Nil, nil
+	}
+	uid, err := uuid.Parse(s)
+	if err != nil {
+		return uuid.Nil, errors.WithStack(err)
+	}
+	return uid, nil
+}
+
+// ParseUUIDs is a convenience method to parse multiple strings to UUIDs,
+// if any error is returned then a nil slice is returned. Each empty string is parsed to
+// a 0 value UUID
+func ParseUUIDs(ss []string) ([]uuid.UUID, error) {
+	parsed := make([]uuid.UUID, len(ss))
+	for i, s := range ss {
+		uid, err := ParseUUID(s)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		parsed[i] = uid
+	}
+	return parsed, nil
+}
