@@ -15,6 +15,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	grpcProject := Scaffold{
 		Config: cfg,
 		BaseDir: Dir{Name: projectDirectory.Name()},
+		TemplatePath: "go-grpc",
 	}
 
 	cmdDir  := Dir{Name: "cmd"}
