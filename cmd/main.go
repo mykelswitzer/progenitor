@@ -60,11 +60,11 @@ func Execute() {
 			cfg.Set("projectType", "go-grpc")
 
 			scaffold, err := scaffolding.New(cfg)
-      if err != nil {
-        log.Println(err.Error())
-        return err
-      }
-      
+			if err != nil {
+				log.Println(err.Error())
+				return err
+			}
+
 			scaffold.BuildStructure()
 
 			return nil

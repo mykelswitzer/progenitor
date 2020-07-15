@@ -23,37 +23,6 @@ type Scaffold struct {
 	TemplatePath string
 }
 
-func (s *Scaffold) BuildStructure() error {
-
-	
-
-	// 	switch {
-	// 	case !isEmpty && !force:
-	// 		return errors.New(basepath + " already exists and is not empty. See --force.")
-
-	// 	case !isEmpty && force:
-	// 		all := append(dirs, filepath.Join(basepath, "config."+n.configFormat))
-	// 		for _, path := range all {
-	// 			if exists, _ := Exists(path, fs.Source); exists {
-	// 				return errors.New(path + " already exists")
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// for _, dir := range dirs {
-	// 	if err := s.Config.projectDir.MkdirAll(dir, 0777); err != nil {
-	// 		return _errors.Wrap(err, "Failed to create dir")
-	// 	}
-	// }
-
-	return nil
-}
-
-func (s *Scaffold) BuildFiles() error {
-	return nil
-}
-
 var scaffoldingTypes = map[string]scaffold{
 	"go-grpc": goGrpc{},
 }
@@ -64,12 +33,40 @@ func New(cfg *config.Config) (*Scaffold, error) {
 	if scfld, ok := scaffoldingTypes[projectType]; ok {
 		scaffold, err := scfld.Init(cfg)
 		if err != nil {
-	    log.Println(err.Error())
-	    return nil, err
-    }
+			log.Println(err.Error())
+			return nil, err
+		}
 		return scaffold, nil
 	}
 
 	return nil, errors.New("project scaffold missing: " + projectType)
 
+}
+
+func (s *Scaffold) BuildStructure() error {
+	return createDirs(s.BaseDir.SubDirs, s.Fs)
+}
+
+func createDirs(dirs []Dir, parent afero.Fs) error {
+
+	for _, dir := range dirs {
+		if err := parent.MkdirAll(dir.Name, 0777); err != nil {
+			log.Println("Failed to create dir")
+			return err // errors.Wrap(err, "Failed to create dir")
+		}
+		if len(dir.SubDirs) > 0 {
+			parentDir := afero.NewBasePathFs(parent, dir.Name)
+			err := createDirs(dir.SubDirs, parentDir)
+			if err != nil {
+				log.Println("Failed to create dir")
+				return err // errors.Wrap(err, "Failed to create dir")
+			}
+		}
+	}
+	return nil
+
+}
+
+func (s *Scaffold) BuildFiles() error {
+	return nil
 }

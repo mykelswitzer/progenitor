@@ -37,10 +37,7 @@ func promptProjectName(config *config.Config) {
 func promptProjectDir(config *config.Config) {
 
 	validate := func(input string) error {
-		if IsValid(input) == false {
-			return errors.New("Directory is invalid or not writeable")
-		}
-		return nil
+		return IsValid(input)
 	}
 
 	prompt := promptui.Prompt{
@@ -58,21 +55,19 @@ func promptProjectDir(config *config.Config) {
 
 }
 
-func IsValid(fp string) bool {
+func IsValid(fp string) error {
 
 	if fp == "" {
-		log.Print("No project directory input")
-		return false
+		return errors.New("No directory was entered")
 	}
 
 	if fp[:1] != "/" {
 		_, err := os.Getwd()
 		if err != nil {
-			log.Println("Relative path provided, unable to determine root.")
-			return false
+			return errors.New("Relative path provided, unable to determine root.")
 		}
 	}
 
-	return true
+	return nil
 
 }

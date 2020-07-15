@@ -3,8 +3,8 @@ package scaffolding
 import (
 	"github.com/spf13/afero"
 	"io"
-	"os"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 )

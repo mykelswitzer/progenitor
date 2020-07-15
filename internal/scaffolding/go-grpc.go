@@ -13,7 +13,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		Config:       cfg,
 		BaseDir:      Dir{Name: dir},
 		TemplatePath: "go-grpc",
-		Fs:						SetBasePath(dir),
+		Fs:           SetBasePath(dir),
 	}
 
 	cmdDir := Dir{Name: "cmd"}
