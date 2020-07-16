@@ -67,6 +67,8 @@ func Execute() {
 
 			scaffold.BuildStructure()
 
+      scaffold.BuildFiles(*token.SecretString)
+
 			return nil
 		},
 	}

@@ -4,19 +4,18 @@ import (
 	"context"
 	"log"
 	"os"
-	"os/signal"
 )
-import "golang.org/x/oauth2"
-import "github.com/caring/progenitor/internal/config"
+import (
+	"github.com/caring/progenitor/internal/config"
+	rp "github.com/caring/progenitor/internal/repo"
+)
 import "github.com/google/go-github/v32/github"
-import "github.com/go-git/go-git/v5"
 
 func createRepo(token string, config *config.Config) *github.Repository {
 
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+	oauth := rp.GithubAuth(token, ctx)
+	client := rp.GithubClient(oauth)
 
 	var name string = config.GetString("projectName")
 	var private bool = false
@@ -31,36 +30,8 @@ func createRepo(token string, config *config.Config) *github.Repository {
 
 	config.Set("projectRepo", repo)
 
-	cloneRepo(config.GetString("projectDir"), repo)
+	rp.Clone(config.GetString("projectDir"), repo)
 
 	return repo
-
-}
-
-func cloneRepo(directory string, repo *github.Repository) {
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
-
-	// The context is the mechanism used by go-git, to support deadlines and
-	// cancellation signals.
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // cancel when we are finished consuming integers
-
-	go func() {
-		<-stop
-		log.Printf("\nSignal detected, canceling operation...")
-		cancel()
-	}()
-
-	_, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
-		URL:      *repo.CloneURL,
-		Progress: os.Stdout,
-	})
-
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
-	}
 
 }
