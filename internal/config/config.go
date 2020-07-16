@@ -1,10 +1,7 @@
 package config
 
 import "strings"
-import (
-	"github.com/spf13/afero"
-	"github.com/spf13/cast"
-)
+import "github.com/spf13/cast"
 import "github.com/google/go-github/v32/github"
 
 type config interface {
@@ -19,7 +16,7 @@ type config interface {
 type Config struct {
 	projectName string
 	projectType string
-	projectDir  afero.Fs
+	projectDir  string
 	projectRepo *github.Repository
 	// These are config values, i.e. the settings declared outside of the [params] section.
 	// This is the map used for looking for configuration values (baseURL etc.).
@@ -30,7 +27,6 @@ type Config struct {
 func New() *Config {
 	return &Config{settings: make(map[string]interface{})}
 }
-
 
 // GetString returns the value associated with the key as a string.
 func (c *Config) GetString(key string) string { return cast.ToString(c.Get(key)) }

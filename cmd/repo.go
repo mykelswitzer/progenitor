@@ -1,6 +1,5 @@
 package cmd
 
-
 import (
 	"context"
 	"log"
@@ -12,7 +11,7 @@ import "github.com/caring/progenitor/internal/config"
 import "github.com/google/go-github/v32/github"
 import "github.com/go-git/go-git/v5"
 
-func createRepo(token string, config *config.Config)  *github.Repository {
+func createRepo(token string, config *config.Config) *github.Repository {
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
@@ -31,14 +30,14 @@ func createRepo(token string, config *config.Config)  *github.Repository {
 	}
 
 	config.Set("projectRepo", repo)
-	
+
 	cloneRepo(config.GetString("projectDir"), repo)
 
 	return repo
 
 }
 
-func cloneRepo(directory string, repo *github.Repository)  {
+func cloneRepo(directory string, repo *github.Repository) {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -55,8 +54,8 @@ func cloneRepo(directory string, repo *github.Repository)  {
 	}()
 
 	_, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
-	    URL:      *repo.CloneURL,
-	    Progress: os.Stdout,
+		URL:      *repo.CloneURL,
+		Progress: os.Stdout,
 	})
 
 	if err != nil {
