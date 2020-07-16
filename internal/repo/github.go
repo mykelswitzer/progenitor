@@ -1,14 +1,13 @@
-
 package repo
 
 import (
-	"net/http"
 	"context"
+	"net/http"
 )
 import "golang.org/x/oauth2"
 import "github.com/google/go-github/v32/github"
 
-func GithubAuth (token string, ctx context.Context) *http.Client {
+func GithubAuth(token string, ctx context.Context) *http.Client {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	return oauth2.NewClient(ctx, ts)
 }

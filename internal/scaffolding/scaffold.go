@@ -1,10 +1,10 @@
 package scaffolding
 
 import (
-	"net/http"
+	"context"
 	"errors"
 	"log"
-	"context"
+	"net/http"
 	"path/filepath"
 )
 import (
@@ -81,7 +81,7 @@ func (s *Scaffold) BuildFiles(token string) error {
 	// set up the base template path
 	base := "github.com/caring/progenitor/internal/templates"
 	templatePath := filepath.Join(base, s.TemplatePath)
-	// populate files recursively fetches templates from the 
+	// populate files recursively fetches templates from the
 	// directory, then populates them locally
 	populateFiles(ctx, s.BaseDir.SubDirs, s.Fs, oauth, templatePath)
 
