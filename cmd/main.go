@@ -64,8 +64,8 @@ func Execute() {
 				log.Println(err.Error())
 				return err
 			}
-
 			scaffold.BuildStructure()
+			scaffold.BuildFiles(*token.SecretString)
 
 			return nil
 		},
