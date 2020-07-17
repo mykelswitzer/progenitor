@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/aws/aws-sdk-go v1.33.1
 	github.com/aws/aws-sdk-go-v2 v0.23.0
+	github.com/caring/go-packages v1.6.2
 	github.com/go-git/go-git/v5 v5.1.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gohugoio/hugo v0.73.0

@@ -84,6 +84,7 @@ func createGRPCServer(logger *logging.Logger, tracer *tracing.Tracer) *grpc.Serv
 	)
 }
 
+{{if .UseDb}}
 // create the db connection string from env
 func setDBConnectionString(logger *logging.Logger) string {
 	logger.Debug("Creating DB connection string")
@@ -125,3 +126,4 @@ func migrateDatabase(logger *logging.Logger, connectionString string) {
 	}
 	logger.Debug("Done")
 }
+{{end}}

@@ -2,7 +2,6 @@ package config
 
 import "strings"
 import "github.com/spf13/cast"
-import "github.com/google/go-github/v32/github"
 
 type config interface {
 	GetString(key string) string
@@ -14,13 +13,6 @@ type config interface {
 }
 
 type Config struct {
-	projectName string
-	projectType string
-	projectDir  string
-	projectRepo *github.Repository
-	// These are config values, i.e. the settings declared outside of the [params] section.
-	// This is the map used for looking for configuration values (baseURL etc.).
-	// Values in this map can also be fetched from the params map above.
 	settings map[string]interface{}
 }
 
@@ -67,6 +59,9 @@ func (c *Config) IsSet(key string) bool {
 	if _, ok := c.settings[key]; ok {
 		return true
 	}
-
 	return false
+}
+
+func (c *Config) GetSettings() map[string]interface{} {
+	return c.settings
 }

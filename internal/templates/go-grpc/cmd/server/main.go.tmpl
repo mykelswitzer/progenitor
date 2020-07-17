@@ -7,7 +7,9 @@ import (
 	"os"
 	"time"
 
+{{if .UseDB}}
 	"github.com/caring/contract-service/internal/db"
+{{end}}
 	"github.com/caring/contract-service/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
@@ -17,10 +19,12 @@ import (
 	"google.golang.org/grpc"
 )
 
+{{if .UseDB}}
 var (
 	store        *db.Store
 	dbConnection string
 )
+{{end}}
 
 var (
 	l *logging.Logger
@@ -34,9 +38,11 @@ var (
 func init() {
 	l = initLogger()
 	initSentry(l)
+{{if .UseDB}}
 	dbConnection = setDBConnectionString(l)
 	migrateDatabase(l, dbConnection)
 	store = initStore(l, dbConnection)
+{{end}}
 	t = initTracing(l)
 	g = createGRPCServer(l, t)
 }

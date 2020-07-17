@@ -1,20 +1,24 @@
 package cmd
 
 import (
-	"errors"
-	"log"
 	"os"
+	"regexp"
 )
-import "github.com/manifoldco/promptui"
 import (
+	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
+	"github.com/manifoldco/promptui"
 )
 
-func promptProjectName(config *config.Config) {
+func promptProjectName(config *config.Config) error {
 
 	validate := func(input string) error {
 		if len(input) < 5 {
 			return errors.New("Project name must have more than 5 characters")
+		}
+		re := regexp.MustCompile(`^[azAZ-]`)
+		if match := re.MatchString(input); !match {
+			return errors.New("Project must contain only alphabetical characters with only hyphens as separators.")
 		}
 		return nil
 	}
@@ -26,15 +30,16 @@ func promptProjectName(config *config.Config) {
 
 	name, err := prompt.Run()
 	if err != nil {
-		log.Print(err)
-		os.Exit(1)
+		return errors.Wrap(err, "Error in executing project name prompt")
 	}
 
 	config.Set("projectName", name)
 
+	return nil
+
 }
 
-func promptProjectDir(config *config.Config) {
+func promptProjectDir(config *config.Config) error {
 
 	validate := func(input string) error {
 		return IsValid(input)
@@ -47,11 +52,12 @@ func promptProjectDir(config *config.Config) {
 
 	dir, err := prompt.Run()
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return errors.Wrap(err, "Error in executing project directory prompt")
 	}
 
 	config.Set("projectDir", dir)
+
+	return nil
 
 }
 

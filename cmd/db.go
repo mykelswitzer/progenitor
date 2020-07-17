@@ -1,11 +1,13 @@
 package cmd
 
 import (
-	_ "errors"
 	_ "io/ioutil"
 	_ "os"
 )
-import "github.com/manifoldco/promptui"
+import (
+	"github.com/caring/go-packages/pkg/errors"
+	"github.com/manifoldco/promptui"
+)
 
 func promptDb() (bool, error) {
 
@@ -21,7 +23,7 @@ func promptDb() (bool, error) {
 	}
 	_, result, err := prompt.Run()
 	if err != nil {
-		return false, err
+		return false, errors.Wrap(err, "Error in executing database prompt")
 	}
 
 	return output[result], err

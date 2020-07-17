@@ -35,8 +35,9 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
-
+{{if .UseDb}}
 COPY ./internal/db/migrations ./migrations
+{{end}}
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
