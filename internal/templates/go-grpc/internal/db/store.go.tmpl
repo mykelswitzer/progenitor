@@ -61,7 +61,7 @@ func prepareStmts(db *sql.DB, unprepared map[string]string) (map[string]*sql.Stm
 
 // Close will close the connection to the underlying database
 func (s *Store) Close() error {
-	err := s.Close()
+	err := s.db.Close()
 	if err != nil {
 		return errors.WithStack(err)
 	}

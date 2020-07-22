@@ -46,7 +46,7 @@ func initSentry(logger *logging.Logger) {
 	}
 
 	sentryDsn := envMust("SENTRY_DSN")
-	env := envMust("ENV")
+	env := envMust("SENTRY_ENV")
 	err = sentry.Init(sentry.ClientOptions{
 		Dsn:         sentryDsn,
 		Environment: env,
