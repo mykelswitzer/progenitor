@@ -8,9 +8,9 @@ import (
 	"time"
 
 {{if .UseDB}}
-	"github.com/caring/contract-service/internal/db"
+	"github.com/caring/{{tolower .Name}}/internal/db"
 {{end}}
-	"github.com/caring/contract-service/pb"
+	"github.com/caring/{{tolower .Name}}/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
 	"github.com/getsentry/sentry-go"
