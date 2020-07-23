@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  {{tostring .Name}}:
+  {{tolower .Name}}:
     build:
       context: .
       dockerfile: Dockerfile.dev

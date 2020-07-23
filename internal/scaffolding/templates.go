@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	txttmpl "text/template"
@@ -50,23 +51,28 @@ func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (m
 			continue
 		}
 
-		if walker.Stat().IsDir() {
-			ex, err := DirExists(walker.Path(), basePath)
+		if !walker.Stat().IsDir() {
+			// get && check path
+			dirpath := filepath.Dir(walker.Path())
+			log.Println(dirpath)
+			ex, err := DirExists(filepath.Dir(walker.Path()), basePath)
 			if err != nil {
 				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
-			if !ex {
-				walker.SkipDir()
-			}
-		} else {
-			log.Println("Attempting to create file: ", trimTmplSuffix(walker.Path()))
 
-			tmpl, err := TmplParse(fs, TemplateFunctions(), nil, walker.Path())
-			if err != nil {
-				werr := errors.Wrapf(err, "Unable to parse template %s", walker.Path())
-				log.Println(werr)
+			log.Println(dirpath, ex)
+			// if the path exists, parse the templates
+			if ex {
+				log.Println("Fetching template: ", trimTmplSuffix(walker.Path()))
+
+				tmpl, err := TmplParse(fs, TemplateFunctions(), nil, walker.Path())
+				if err != nil {
+					werr := errors.Wrapf(err, "Unable to parse template %s", walker.Path())
+					log.Println(werr)
+				}
+				templates[walker.Path()] = tmpl
 			}
-			templates[walker.Path()] = tmpl
+
 		}
 	}
 

@@ -55,12 +55,9 @@ func Execute() {
 
       createRepo(*token.SecretString, cfg)
 
-      setupDb, err := promptDb()
-      if err != nil {
-        log.Println(err.Error())
-        return err
+      if err := promptDb(cfg); err != nil {
+        return handleError(err)
       }
-      log.Print(setupDb)
 
       cfg.Set("projectType", "go-grpc")
 
@@ -69,8 +66,18 @@ func Execute() {
         log.Println(err.Error())
         return err
       }
-      scaffold.BuildStructure()
-      scaffold.BuildFiles(*token.SecretString)
+
+      err = scaffold.BuildStructure()
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
+
+      err = scaffold.BuildFiles(*token.SecretString)
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
 
       return nil
     },

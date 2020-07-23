@@ -6,10 +6,11 @@ import (
 )
 import (
 	"github.com/caring/go-packages/pkg/errors"
+	"github.com/caring/progenitor/internal/config"
 	"github.com/manifoldco/promptui"
 )
 
-func promptDb() (bool, error) {
+func promptDb(config *config.Config) error {
 
 	output := map[string]bool{"Yes": true, "No": false}
 	var keys []string
@@ -23,9 +24,10 @@ func promptDb() (bool, error) {
 	}
 	_, result, err := prompt.Run()
 	if err != nil {
-		return false, errors.Wrap(err, "Error in executing database prompt")
+		return errors.Wrap(err, "Error in executing database prompt")
 	}
+	config.Set("requireDb", output[result])
 
-	return output[result], err
+	return nil
 
 }
