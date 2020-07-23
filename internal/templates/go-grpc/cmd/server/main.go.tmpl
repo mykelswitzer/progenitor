@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"log"
 
 {{if .UseDB}}
 	"github.com/caring/{{tolower .Name}}/internal/db"
@@ -70,7 +71,7 @@ func main() {
 	// register the server with gRPC
 	pb.RegisterProductsServer(g, &service{})
 
-	// Add a healthcheck endpoint for automated container monitoring
+	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
@@ -109,6 +110,8 @@ func envMust(varName string) string {
 		sentry.CaptureException(e)
 		if l != nil {
 			l.Fatal(e.Error())
+		} else {
+			log.Fatalln(e.Error())
 		}
 	}
 	return value

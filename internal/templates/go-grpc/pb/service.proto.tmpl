@@ -8,10 +8,10 @@ service {{tocamel .Name}} {}
 // #################################
 //          Shared Messages
 // #################################
-message GetByIDRequest {
+message GetIDRequest {
   string id = 1;
 }
 
-message PrimaryKeyLoadRequest {
+message LoadKeyRequest {
   repeated string keys = 1;
 }
