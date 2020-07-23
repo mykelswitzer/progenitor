@@ -2,16 +2,15 @@ package cmd
 
 import (
 	"context"
-	"log"
-	"os"
 )
 import (
+	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
 	rp "github.com/caring/progenitor/internal/repo"
+	"github.com/google/go-github/v32/github"
 )
-import "github.com/google/go-github/v32/github"
 
-func createRepo(token string, config *config.Config) *github.Repository {
+func createRepo(token string, config *config.Config) (*github.Repository, error) {
 
 	ctx := context.Background()
 	oauth := rp.GithubAuth(token, ctx)
@@ -24,14 +23,15 @@ func createRepo(token string, config *config.Config) *github.Repository {
 	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit}
 	repo, _, err := client.Repositories.Create(ctx, "caring", r)
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		return nil, errors.Wrap(err, "Failed to create the repo")
 	}
 
 	config.Set("projectRepo", repo)
 
-	rp.Clone(config.GetString("projectDir"), repo)
+	if err = rp.Clone(config.GetString("projectDir"), repo); err != nil {
+		return nil, errors.Wrap(err, "Failed to clone the repo")
+	}
 
-	return repo
+	return repo, nil
 
 }

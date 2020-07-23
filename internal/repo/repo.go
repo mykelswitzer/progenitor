@@ -6,10 +6,13 @@ import (
 	"os"
 	"os/signal"
 )
-import "github.com/google/go-github/v32/github"
-import "github.com/go-git/go-git/v5"
+import (
+	"github.com/caring/go-packages/pkg/errors"
+	"github.com/go-git/go-git/v5"
+	"github.com/google/go-github/v32/github"
+)
 
-func Clone(directory string, repo *github.Repository) {
+func Clone(directory string, repo *github.Repository) error {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -30,9 +33,7 @@ func Clone(directory string, repo *github.Repository) {
 		Progress: os.Stdout,
 	})
 
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
-	}
+	// note that err is nil, WithStack returns nil
+	return errors.WithStack(err)
 
 }

@@ -1,9 +1,9 @@
 syntax = "proto3";
-package products;
+package {{tolower .Name}};
 
 option go_package = "pb";
 
-service Products {}
+service {{tocamel .Name}} {}
 
 // #################################
 //          Shared Messages

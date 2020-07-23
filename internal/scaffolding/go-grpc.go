@@ -1,15 +1,31 @@
 package scaffolding
 
-import _ "log"
 import "github.com/caring/progenitor/internal/config"
 
+type goGrpcTemplateData struct {
+	Name  string
+	UseDB bool
+}
+
+func (t goGrpcTemplateData) Init(config *config.Config) templateData {
+	t.Name = config.GetString("projectName")
+	t.UseDB = config.GetBool("requireDb")
+	return t
+}
+
 type goGrpc struct{}
+
+func (g goGrpc) GetData(config *config.Config) templateData {
+	td := goGrpcTemplateData{}
+	return td.Init(config)
+}
 
 func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 
 	dir := cfg.GetString("projectDir")
 
 	grpcProject := Scaffold{
+		Source:       g,
 		Config:       cfg,
 		BaseDir:      Dir{Name: dir},
 		TemplatePath: "go-grpc",
