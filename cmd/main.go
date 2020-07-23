@@ -1,19 +1,24 @@
 package cmd
 
 import (
-  "os"
   "log"
+  "os"
 )
 
-import "github.com/urfave/cli/v2"
-import "github.com/caring/progenitor/pkg/aws"
+import (
+  "github.com/caring/progenitor/internal/config"
+  "github.com/caring/progenitor/internal/scaffolding"
+  "github.com/caring/progenitor/pkg/aws"
+  "github.com/urfave/cli/v2"
+)
 
 var (
   awsClient *aws.Client
+  cfg       *config.Config
 )
 
 func Execute() {
-	app := &cli.App{
+  app := &cli.App{
     Name: "progenitor",
     Usage: `
              @@@@,             
@@ -25,52 +30,47 @@ func Execute() {
         .####    .####           boilerplate code, so that you 
           ####  .###*            do not need to do that awful
           .###  ####             copy pasta you used to do.
-           ###**###           
+           *###*###           
            .### ###           
            ###* ###.
           .###  ####          
           ###,   ###,          `,
-   Action: func(c *cli.Context) error {
+    Action: func(c *cli.Context) error {
 
-      var region string     = "us-east-1"
-      var account_id string = "182565773517"
-      var role string       = "ops-mgmt-admin"
+      awsClient = setupAwsClient()
 
-      awsClient := aws.New()
-      awsClient.SetConfig(&region, &account_id, &role)
+      cfg = config.New()
 
-   		name, err := promptProjectName()
-   		if err != nil {
-   			log.Println(err.Error())
-        return err
-   		}
-
-      directory, err := promptProjectDir()
-      if err != nil {
-        log.Println(err.Error())
-        return err
+      if err := promptProjectName(cfg); err != nil {
+        return handleError(err)
+      }
+      if err := promptProjectDir(cfg); err != nil {
+        return handleError(err)
       }
 
       token, err := awsClient.GetSecret("github_token")
       if err != nil {
-        log.Println(err.Error())
-        return err
+        return handleError(err)
       }
 
-   		repo := createRepo(*token.SecretString, name)
-
-      // next clone the repo
-      var projectDir string = directory
-      cloneRepo(projectDir, repo)
-
+      createRepo(*token.SecretString, cfg)
 
       setupDb, err := promptDb()
       if err != nil {
         log.Println(err.Error())
         return err
       }
+      log.Print(setupDb)
 
+      cfg.Set("projectType", "go-grpc")
 
+      scaffold, err := scaffolding.New(cfg)
+      if err != nil {
+        log.Println(err.Error())
+        return err
+      }
+      scaffold.BuildStructure()
+      scaffold.BuildFiles(*token.SecretString)
 
       return nil
     },
@@ -83,3 +83,19 @@ func Execute() {
 
 }
 
+func setupAwsClient() *aws.Client {
+  var region string = "us-east-1"
+  var account_id string = "182565773517"
+  var role string = "ops-mgmt-admin"
+
+  awsClient := aws.New()
+  awsClient.SetConfig(&region, &account_id, &role)
+
+  return awsClient
+}
+
+func handleError(err error) error {
+  log.Println(err)
+  os.Exit(1)
+  return err
+}

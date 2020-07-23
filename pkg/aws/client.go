@@ -2,14 +2,13 @@ package aws
 
 import (
 	"context"
-	"log"
 	"fmt"
-	"errors"
 )
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/caring/go-packages/pkg/errors"
 )
 
 type Client struct {
@@ -17,7 +16,7 @@ type Client struct {
 }
 
 func New() *Client {
-	return &Client{config:nil}
+	return &Client{config: nil}
 }
 
 func (c *Client) GetConfig() *aws.Config {
@@ -28,8 +27,7 @@ func (c *Client) SetConfig(region *string, account_id *string, role *string) (*a
 
 	// return no config for nil inputs
 	if account_id == nil || region == nil || role == nil {
-		err := errors.New("Region, Account Id, and Role Name to assume are all required.");
-		log.Println(err.Error())
+		err := errors.New("Region, Account Id, and Role Name to assume are all required.")
 		return nil, err
 	}
 
@@ -38,14 +36,14 @@ func (c *Client) SetConfig(region *string, account_id *string, role *string) (*a
 		*account_id,
 		*role,
 	)
-	sessionName := *role+"-progenitor"
+	sessionName := *role + "-progenitor"
 
 	// check for cached config
 	if c.config != nil {
 		return c.config, nil
 	}
 
-	// new config	
+	// new config
 	config, err := external.LoadDefaultAWSConfig()
 	if err != nil {
 		return nil, err

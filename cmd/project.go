@@ -1,62 +1,79 @@
 package cmd
 
-
 import (
-	"errors"
-	"io/ioutil"
 	"os"
+	"regexp"
 )
-import "github.com/manifoldco/promptui"
+import (
+	"github.com/caring/go-packages/pkg/errors"
+	"github.com/caring/progenitor/internal/config"
+	"github.com/manifoldco/promptui"
+)
 
-
-func promptProjectName() (string, error) {
+func promptProjectName(config *config.Config) error {
 
 	validate := func(input string) error {
 		if len(input) < 5 {
 			return errors.New("Project name must have more than 5 characters")
 		}
+		re := regexp.MustCompile(`^[azAZ-]`)
+		if match := re.MatchString(input); !match {
+			return errors.New("Project must contain only alphabetical characters with only hyphens as separators.")
+		}
 		return nil
 	}
-  
+
 	prompt := promptui.Prompt{
 		Label:    "What is your project named?",
 		Validate: validate,
 	}
 
-	return prompt.Run()
+	name, err := prompt.Run()
+	if err != nil {
+		return errors.Wrap(err, "Error in executing project name prompt")
+	}
+
+	config.Set("projectName", name)
+
+	return nil
 
 }
 
-func promptProjectDir() (string, error) {
+func promptProjectDir(config *config.Config) error {
 
 	validate := func(input string) error {
-		if IsValid(input) == false {
-			return errors.New("Directory is invalid or not writeable")
-		}
-		return nil
+		return IsValid(input)
 	}
-  
+
 	prompt := promptui.Prompt{
 		Label:    "Where should we store this project?",
 		Validate: validate,
 	}
 
-	return prompt.Run()
+	dir, err := prompt.Run()
+	if err != nil {
+		return errors.Wrap(err, "Error in executing project directory prompt")
+	}
+
+	config.Set("projectDir", dir)
+
+	return nil
 
 }
 
-func IsValid(fp string) bool {
-  // Check if file already exists
-  if _, err := os.Stat(fp); err == nil {
-    return true
-  }
+func IsValid(fp string) error {
 
-  // Attempt to create it
-  var d []byte
-  if err := ioutil.WriteFile(fp, d, 0644); err == nil {
-    os.Remove(fp) // And delete it
-    return true
-  }
+	if fp == "" {
+		return errors.New("No directory was entered")
+	}
 
-  return false
+	if fp[:1] != "/" {
+		_, err := os.Getwd()
+		if err != nil {
+			return errors.New("Relative path provided, unable to determine root.")
+		}
+	}
+
+	return nil
+
 }

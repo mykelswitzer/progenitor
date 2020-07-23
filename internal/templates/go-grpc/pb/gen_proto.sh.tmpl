@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ -f "$(command -v protoc)" ]; then
+    version = "$(protoc --version)"
+    echo "Using protoc version: $version"
+    protoc --proto_path=. --go_out=plugins=grpc:. *.proto
+else
+    echo "Error: protoc was not found. Please check that it is installed."
+fi

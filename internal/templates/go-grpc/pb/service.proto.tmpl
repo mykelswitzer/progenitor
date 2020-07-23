@@ -1,0 +1,17 @@
+syntax = "proto3";
+package {{tolower .Name}};
+
+option go_package = "pb";
+
+service {{tocamel .Name}} {}
+
+// #################################
+//          Shared Messages
+// #################################
+message GetByIDRequest {
+  string id = 1;
+}
+
+message PrimaryKeyLoadRequest {
+  repeated string keys = 1;
+}
