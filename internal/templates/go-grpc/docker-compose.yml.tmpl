@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  {{tostring .Name}}:
+  {{tolower .Name}}:
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -9,7 +9,7 @@ services:
         APP_PORT: ${PORT}
     image: {{tolower .Name}}:latest
     depends_on:
-      - {{tostring .Name}}db
+      - {{tolower .Name}}db
     volumes:
       - ./:/root/app
     env_file:

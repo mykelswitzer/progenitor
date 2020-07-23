@@ -16,9 +16,9 @@ func promptProjectName(config *config.Config) error {
 		if len(input) < 5 {
 			return errors.New("Project name must have more than 5 characters")
 		}
-		re := regexp.MustCompile(`^[azAZ-]`)
+		re := regexp.MustCompile(`^[a-z\-]+$`)
 		if match := re.MatchString(input); !match {
-			return errors.New("Project must contain only alphabetical characters with only hyphens as separators.")
+			return errors.New("Project must contain lowercase alphabetical characters with only hyphens as separators.")
 		}
 		return nil
 	}

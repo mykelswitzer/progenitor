@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	txttmpl "text/template"
@@ -15,6 +16,7 @@ import (
 	rp "github.com/caring/progenitor/internal/repo"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
+	"github.com/spf13/afero"
 )
 
 type templateData interface {
@@ -27,7 +29,7 @@ func trimTmplSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)
 }
 
-func getLatestTemplates(token string, templatePath string) (map[string]*txttmpl.Template, error) {
+func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
 	var templates = map[string]*txttmpl.Template{}
 
@@ -50,32 +52,41 @@ func getLatestTemplates(token string, templatePath string) (map[string]*txttmpl.
 		}
 
 		if !walker.Stat().IsDir() {
-			log.Println("Attempting to create file: ", trimTmplSuffix(walker.Path()))
-
-			tmpl, err := fsutil.TmplParse(fs, nil, walker.Path())
+			// get && check path
+			dirpath := filepath.Dir(walker.Path())
+			log.Println(dirpath)
+			ex, err := DirExists(filepath.Dir(walker.Path()), basePath)
 			if err != nil {
-				werr := errors.Wrapf(err, "Unable to parse template %s", walker.Path())
-				log.Println(werr)
+				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
-			templates[walker.Path()] = tmpl
+
+			log.Println(dirpath, ex)
+			// if the path exists, parse the templates
+			if ex {
+				log.Println("Fetching template: ", trimTmplSuffix(walker.Path()))
+
+				tmpl, err := TmplParse(fs, TemplateFunctions(), nil, walker.Path())
+				if err != nil {
+					werr := errors.Wrapf(err, "Unable to parse template %s", walker.Path())
+					log.Println(werr)
+				}
+				templates[walker.Path()] = tmpl
+			}
+
 		}
 	}
 
 	return templates, nil
 }
 
-func getTemplateFunctions() txttmpl.FuncMap {
+func TemplateFunctions() txttmpl.FuncMap {
 	return txttmpl.FuncMap{
-		"tolower": toLower,
-		"tocamel": toCamel,
+		"tolower": strings.ToLower,
+		"tocamel": ToCamel,
 	}
 }
 
-func toLower(s string) string {
-	return strings.ToLower(s)
-}
-
-func toCamel(s string) string {
+func ToCamel(s string) string {
 	a := regexp.MustCompile(`-`)
 	words := a.Split(s, -1)
 	for index, word := range words {

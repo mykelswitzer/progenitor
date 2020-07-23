@@ -38,7 +38,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, cmdDir)
 
 	internalDir := Dir{Name: "internal"}
-	if cfg.GetBool("setupDb") == true {
+	if cfg.GetBool("requireDb") == true {
 		dbDir := Dir{Name: "db"}
 		dbMigrationsDir := Dir{Name: "migrations"}
 		dbDir.SubDirs = append(dbDir.SubDirs, dbMigrationsDir)
@@ -47,6 +47,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	internalDir.SubDirs = append(internalDir.SubDirs, Dir{Name: "handlers"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, internalDir)
 
+	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pb"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
 
 	return &grpcProject, nil
