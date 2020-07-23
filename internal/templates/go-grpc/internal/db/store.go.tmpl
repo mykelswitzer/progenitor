@@ -4,10 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/caring/go-packages/pkg/errors"
+	_ "github.com/caring/go-packages/pkg/uuid"
 	// anonymous import so package exports are not exposed
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
 )
+
+type ctxKey struct{}
+
+var txCtxKey = ctxKey{}
 
 // Store represents a connection and a collection
 // of statements that we will use to interface with
@@ -77,29 +81,17 @@ func (s *Store) GetTx() (*sql.Tx, error) {
 	return tx, nil
 }
 
-// ParseUUID parses a UUID string to a byte slice UUID. if the string is empty it return uuid.Nil
-func ParseUUID(s string) (uuid.UUID, error) {
-	if s == "" {
-		return uuid.Nil, nil
-	}
-	uid, err := uuid.Parse(s)
-	if err != nil {
-		return uuid.Nil, errors.WithStack(err)
-	}
-	return uid, nil
+// ToCtx stores a sql.Tx within a context
+func ToCtx(ctx context.Context, tx *sql.Tx) context.Context {
+	return context.WithValue(ctx, txCtxKey, tx)
 }
 
-// ParseUUIDs is a convenience method to parse multiple strings to UUIDs,
-// if any error is returned then a nil slice is returned. Each empty string is parsed to
-// a 0 value UUID
-func ParseUUIDs(ss []string) ([]uuid.UUID, error) {
-	parsed := make([]uuid.UUID, len(ss))
-	for i, s := range ss {
-		uid, err := ParseUUID(s)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		parsed[i] = uid
+// FromCtx extracts a sql.Tx from a context which has been stored by this package,
+// returns a error if no tx is present
+func FromCtx(ctx context.Context) (*sql.Tx, error) {
+	val := ctx.Value(txCtxKey)
+	if val != nil {
+		return val.(*sql.Tx), nil
 	}
-	return parsed, nil
+	return nil, errors.New("No *sql.Tx present in context")
 }

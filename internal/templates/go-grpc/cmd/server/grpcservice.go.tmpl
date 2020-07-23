@@ -1,4 +1,15 @@
 package main
 
+import (
+  _ "context"
+{{if .UseDB}}
+  _ "github.com/caring/{{tolower .Name}}/internal/db"
+{{end}}
+  _ "github.com/caring/{{tolower .Name}}/internal/handlers"
+  _ "github.com/caring/{{tolower .Name}}/pb"
+  _ "github.com/caring/go-packages/pkg/errors"
+  _ "google.golang.org/grpc/codes"
+)
+
 type service struct {
 }
