@@ -35,7 +35,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
-{{if .UseDb}}
+{{if .UseDB}}
 COPY ./internal/db/migrations ./migrations
 {{end}}
 
