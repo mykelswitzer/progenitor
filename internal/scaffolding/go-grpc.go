@@ -47,6 +47,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	internalDir.SubDirs = append(internalDir.SubDirs, Dir{Name: "handlers"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, internalDir)
 
+	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pb"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
 
 	return &grpcProject, nil

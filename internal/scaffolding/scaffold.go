@@ -81,7 +81,7 @@ func createDirs(dirs []Dir, parent afero.Fs) error {
 func (s *Scaffold) BuildFiles(token string) error {
 
 	base := "github.com/caring/progenitor/internal/templates"
-	templates, err := getLatestTemplates(token, filepath.Join(base, s.TemplatePath))
+	templates, err := getLatestTemplates(token, filepath.Join(base, s.TemplatePath), s.Fs)
 	if err != nil {
 		log.Println(err)
 	}
@@ -95,14 +95,13 @@ func (s *Scaffold) BuildFiles(token string) error {
 func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
 
 	data := s.Source.GetData(s.Config)
-	fm := getTemplateFunctions()
 
 	for path, tmpl := range templates {
 		f, err := OpenFileForWriting(s.Fs, trimTmplSuffix(path))
 		if err != nil {
 			return errors.Wrap(err, "Unable to open file for writing")
 		}
-		if err = tmpl.Funcs(fm).Execute(f, data); err != nil {
+		if err = tmpl.Execute(f, data); err != nil {
 			return errors.Wrap(err, "Unable to execute template")
 		}
 	}
