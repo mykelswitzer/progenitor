@@ -2,12 +2,10 @@ package repo
 
 import (
 	"context"
-	_ "io/ioutil"
 	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
-	_ "strings"
 	"time"
 )
 import (
