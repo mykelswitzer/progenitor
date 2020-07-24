@@ -7,6 +7,7 @@ import (
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
 	rp "github.com/caring/progenitor/internal/repo"
+	"github.com/caring/progenitor/internal/scaffolding"
 	"github.com/google/go-github/v32/github"
 )
 
@@ -34,4 +35,8 @@ func createRepo(token string, config *config.Config) (*github.Repository, error)
 
 	return repo, nil
 
+}
+
+func commitCodeToRepo(token string, s *scaffolding.Scaffold) error {
+	return rp.AddAll(token, s.BaseDir.Name, s.Fs)
 }
