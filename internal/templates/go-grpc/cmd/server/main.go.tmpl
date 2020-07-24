@@ -69,7 +69,7 @@ func main() {
 	httpL := m.Match(cmux.HTTP1Fast())
 
 	// register the server with gRPC
-	pb.RegisterProductsServer(g, &service{})
+	pb.Register{{tocamel .Name}}Server(g, &service{})
 
 	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

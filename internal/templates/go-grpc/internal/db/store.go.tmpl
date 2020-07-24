@@ -72,6 +72,14 @@ func (s *Store) Close() error {
 	return nil
 }
 
+// Ping will check the connection to the underlying database
+func (s *Store) Ping() error {
+	if err = s.db.Ping(); err != nil {
+    return err
+  }
+  return nil
+}
+
 // GetTx initializes a db transaction
 func (s *Store) GetTx() (*sql.Tx, error) {
 	tx, err := s.db.Begin()
