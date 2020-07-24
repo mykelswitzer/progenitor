@@ -18,11 +18,13 @@ func (s *service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingRespons
     l.Printf("Received: %v", in.Data)
     resp := "Data: " + in.Data
     {{if .UseDB}}
-    if err := store.Ping(); err != nil {
-      return &pb.PingResponse{Data: resp+"; Database: down"}, nil
-    } else {
-      return &pb.PingResponse{Data: resp +"; Database: up"}, nil
+    ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+    defer cancel()
+    status := "up"
+    if err := store.Ping(ctx); err != nil {
+      status = "down"
     }
+    return &pb.PingResponse{Data: resp + "; Database: " + status}, nil
     {{else}}
     return &pb.PingResponse{Data: resp}, nil
     {{end}}
