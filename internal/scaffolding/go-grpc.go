@@ -33,6 +33,8 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	}
 
 	cmdDir := Dir{Name: "cmd"}
+	cmdClientDir := Dir{Name: "client"}
+	cmdDir.SubDirs = append(cmdDir.SubDirs, cmdClientDir)
 	cmdServerDir := Dir{Name: "server"}
 	cmdDir.SubDirs = append(cmdDir.SubDirs, cmdServerDir)
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, cmdDir)

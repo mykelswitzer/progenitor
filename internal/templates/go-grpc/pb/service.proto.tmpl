@@ -3,7 +3,21 @@ package {{tolower .Name}};
 
 option go_package = "pb";
 
-service {{tocamel .Name}} {}
+service {{tocamel .Name}}Service {
+  rpc Ping (PingRequest) returns (PingResponse);
+}
+
+// #################################
+//          Ping
+// #################################
+
+message PingRequest {
+  string data = 1;
+}
+
+message PingResponse {
+  string data = 1;
+}
 
 // #################################
 //          Shared Messages

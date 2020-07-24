@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/caring/go-packages/pkg/errors"
@@ -70,6 +71,14 @@ func (s *Store) Close() error {
 		return errors.WithStack(err)
 	}
 	return nil
+}
+
+// Ping will check the connection to the underlying database
+func (s *Store) Ping(ctx context.Context) error {
+	if err = s.db.PingContext(ctx); err != nil {
+    return err
+  }
+  return nil
 }
 
 // GetTx initializes a db transaction
