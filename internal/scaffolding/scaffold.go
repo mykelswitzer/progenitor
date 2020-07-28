@@ -27,6 +27,7 @@ type Scaffold struct {
 	BaseDir      Dir
 	Fs           afero.Fs
 	TemplatePath string
+	ProcessHooks map[string]func(*Scaffold) error
 }
 
 var scaffoldingTypes = map[string]scaffold{
@@ -53,7 +54,19 @@ func New(cfg *config.Config) (*Scaffold, error) {
 // BuildStructure is responsible for creating the project
 // folder structure in the local directory
 func (s *Scaffold) BuildStructure() error {
-	return createDirs(s.BaseDir.SubDirs, s.Fs)
+	err := createDirs(s.BaseDir.SubDirs, s.Fs)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := s.ProcessHooks["postBuildStructure"]; ok {
+		log.Println("Running postBuildStructure")
+		err := s.ProcessHooks["postBuildStructure"](s)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // createDirs recursively reads the project map from the
@@ -89,14 +102,19 @@ func (s *Scaffold) BuildFiles(token string) error {
 		return err
 	}
 
+	if _, ok := s.ProcessHooks["postBuildFiles"]; ok {
+		log.Println("Running postBuildFiles")
+		err := s.ProcessHooks["postBuildFiles"](s)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 // populateFiles ranges over the templates and passes in the data
 // and executes the template
 func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
-
-	log.Println(templates)
 
 	data := s.Source.GetData(s.Config)
 
