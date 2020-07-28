@@ -7,7 +7,7 @@ import (
   "strings"
   txttmpl "text/template"
 
-  "github.com/pkg/errors"
+  "github.com/caring/go-packages/pkg/errors"
 )
 
 // TmplParse parses templates from the given filesystem according to the
