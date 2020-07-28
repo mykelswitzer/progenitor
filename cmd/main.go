@@ -7,6 +7,7 @@ import (
 
 import (
   "github.com/caring/progenitor/internal/config"
+  "github.com/caring/progenitor/internal/prompt"
   "github.com/caring/progenitor/internal/scaffolding"
   "github.com/caring/progenitor/pkg/aws"
   "github.com/urfave/cli/v2"
@@ -41,10 +42,10 @@ func Execute() {
 
       cfg = config.New()
 
-      if err := promptProjectName(cfg); err != nil {
+      if err := prompt.ProjectName(cfg); err != nil {
         return handleError(err)
       }
-      if err := promptProjectDir(cfg); err != nil {
+      if err := prompt.ProjectDir(cfg); err != nil {
         return handleError(err)
       }
 
@@ -55,7 +56,7 @@ func Execute() {
 
       createRepo(*token.SecretString, cfg)
 
-      if err := promptDb(cfg); err != nil {
+      if err := prompt.Db(cfg); err != nil {
         return handleError(err)
       }
 
@@ -67,14 +68,17 @@ func Execute() {
         return err
       }
 
-      err = scaffold.BuildStructure()
-      if err != nil {
+      if err = scaffold.BuildStructure(); err != nil {
         log.Println(err.Error())
         return err
       }
 
-      err = scaffold.BuildFiles(*token.SecretString)
-      if err != nil {
+      if err = scaffold.BuildFiles(*token.SecretString); err != nil {
+        log.Println(err.Error())
+        return err
+      }
+
+      if err = commitCodeToRepo(*token.SecretString, scaffold); err != nil {
         log.Println(err.Error())
         return err
       }

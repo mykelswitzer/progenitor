@@ -1,4 +1,4 @@
-package cmd
+package prompt
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func promptProjectName(config *config.Config) error {
+func ProjectName(config *config.Config) error {
 
 	validate := func(input string) error {
 		if len(input) < 5 {
@@ -39,10 +39,19 @@ func promptProjectName(config *config.Config) error {
 
 }
 
-func promptProjectDir(config *config.Config) error {
+func ProjectDir(config *config.Config) error {
 
 	validate := func(input string) error {
-		return IsValid(input)
+		if input == "" {
+			return errors.New("No directory was entered")
+		}
+		if input[:1] != "/" {
+			_, err := os.Getwd()
+			if err != nil {
+				return errors.New("Relative path provided, unable to determine root.")
+			}
+		}
+		return nil
 	}
 
 	prompt := promptui.Prompt{
@@ -56,23 +65,6 @@ func promptProjectDir(config *config.Config) error {
 	}
 
 	config.Set("projectDir", dir)
-
-	return nil
-
-}
-
-func IsValid(fp string) error {
-
-	if fp == "" {
-		return errors.New("No directory was entered")
-	}
-
-	if fp[:1] != "/" {
-		_, err := os.Getwd()
-		if err != nil {
-			return errors.New("Relative path provided, unable to determine root.")
-		}
-	}
 
 	return nil
 
