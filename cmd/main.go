@@ -42,6 +42,8 @@ func Execute() {
 
       cfg = config.New()
 
+      cfg.Set("projectType", "go-grpc")
+
       if err := prompt.ProjectName(cfg); err != nil {
         return handleError(err)
       }
@@ -49,41 +51,17 @@ func Execute() {
         return handleError(err)
       }
 
-      token, err := awsClient.GetSecret("github_token")
-      if err != nil {
+      if err := prompt.UseDB(cfg); err != nil {
         return handleError(err)
       }
 
-      createRepo(*token.SecretString, cfg)
-
-      if err := prompt.Db(cfg); err != nil {
-        return handleError(err)
+      if cfg.GetString("projectType") == "go-grpc" && cfg.GetBool("requireDb") == true {
+        if err := prompt.CoreDBObject(cfg); err != nil {
+          return handleError(err)
+        }
       }
 
-      cfg.Set("projectType", "go-grpc")
-
-      scaffold, err := scaffolding.New(cfg)
-      if err != nil {
-        log.Println(err.Error())
-        return err
-      }
-
-      if err = scaffold.BuildStructure(); err != nil {
-        log.Println(err.Error())
-        return err
-      }
-
-      if err = scaffold.BuildFiles(*token.SecretString); err != nil {
-        log.Println(err.Error())
-        return err
-      }
-
-      if err = commitCodeToRepo(*token.SecretString, scaffold); err != nil {
-        log.Println(err.Error())
-        return err
-      }
-
-      return nil
+      return generate(cfg)
     },
   }
 
@@ -92,6 +70,39 @@ func Execute() {
     log.Println(err)
   }
 
+}
+
+func generate(cfg *config.Config) error {
+
+  token, err := awsClient.GetSecret("github_token")
+  if err != nil {
+    return handleError(err)
+  }
+
+  createRepo(*token.SecretString, cfg)
+
+  scaffold, err := scaffolding.New(cfg)
+  if err != nil {
+    log.Println(err.Error())
+    return err
+  }
+
+  if err = scaffold.BuildStructure(); err != nil {
+    log.Println(err.Error())
+    return err
+  }
+
+  if err = scaffold.BuildFiles(*token.SecretString); err != nil {
+    log.Println(err.Error())
+    return err
+  }
+
+  if err = commitCodeToRepo(*token.SecretString, scaffold); err != nil {
+    log.Println(err.Error())
+    return err
+  }
+
+  return nil
 }
 
 func setupAwsClient() *aws.Client {
