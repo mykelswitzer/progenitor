@@ -1,0 +1,143 @@
+package db
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"github.com/caring/go-packages/pkg/errors"
+	"github.com/google/uuid"
+
+	"github.com/caring/{{tolower .Name}}/pb"
+)
+
+// {{tolower .CoreObject}}Service interacts with data in the {{tolower .CoreObject}}s db table
+type {{tolower .CoreObject}}Service struct {
+	db    *sql.DB
+	stmts map[string]*sql.Stmt
+}
+
+// {{tocamel .CoreObject}} is a struct representation of a row from the {{tolower .CoreObject}} table
+type {{tocamel .CoreObject}} struct {
+}
+
+// proto{{.CoreObject}} defines a proto object that contains {{tolower .CoreObject}} fields
+type proto{{.CoreObject}} interface {
+
+}
+
+// New{{tocamel .CoreObject}} creates a DB layer {{tolower .CoreObject}}  from a protobuf struct.
+func New{{tocamel .CoreObject}}(ID string, proto proto{{tocamel .CoreObject}}) (*{{tocamel .CoreObject}}, error) {
+	{{tolower .CoreObject}}ID, err := ParseUUID(ID)
+	if err != nil {
+		return nil, err
+	}
+	return &{{tocamel .CoreObject}}{
+	}, nil
+}
+
+// ToProto converts a DB layer struct to a protobuf struct
+func (c *{{tocamel .CoreObject}}) ToProto() *pb.{{tocamel .CoreObject}}Response {
+	return &pb.{{tocamel .CoreObject}}Response{
+		{{tocamel .CoreObject}}Id:        c.{{tocamel .CoreObject}}ID.String(),
+	}
+}
+
+// Create inserts new {{tolower .CoreObject}} record in the database.
+func (svc *{{tolower .CoreObject}}Service) Create(ctx context.Context, input *{{tocamel .CoreObject}}) error {
+	return svc.create(ctx, false, input)
+}
+
+// CreateTx inserts new {{tolower .CoreObject}} record in the database within a sql.Tx from ctx
+func (svc *{{tolower .CoreObject}}Service) CreateTx(ctx context.Context, input *{{tocamel .CoreObject}}) error {
+	return svc.create(ctx, true, input)
+}
+
+// create inserts new {{tolower .CoreObject}} record in the database. if useTx = true then it will attempt
+// to query within a sql.Tx from ctx
+func (svc *{{tolower .CoreObject}}Service) create(ctx context.Context, useTx bool, input *{{tocamel .CoreObject}}) error {
+	errMsg := func() string { return "Error executing insert on {{tolower .CoreObject}} " + fmt.Sprint(input) }
+
+	var (
+		stmt *sql.Stmt
+		err  error
+		tx   *sql.Tx
+	)
+
+	if useTx {
+
+		if tx, err = FromCtx(ctx); err != nil {
+			return err
+		}
+
+		stmt = tx.Stmt(svc.stmts["insert-{{tolower .CoreObject}}"])
+	} else {
+		stmt = svc.stmts["insert-{{tolower .CoreObject}}"]
+	}
+
+	result, err := stmt.Exec(input.{{tocamel .CoreObject}}ID)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	if rowCount == 0 {
+		return errors.Wrap(ErrNotCreated, errMsg())
+	}
+
+	return nil
+}
+
+// Update sets the inputted values of the given {{tolower .CoreObject}} in the database.
+func (svc *{{tolower .CoreObject}}Service) Update(ctx context.Context, input *{{tocamel .CoreObject}}) error {
+	return svc.update(ctx, false, input)
+}
+
+// UpdateTx sets the inputted values of the given {{tolower .CoreObject}} in the database
+// within a sql.Tx from ctx
+func (svc *{{tolower .CoreObject}}Service) UpdateTx(ctx context.Context, input *{{tocamel .CoreObject}}) error {
+	return svc.update(ctx, true, input)
+}
+
+// update sets the inputted values of the given {{tolower .CoreObject}} in the database.
+// if useTx = true then it will attempt to query within a sql.Tx from ctx
+func (svc *{{tolower .CoreObject}}Service) update(ctx context.Context, useTx bool, input *{{tocamel .CoreObject}}) error {
+	errMsg := func() string { return "Error executing {{tolower .CoreObject}} update on {{tolower .CoreObject}} " + fmt.Sprint(input) }
+
+	var (
+		stmt *sql.Stmt
+		err  error
+		tx   *sql.Tx
+	)
+
+	if useTx {
+		if tx, err = FromCtx(ctx); err != nil {
+			return err
+		}
+		stmt = tx.Stmt(svc.stmts["update-{{tolower .CoreObject}}"])
+	} else {
+		stmt = svc.stmts["update-{{tolower .CoreObject}}"]
+	}
+
+	result, err := stmt.ExecContext(ctx, input.{{tocamel .CoreObject}}ID)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	if rowCount == 0 {
+		return errors.Wrap(ErrNotFound, errMsg())
+	}
+
+	return nil
+}
+

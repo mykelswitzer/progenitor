@@ -45,6 +45,8 @@ func CoreDBObject(config *config.Config) error {
 	prompt := promptui.Prompt{
 		Label:    "What is your core DB object named (singular)?",
 		Validate: validate,
+		// in most cases the core object is named same as service
+		Default: config.GetString("projectName"),
 	}
 
 	name, err := prompt.Run()
@@ -52,7 +54,7 @@ func CoreDBObject(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing DB object name prompt")
 	}
 
-	config.Set("dbObjectName", name)
+	config.Set("dbCoreObject", name)
 
 	return nil
 

@@ -1,3 +1,6 @@
 package db
 
-var statements = map[string]string{}
+var statements = map[string]string{
+  "insert-{{tolower .CoreObject}}": ``,
+  "update-{{tolower .CoreObject}}": ``,
+}

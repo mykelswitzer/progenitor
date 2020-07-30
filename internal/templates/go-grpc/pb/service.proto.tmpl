@@ -5,6 +5,8 @@ option go_package = "pb";
 
 service {{tocamel .Name}}Service {
   rpc Ping (PingRequest) returns (PingResponse);
+  rpc Create{{tocamel .CoreObject}}(Create{{tocamel .CoreObject}}Request)       returns ({{tocamel .CoreObject}}Response) { }
+  rpc Update{{tocamel .CoreObject}}(Update{{tocamel .CoreObject}}Request)       returns ({{tocamel .CoreObject}}Response) { }
 }
 
 // #################################
@@ -28,4 +30,18 @@ message GetIDRequest {
 
 message LoadKeyRequest {
   repeated string keys = 1;
+}
+
+// #################################
+//            Contract
+// #################################
+message {{tocamel .CoreObject}}Response {
+  string {{tolower .CoreObject}}_id = 1;
+}
+
+message Create{{tocamel .CoreObject}}Request {
+}
+
+message Update{{tocamel .CoreObject}}Request {
+  string {{tolower .CoreObject}}_id = 1;
 }
