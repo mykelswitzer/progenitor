@@ -25,15 +25,15 @@ func UseDB(config *config.Config) error {
 	}
 	config.Set("requireDb", output[result])
 
-	if output[result] == true {
-		return CoreDBObject(config)
-	}
-
 	return nil
 
 }
 
 func CoreDBObject(config *config.Config) error {
+
+	if config.GetBool("requireDb") == false {
+		return nil
+	}
 
 	validate := func(input string) error {
 		if len(input) < 5 {
