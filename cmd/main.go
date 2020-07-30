@@ -18,6 +18,15 @@ var (
   cfg       *config.Config
 )
 
+var prompts = map[string][]func(*config.Config) error{
+  "go-grpc": {
+    prompt.ProjectName,
+    prompt.ProjectDir,
+    prompt.UseDB,
+    prompt.CoreDBObject,
+  },
+}
+
 func Execute() {
   app := &cli.App{
     Name: "progenitor",
@@ -44,19 +53,8 @@ func Execute() {
 
       cfg.Set("projectType", "go-grpc")
 
-      if err := prompt.ProjectName(cfg); err != nil {
-        return handleError(err)
-      }
-      if err := prompt.ProjectDir(cfg); err != nil {
-        return handleError(err)
-      }
-
-      if err := prompt.UseDB(cfg); err != nil {
-        return handleError(err)
-      }
-
-      if cfg.GetString("projectType") == "go-grpc" && cfg.GetBool("requireDb") == true {
-        if err := prompt.CoreDBObject(cfg); err != nil {
+      for _, p := range prompts[cfg.GetString("projectType")] {
+        if err := p(cfg); err != nil {
           return handleError(err)
         }
       }
