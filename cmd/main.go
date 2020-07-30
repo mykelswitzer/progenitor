@@ -45,21 +45,16 @@ func Execute() {
            ###* ###.
           .###  ####          
           ###,   ###,          `,
-    Action: func(c *cli.Context) error {
-
-      awsClient = setupAwsClient()
-
-      cfg = config.New()
-
-      cfg.Set("projectType", "go-grpc")
-
-      for _, p := range prompts[cfg.GetString("projectType")] {
-        if err := p(cfg); err != nil {
-          return handleError(err)
-        }
-      }
-
-      return generate(cfg)
+    Commands: []*cli.Command{
+      {
+        Name:  "go-grpc",
+        Usage: "scaffolds a gRPC service in Go",
+        Action: func(c *cli.Context) error {
+          cfg = config.New()
+          cfg.Set("projectType", "go-grpc")
+          return generate(cfg)
+        },
+      },
     },
   }
 
@@ -71,6 +66,14 @@ func Execute() {
 }
 
 func generate(cfg *config.Config) error {
+
+  awsClient = setupAwsClient()
+
+  for _, p := range prompts[cfg.GetString("projectType")] {
+    if err := p(cfg); err != nil {
+      return handleError(err)
+    }
+  }
 
   token, err := awsClient.GetSecret("github_token")
   if err != nil {
