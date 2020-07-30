@@ -25,7 +25,11 @@ func UseDB(config *config.Config) error {
 	}
 	config.Set("requireDb", output[result])
 
-	return CoreDBObject(config)
+	if output[result] == true {
+		return CoreDBObject(config)
+	}
+
+	return nil
 
 }
 
