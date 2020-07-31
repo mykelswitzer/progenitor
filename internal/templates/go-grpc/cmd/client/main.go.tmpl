@@ -28,7 +28,7 @@ func main() {
         log.Fatalf("did not connect: %v", err)
     }
     defer conn.Close()
-    c := pb.New{{tocamel .Name}}ServiceClient(conn)
+    c := pb.New{{topascal .Name}}ServiceClient(conn)
 
     index := 0
     for {

@@ -18,50 +18,45 @@ var (
   cfg       *config.Config
 )
 
+var prompts = map[string][]func(*config.Config) error{
+  "go-grpc": {
+    prompt.ProjectName,
+    prompt.ProjectDir,
+    prompt.UseDB,
+    prompt.CoreDBObject,
+  },
+}
+
 func Execute() {
+
+  cfg = config.New()
+
   app := &cli.App{
     Name: "progenitor",
     Usage: `
              @@@@,             
            (@@@@@@@           
  ,##%.     (@@@@@@@,     *###    Hello, I am the Progenitor!!!
- ######*     @@@@@    *#####* 
+  #####*     @@@@@    *#####* 
     ######          *####*       Please answer my questions, and
        ####*       ####*         I will set up a nice set of 
         .####    .####           boilerplate code, so that you 
           ####  .###*            do not need to do that awful
           .###  ####             copy pasta you used to do.
-           *###*###           
+           '###*###           
            .### ###           
            ###* ###.
           .###  ####          
           ###,   ###,          `,
-    Action: func(c *cli.Context) error {
-
-      awsClient = setupAwsClient()
-
-      cfg = config.New()
-
-      cfg.Set("projectType", "go-grpc")
-
-      if err := prompt.ProjectName(cfg); err != nil {
-        return handleError(err)
-      }
-      if err := prompt.ProjectDir(cfg); err != nil {
-        return handleError(err)
-      }
-
-      if err := prompt.UseDB(cfg); err != nil {
-        return handleError(err)
-      }
-
-      if cfg.GetString("projectType") == "go-grpc" && cfg.GetBool("requireDb") == true {
-        if err := prompt.CoreDBObject(cfg); err != nil {
-          return handleError(err)
-        }
-      }
-
-      return generate(cfg)
+    Commands: []*cli.Command{
+      {
+        Name:  "go-grpc",
+        Usage: "scaffolds a gRPC service in Go",
+        Action: func(c *cli.Context) error {
+          cfg.Set("projectType", "go-grpc")
+          return generate(cfg)
+        },
+      },
     },
   }
 
@@ -73,6 +68,14 @@ func Execute() {
 }
 
 func generate(cfg *config.Config) error {
+
+  awsClient = setupAwsClient()
+
+  for _, p := range prompts[cfg.GetString("projectType")] {
+    if err := p(cfg); err != nil {
+      return handleError(err)
+    }
+  }
 
   token, err := awsClient.GetSecret("github_token")
   if err != nil {

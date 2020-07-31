@@ -3,8 +3,12 @@ package {{tolower .Name}};
 
 option go_package = "pb";
 
-service {{tocamel .Name}}Service {
-  rpc Ping (PingRequest) returns (PingResponse);
+service {{topascal .Name}}Service {
+  rpc Ping (PingRequest)                  returns (PingResponse);
+  rpc Create{{topascal .dbModel}}(Create{{topascal .dbModel}}Request) returns ({{topascal .dbModel}}Response) {}
+  rpc Update{{topascal .dbModel}}(Update{{topascal .dbModel}}Request) returns ({{topascal .dbModel}}Response) {}
+  rpc Delete{{topascal .dbModel}}(ByIDRequest)          returns ({{topascal .dbModel}}Response) {}
+  rpc Get{{topascal .dbModel}}(ByIDRequest)             returns ({{topascal .dbModel}}Response) {}
 }
 
 // #################################
@@ -22,10 +26,27 @@ message PingResponse {
 // #################################
 //          Shared Messages
 // #################################
-message GetIDRequest {
+message ByIDRequest {
   string id = 1;
 }
 
 message LoadKeyRequest {
   repeated string keys = 1;
+}
+
+// #################################
+//          {{topascal .dbModel}}
+// #################################
+message {{topascal .dbModel}}Response {
+  string id = 1;
+  string name = 2;
+}
+
+message Create{{topascal .dbModel}}Request {
+  string name = 1;
+}
+
+message Update{{topascal .dbModel}}Request {
+  string id = 1;
+  string name = 2;
 }

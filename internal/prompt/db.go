@@ -23,13 +23,17 @@ func UseDB(config *config.Config) error {
 	if err != nil {
 		return errors.Wrap(err, "Error in executing database prompt")
 	}
-	config.Set("requireDb", output[result])
+	config.Set("dbRequired", output[result])
 
 	return nil
 
 }
 
 func CoreDBObject(config *config.Config) error {
+
+	if config.GetBool("dbRequired") == false {
+		return nil
+	}
 
 	validate := func(input string) error {
 		if len(input) < 5 {
@@ -45,6 +49,8 @@ func CoreDBObject(config *config.Config) error {
 	prompt := promptui.Prompt{
 		Label:    "What is your core DB object named (singular)?",
 		Validate: validate,
+		// in most cases the core object is named same as service
+		Default: config.GetString("projectName"),
 	}
 
 	name, err := prompt.Run()
@@ -52,7 +58,7 @@ func CoreDBObject(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing DB object name prompt")
 	}
 
-	config.Set("dbObjectName", name)
+	config.Set("dbModel", name)
 
 	return nil
 
