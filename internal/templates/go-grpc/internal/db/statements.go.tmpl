@@ -1,39 +1,39 @@
 package db
 
 var statements = map[string]string{
-  // inserts a new row into the {{.dbModel}}s table
-  "create-{{.dbModel}}": `
-  INSERT INTO {{.dbModel}}s ({{.dbModel}}_id, name)
+  // inserts a new row into the {{.DBModel}}s table
+  "create-{{.DBModel}}": `
+  INSERT INTO {{.DBModel}}s ({{.DBModel}}_id, name)
     values(UUID_TO_BIN(?), ?)
   `,
-  // soft deletes a {{.dbModel}} by id
-  "delete-{{.dbModel}}": `
+  // soft deletes a {{.DBModel}} by id
+  "delete-{{.DBModel}}": `
   UPDATE
-    {{.dbModel}}s
+    {{.DBModel}}s
   SET
     deleted_at = NOW()
   WHERE
-    {{.dbModel}}_id = UUID_TO_BIN(?)
+    {{.DBModel}}_id = UUID_TO_BIN(?)
     AND deleted_at IS NULL
   `,
-  // gets a single {{.dbModel}} row by id
-  "get-{{.dbModel}}": `
+  // gets a single {{.DBModel}} row by id
+  "get-{{.DBModel}}": `
   SELECT
-    {{.dbModel}}_id, name
+    {{.DBModel}}_id, name
   FROM
-    {{.dbModel}}s
+    {{.DBModel}}s
   WHERE
-    {{.dbModel}}_id = UUID_TO_BIN(?)
+    {{.DBModel}}_id = UUID_TO_BIN(?)
     AND deleted_at IS NULL
   `,
-  // update a single {{.dbModel}} row by ID
-  "update-{{.dbModel}}": `
+  // update a single {{.DBModel}} row by ID
+  "update-{{.DBModel}}": `
   UPDATE
-    {{.dbModel}}s
+    {{.DBModel}}s
   SET
     name = ?
   WHERE
-    {{.dbModel}}_id = UUID_TO_BIN(?)
+    {{.DBModel}}_id = UUID_TO_BIN(?)
     AND deleted_at IS NULL
   `,
 }

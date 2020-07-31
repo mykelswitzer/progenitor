@@ -5,10 +5,10 @@ option go_package = "pb";
 
 service {{topascal .Name}}Service {
   rpc Ping (PingRequest)                  returns (PingResponse);
-  rpc Create{{topascal .dbModel}}(Create{{topascal .dbModel}}Request) returns ({{topascal .dbModel}}Response) {}
-  rpc Update{{topascal .dbModel}}(Update{{topascal .dbModel}}Request) returns ({{topascal .dbModel}}Response) {}
-  rpc Delete{{topascal .dbModel}}(ByIDRequest)          returns ({{topascal .dbModel}}Response) {}
-  rpc Get{{topascal .dbModel}}(ByIDRequest)             returns ({{topascal .dbModel}}Response) {}
+  rpc Create{{topascal .DBModel}}(Create{{topascal .DBModel}}Request) returns ({{topascal .DBModel}}Response) {}
+  rpc Update{{topascal .DBModel}}(Update{{topascal .DBModel}}Request) returns ({{topascal .DBModel}}Response) {}
+  rpc Delete{{topascal .DBModel}}(ByIDRequest)          returns ({{topascal .DBModel}}Response) {}
+  rpc Get{{topascal .DBModel}}(ByIDRequest)             returns ({{topascal .DBModel}}Response) {}
 }
 
 // #################################
@@ -35,18 +35,18 @@ message LoadKeyRequest {
 }
 
 // #################################
-//          {{topascal .dbModel}}
+//          {{topascal .DBModel}}
 // #################################
-message {{topascal .dbModel}}Response {
+message {{topascal .DBModel}}Response {
   string id = 1;
   string name = 2;
 }
 
-message Create{{topascal .dbModel}}Request {
+message Create{{topascal .DBModel}}Request {
   string name = 1;
 }
 
-message Update{{topascal .dbModel}}Request {
+message Update{{topascal .DBModel}}Request {
   string id = 1;
   string name = 2;
 }

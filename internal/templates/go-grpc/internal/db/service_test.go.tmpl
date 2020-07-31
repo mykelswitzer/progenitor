@@ -13,41 +13,41 @@ import (
   "github.com/caring/{{.Name}}/pb"
 )
 
-{{$pascalDbModel := topascal .dbModel}}
+{{$pascalDbModel := topascal .DBModel}}
 
 // ensures that casting from proto to store structs occurs correctly
 func TestNew{{$pascalDbModel}}(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
   proto := pb.Create{{$pascalDbModel}}Request{
     Name:       "Foobar",
   }
 
-  r, err := New{{$pascalDbModel}}({{.dbModel}}ID.String(), &proto)
+  r, err := New{{$pascalDbModel}}({{.DBModel}}ID.String(), &proto)
 
   assert.NoError(t, err, "Expected NewCategory not to error")
-  assert.Equal(t, {{.dbModel}}ID, r.ID, "Expected UUIDs to match")
+  assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected UUIDs to match")
   assert.Equal(t, proto.Name, r.Name, "Expected name to be correctly assigned")
 }
 
 // ensures that casting from store to proto response occurs correctly
 func Test{{$pascalDbModel}}_ToProto(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
 
-  {{.dbModel}} := &{{$pascalDbModel}}{
-    ID:  {{.dbModel}}ID,
+  {{.DBModel}} := &{{$pascalDbModel}}{
+    ID:  {{.DBModel}}ID,
     Name:       "foobar",
   }
 
-  r := {{.dbModel}}.ToProto()
+  r := {{.DBModel}}.ToProto()
 
-  assert.Equal(t, {{.dbModel}}ID.String(), r.{{$pascalDbModel}}Id, "Expected field to be mapped back to proto object correctly")
+  assert.Equal(t, {{.DBModel}}ID.String(), r.{{$pascalDbModel}}Id, "Expected field to be mapped back to proto object correctly")
   assert.Equal(t, "foobar", r.Name, "Expected field to be mapped back to proto object correctly")
 }
 
 func Test{{$pascalDbModel}}Service_get(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
   stmt := map[string]string{
-    "get-{{.dbModel}}": "SELECT {{.dbModel}}s",
+    "get-{{.DBModel}}": "SELECT {{.DBModel}}s",
   }
   args := []driver.Value{
     "72bc87f3-4a9f-4d05-93fe-844d3cd94c65",
@@ -61,11 +61,11 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
     }
 
     mock.ExpectBegin()
-    mock.ExpectQuery("SELECT {{.dbModel}}s").
+    mock.ExpectQuery("SELECT {{.DBModel}}s").
       WithArgs(args...).
       WillReturnRows(
-        sqlmock.NewRows([]string{"{{.dbModel}}_id", "name"}).
-          AddRow({{.dbModel}}ID, "Foobar"),
+        sqlmock.NewRows([]string{"{{.DBModel}}_id", "name"}).
+          AddRow({{.DBModel}}ID, "Foobar"),
       )
 
     tx, err := store.GetTx()
@@ -73,10 +73,10 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
       assert.FailNow(t, "transaction setup failed")
     }
 
-    result, err := store.{{$pascalDbModel}}.GetTx(ToCtx(context.Background(), tx), {{.dbModel}}ID)
+    result, err := store.{{$pascalDbModel}}.GetTx(ToCtx(context.Background(), tx), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
-    assert.Equal(t, {{.dbModel}}ID, r.ID, "Expected correct {{.dbModel}} ID to be returned")
+    assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected correct {{.DBModel}} ID to be returned")
     assert.Equal(t, "Foobar", r.Name, "Expected correct name to be returned")
 
     err = mock.ExpectationsWereMet()
@@ -90,17 +90,17 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectQuery("SELECT {{.dbModel}}s").
+    mock.ExpectQuery("SELECT {{.DBModel}}s").
       WithArgs(args...).
       WillReturnRows(
-        sqlmock.NewRows([]string{"{{.dbModel}}_id", "name"}).
-          AddRow({{.dbModel}}ID, "Foobar"),
+        sqlmock.NewRows([]string{"{{.DBModel}}_id", "name"}).
+          AddRow({{.DBModel}}ID, "Foobar"),
       )
 
-    result, err := store.{{$pascalDbModel}}.Get(context.Background(), {{.dbModel}}ID)
+    result, err := store.{{$pascalDbModel}}.Get(context.Background(), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
-    assert.Equal(t, {{.dbModel}}ID, r.ID, "Expected correct {{.dbModel}} ID to be returned")
+    assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected correct {{.DBModel}} ID to be returned")
     assert.Equal(t, "Foobar", r.Name, "Expected correct name to be returned")
 
     err = mock.ExpectationsWereMet()
@@ -114,11 +114,11 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectQuery("SELECT {{.dbModel}}s").
+    mock.ExpectQuery("SELECT {{.DBModel}}s").
       WithArgs(args...).WillReturnError(sql.ErrNoRows)
 
-    _, err = store.{{$pascalDbModel}}.Get(context.Background(), {{.dbModel}}ID)
-    assert.EqualError(t, err, "Error executing get {{.dbModel}} - 72bc87f3-4a9f-4d05-93fe-844d3cd94c65: the record you are attempting to find or update is not found", "Expecting no query error")
+    _, err = store.{{$pascalDbModel}}.Get(context.Background(), {{.DBModel}}ID)
+    assert.EqualError(t, err, "Error executing get {{.DBModel}} - 72bc87f3-4a9f-4d05-93fe-844d3cd94c65: the record you are attempting to find or update is not found", "Expecting no query error")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
@@ -126,12 +126,12 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
 }
 
 func Test{{$pascalDbModel}}Service_create(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
   stmt := map[string]string{
-    "create-{{.dbModel}}": "INSERT {{.dbModel}}s",
+    "create-{{.DBModel}}": "INSERT {{.DBModel}}s",
   }
   input := &{{$pascalDbModel}}{
-    ID:   {{.dbModel}}ID,
+    ID:   {{.DBModel}}ID,
     Name: "Foobar",
   }
   args := []driver.Value{
@@ -147,7 +147,7 @@ func Test{{$pascalDbModel}}Service_create(t *testing.T) {
     }
 
     mock.ExpectBegin()
-    mock.ExpectExec("INSERT {{.dbModel}}s").
+    mock.ExpectExec("INSERT {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -170,7 +170,7 @@ func Test{{$pascalDbModel}}Service_create(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("INSERT {{.dbModel}}s").
+    mock.ExpectExec("INSERT {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -188,12 +188,12 @@ func Test{{$pascalDbModel}}Service_create(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("INSERT {{.dbModel}}s").
+    mock.ExpectExec("INSERT {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 0))
 
     err = store.{{$pascalDbModel}}.Create(context.Background(), input)
-    assert.EqualError(t, err, "Error executing create {{.dbModel}} - &{72bc87f3-4a9f-4d05-93fe-844d3cd94c65 Foobar}: no new rows were created", "Expecting no query error")
+    assert.EqualError(t, err, "Error executing create {{.DBModel}} - &{72bc87f3-4a9f-4d05-93fe-844d3cd94c65 Foobar}: no new rows were created", "Expecting no query error")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
@@ -201,12 +201,12 @@ func Test{{$pascalDbModel}}Service_create(t *testing.T) {
 }
 
 func Test{{$pascalDbModel}}Service_update(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
   stmt := map[string]string{
-    "update-{{.dbModel}}": "UPDATE {{.dbModel}}s",
+    "update-{{.DBModel}}": "UPDATE {{.DBModel}}s",
   }
   input := &{{$pascalDbModel}}{
-    ID:   {{.dbModel}}ID,
+    ID:   {{.DBModel}}ID,
     Name: "Foobar",
   }
   args := []driver.Value{
@@ -222,7 +222,7 @@ func Test{{$pascalDbModel}}Service_update(t *testing.T) {
     }
 
     mock.ExpectBegin()
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -245,7 +245,7 @@ func Test{{$pascalDbModel}}Service_update(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -263,12 +263,12 @@ func Test{{$pascalDbModel}}Service_update(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 0))
 
     err = store.{{$pascalDbModel}}.Update(context.Background(), input)
-    assert.EqualError(t, err, "Error executing update {{.dbModel}} - &{72bc87f3-4a9f-4d05-93fe-844d3cd94c65 Foobar}: no rows affected", "Expecting no query error")
+    assert.EqualError(t, err, "Error executing update {{.DBModel}} - &{72bc87f3-4a9f-4d05-93fe-844d3cd94c65 Foobar}: no rows affected", "Expecting no query error")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
@@ -276,9 +276,9 @@ func Test{{$pascalDbModel}}Service_update(t *testing.T) {
 }
 
 func Test{{$pascalDbModel}}Service_delete(t *testing.T) {
-  {{.dbModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
+  {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
   stmt := map[string]string{
-    "delete-{{.dbModel}}": "UPDATE {{.dbModel}}s",
+    "delete-{{.DBModel}}": "UPDATE {{.DBModel}}s",
   }
   args := []driver.Value{
     "72bc87f3-4a9f-4d05-93fe-844d3cd94c65",
@@ -292,7 +292,7 @@ func Test{{$pascalDbModel}}Service_delete(t *testing.T) {
     }
 
     mock.ExpectBegin()
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -301,7 +301,7 @@ func Test{{$pascalDbModel}}Service_delete(t *testing.T) {
       assert.FailNow(t, "transaction setup failed")
     }
 
-    err = store.{{$pascalDbModel}}.DeleteTx(ToCtx(context.Background(), tx), {{.dbModel}}ID)
+    err = store.{{$pascalDbModel}}.DeleteTx(ToCtx(context.Background(), tx), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
     err = mock.ExpectationsWereMet()
@@ -315,11 +315,11 @@ func Test{{$pascalDbModel}}Service_delete(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 1))
 
-    err = store.{{$pascalDbModel}}.Delete(context.Background(), {{.dbModel}}ID)
+    err = store.{{$pascalDbModel}}.Delete(context.Background(), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
     err = mock.ExpectationsWereMet()
@@ -333,12 +333,12 @@ func Test{{$pascalDbModel}}Service_delete(t *testing.T) {
       assert.FailNow(t, "test setup failed")
     }
 
-    mock.ExpectExec("UPDATE {{.dbModel}}s").
+    mock.ExpectExec("UPDATE {{.DBModel}}s").
       WithArgs(args...).
       WillReturnResult(sqlmock.NewResult(0, 0))
 
-    err = store.{{$pascalDbModel}}.Delete(context.Background(), {{.dbModel}}ID)
-    assert.EqualError(t, err, "Error executing delete {{.dbModel}} - 72bc87f3-4a9f-4d05-93fe-844d3cd94c65: the record you are attempting to find or update is not found", "Expecting not found error")
+    err = store.{{$pascalDbModel}}.Delete(context.Background(), {{.DBModel}}ID)
+    assert.EqualError(t, err, "Error executing delete {{.DBModel}} - 72bc87f3-4a9f-4d05-93fe-844d3cd94c65: the record you are attempting to find or update is not found", "Expecting not found error")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
