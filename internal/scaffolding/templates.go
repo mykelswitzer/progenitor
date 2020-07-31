@@ -59,8 +59,6 @@ func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (m
 			if err != nil {
 				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
-
-			log.Println(dirpath, ex)
 			// if the path exists, parse the templates
 			if ex {
 				log.Println("Fetching template: ", trimTmplSuffix(walker.Path()))
@@ -72,7 +70,6 @@ func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (m
 				}
 				templates[walker.Path()] = tmpl
 			}
-
 		}
 	}
 
@@ -81,16 +78,23 @@ func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (m
 
 func TemplateFunctions() txttmpl.FuncMap {
 	return txttmpl.FuncMap{
-		"tolower": strings.ToLower,
-		"tocamel": ToCamel,
+		"tolower":   strings.ToLower,
+		"topascal":  ToPascal,
+		"topackage": ToPackage,
 	}
 }
 
-func ToCamel(s string) string {
+func ToPascal(s string) string {
 	a := regexp.MustCompile(`-`)
 	words := a.Split(s, -1)
 	for index, word := range words {
 		words[index] = strings.Title(word)
 	}
+	return strings.Join(words, "")
+}
+
+func ToPackage(s string) string {
+	a := regexp.MustCompile(`-`)
+	words := a.Split(s, -1)
 	return strings.Join(words, "")
 }

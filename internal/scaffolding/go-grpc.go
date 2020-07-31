@@ -12,18 +12,18 @@ import (
 )
 
 type goGrpcTemplateData struct {
-	Name       string
-	LocalPath  string
-	UseDB      bool
-	CoreObject string
+	Name      string
+	LocalPath string
+	UseDB     bool
+	dbModel   string
 }
 
 // Init sets the values for the goGrpcTemplateData struct
 func (t goGrpcTemplateData) Init(config *config.Config) templateData {
 	t.Name = config.GetString("projectName")
 	t.LocalPath = config.GetString("projectDir")
-	t.UseDB = config.GetBool("requireDb")
-	t.CoreObject = config.GetString("dbCoreObject")
+	t.UseDB = config.GetBool("dbRequired")
+	t.dbModel = config.GetString("dbModel")
 	return t
 }
 
@@ -61,7 +61,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, cmdDir)
 
 	internalDir := Dir{Name: "internal"}
-	if cfg.GetBool("requireDb") == true {
+	if cfg.GetBool("dbRequired") == true {
 		dbDir := Dir{Name: "db"}
 		dbMigrationsDir := Dir{Name: "migrations"}
 		dbDir.SubDirs = append(dbDir.SubDirs, dbMigrationsDir)
@@ -106,17 +106,17 @@ func renameServiceFiles(s *Scaffold) error {
 		log.Println(err)
 	}
 
-	if s.Config.GetBool("requireDb") == true {
+	if s.Config.GetBool("dbRequired") == true {
 
 		oldName = filepath.Join(path, "internal/db/service.go")
-		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbCoreObject")+".go")
+		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+".go")
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)
 		}
 
 		oldName = filepath.Join(path, "internal/db/service_test.go")
-		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbCoreObject")+"_test.go")
+		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+"_test.go")
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)

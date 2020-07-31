@@ -28,19 +28,22 @@ var prompts = map[string][]func(*config.Config) error{
 }
 
 func Execute() {
+
+  cfg = config.New()
+
   app := &cli.App{
     Name: "progenitor",
     Usage: `
              @@@@,             
            (@@@@@@@           
  ,##%.     (@@@@@@@,     *###    Hello, I am the Progenitor!!!
- ######*     @@@@@    *#####* 
+  #####*     @@@@@    *#####* 
     ######          *####*       Please answer my questions, and
        ####*       ####*         I will set up a nice set of 
         .####    .####           boilerplate code, so that you 
           ####  .###*            do not need to do that awful
           .###  ####             copy pasta you used to do.
-           *###*###           
+           '###*###           
            .### ###           
            ###* ###.
           .###  ####          
@@ -50,7 +53,6 @@ func Execute() {
         Name:  "go-grpc",
         Usage: "scaffolds a gRPC service in Go",
         Action: func(c *cli.Context) error {
-          cfg = config.New()
           cfg.Set("projectType", "go-grpc")
           return generate(cfg)
         },
