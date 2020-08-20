@@ -51,9 +51,7 @@ module rds_db {
   database_user         = local.service_name
   database_password     = random_string.rds_db_password.result
   rds_security_group_id = data.terraform_remote_state.network.outputs.mysql_sg_id
-
   tags = local.tags
-
   subnet_az1 = data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[0]
   subnet_az2 = data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[1]
   subnet_az3 = data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[2]
