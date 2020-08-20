@@ -7,12 +7,12 @@
     "environment": [
       { "name": "SERVICE_NAME", "value": "${service_name}"},
       { "name": "PORT", "value": "${container_port}"},
-      {{if .UseDB}}
+{{if .UseDB}}
       { "name": "DB_HOST", "value": "${db_host}"},
       { "name": "DB_PORT", "value": "${db_port}"},
       { "name": "DB_USER", "value": "${db_user}"},
       { "name": "DB_SCHEMA", "value": "${db_schema}"},
-      {{end}}
+{{end}}
       { "name": "LOG_NAME", "value": "${log_name}"},
       { "name": "LOG_LEVEL", "value": "${log_level}"},
       { "name": "LOG_ENABLE_DEV", "value": "${log_enable_dev}"},
@@ -29,12 +29,12 @@
       { "name": "SENTRY_ENV", "value": "${sentry_env}"},
       { "name": "SENTRY_DISABLE", "value": "${sentry_disable}"}
     ],
-    {{if .UseDB}}
+{{if .UseDB}}
     "secrets": [
       { "name": "DB_PWD", "valueFrom":  "${db_pwd}"},
       { "name": "DB_MIGRATIONS_SRC", "valueFrom": "${db_migrations_src}"}
     ],
-    {{end}}
+{{end}}
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
