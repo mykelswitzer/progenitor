@@ -111,7 +111,7 @@ data template_file "task_definition" {
     db_schema         = local.service_name
     db_migrations_src = data.aws_secretsmanager_secret.db_migration_src.arn
     waitfordbhost     = module.rds_db.rds_instance_address
-    {{end}}
+{{end}}
 
     #########################
     # Logging (Application)
