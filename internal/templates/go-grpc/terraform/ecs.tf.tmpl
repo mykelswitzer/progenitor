@@ -1,7 +1,6 @@
 resource "aws_cloudwatch_log_group" "service_log_group" {
   name              = "${local.service_name}_log_group"
   retention_in_days = 30
-
   tags = local.tags
 }
 
@@ -101,7 +100,7 @@ data template_file "task_definition" {
     service_name = local.service_name
     port         = var.ecs_task_port
 
-    {{if .UseDB}}
+{{if .UseDB}}
     ####################
     # DB
     ####################
