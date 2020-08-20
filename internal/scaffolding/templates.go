@@ -84,6 +84,7 @@ func TemplateFunctions() txttmpl.FuncMap {
 	}
 }
 
+// Converts a string to Pascal case
 func ToPascal(s string) string {
 	a := regexp.MustCompile(`-`)
 	words := a.Split(s, -1)
@@ -93,6 +94,7 @@ func ToPascal(s string) string {
 	return strings.Join(words, "")
 }
 
+// Formats string into acceptable go package name
 func ToPackage(s string) string {
 	a := regexp.MustCompile(`-`)
 	words := a.Split(s, -1)
