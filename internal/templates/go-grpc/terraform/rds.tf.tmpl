@@ -1,3 +1,4 @@
+{{if .UseDB}}
 resource "random_string" "rds_db_password" {
   length           = 16
   special          = true
@@ -57,3 +58,4 @@ module rds_db {
   subnet_az2 = data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[ 1 ]
   subnet_az3 = data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[ 2 ]
 }
+{{end}}

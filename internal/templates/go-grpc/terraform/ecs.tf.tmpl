@@ -22,7 +22,7 @@ module ecs_service {
     data.terraform_remote_state.network.outputs.nlb_sg_id,
     data.terraform_remote_state.network.outputs.ecs_sg_id
   ]
-  ssl_certificate_arn = data.aws_secretsmanager_secret_version.acm_ssl_cert.secret_string
+  ssl_certificate_arn = module.ssl_cert.valid_cert_arn
 
   ##################################
   # service variables
@@ -121,9 +121,7 @@ data template_file "task_definition" {
     log_level             = var.log_level[ terraform.workspace ]
     log_enable_dev        = var.log_enable_dev[ terraform.workspace ]
     log_stream_monitoring = module.firehose.firehose_monitoring_stream_name
-    {{if .UseReporting}}
     log_stream_reporting  = module.firehose.firehose_reporting_stream_name
-    {{end}}
     log_disable_kinesis   = var.log_disable_kinesis[ terraform.workspace ]
     log_flush_interval    = var.log_flush_interval[ terraform.workspace ]
     log_buffer_size       = var.log_buffer_size[ terraform.workspace ]
