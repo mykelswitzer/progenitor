@@ -73,6 +73,12 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pb"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
 
+	// Construct and append Terraform directory to project directory
+	tfDir := Dir{Name: "terraform"}
+	tfTmplDir := Dir{Name: "templates"}
+	tfDir.SubDirs = append(tfDir.SubDirs, tfTmplDir)
+	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, tfDir)
+
 	return &grpcProject, nil
 
 }
@@ -91,7 +97,7 @@ func postBuildFiles(s *Scaffold) error {
 	return nil
 }
 
-// we have a few files named generically that we need to remname
+// we have a few files named generically that we need to rename
 // pb/service.pb should be pb/{{config.projectName}}.pb
 // internal/db/service*.go should be internal/db/{{config.dbObject}}.go
 func renameServiceFiles(s *Scaffold) error {
@@ -127,7 +133,7 @@ func renameServiceFiles(s *Scaffold) error {
 
 }
 
-// rumns the protoc go transpiler
+// runs the protoc go transpiler
 func generateProto(s *Scaffold) error {
 
 	base, err := os.Getwd()
