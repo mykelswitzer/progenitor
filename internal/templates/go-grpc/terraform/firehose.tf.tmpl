@@ -1,10 +1,6 @@
 module "firehose" {
-{{if .UseReporting}}
-  source = "git@github.com:caring/tf-modules.git//aws/firehose_monitoring_reporting?ref=v1.6.0"
-{{else}}
-  source = "git@github.com:caring/tf-modules.git//aws/firehose_monitoring?ref=v1.6.0"
-{{end}}
-
+  source = "git@github.com:caring/tf-modules.git//aws/firehose_monitoring{{if .UseReporting}}_reporting{{end}}?ref=v1.6.0"
+  
   service_name              = local.service_name
   task_role_name            = aws_iam_role.ecs_task_role.name
 {{if .UseReporting}}
