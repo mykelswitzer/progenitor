@@ -24,6 +24,7 @@ var prompts = map[string][]func(*config.Config) error{
     prompt.ProjectDir,
     prompt.UseDB,
     prompt.CoreDBObject,
+    prompt.UseReporting,
   },
 }
 
