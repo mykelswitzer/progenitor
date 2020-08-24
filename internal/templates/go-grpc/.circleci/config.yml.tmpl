@@ -70,7 +70,7 @@ commands:
             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${<< parameters.aws_account_id >>}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
             docker push $FULL_IMAGE_NAME
             export CLUSTER="arn:aws:ecs:${<< parameters.aws_region >>}:${<< parameters.aws_account_id >>}:cluster/main"
-            export SERVICE="arn:aws:ecs:${<< parameters.aws_region >>}:${<< parameters.aws_account_id >>}:service/main/ecs-callscoring"
+            export SERVICE="arn:aws:ecs:${<< parameters.aws_region >>}:${<< parameters.aws_account_id >>}:service/main/ecs-{{.Name}}"
             aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment | cat
 
 jobs:
