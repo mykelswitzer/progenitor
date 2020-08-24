@@ -108,8 +108,8 @@ func renameServiceFiles(s *Scaffold) error {
 	base, err := os.Getwd()
 	path := filepath.Join(base, s.Config.GetString("projectDir"))
 
-	oldName := filepath.Join(path, "pb/service.pb")
-	newName := filepath.Join(path, "pb", s.Config.GetString("projectName")+".pb")
+	oldName := filepath.Join(path, "pb/service.pb.go")
+	newName := filepath.Join(path, "pb", s.Config.GetString("projectName")+".pb.go")
 	err = os.Rename(oldName, newName)
 	if err != nil {
 		log.Println(err)
