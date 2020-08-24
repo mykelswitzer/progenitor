@@ -72,6 +72,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pb"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
+	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: ".circleci"})
 
 	// Construct and append Terraform directory to project directory
 	tfDir := Dir{Name: "terraform"}
