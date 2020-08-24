@@ -19,6 +19,8 @@ variable "secretsmanager_recovery_window" {
     "caring-prod" = 30
   }
 }
+
+{{if .UseReporting}}
 variable "storage_aws_iam_user_arn" {
   description = "The AWS IAM user created for your Snowflake account to use with storage integrations"
   type        = map(string)
@@ -48,6 +50,7 @@ variable "snowpipe_sqs_arn" {
     caring-prod: "<snowpipe_sqs_arn>"
   }
 }
+{{end}}
 
 variable "aws_region" {
   description = "The AWS region to use for this plan."
