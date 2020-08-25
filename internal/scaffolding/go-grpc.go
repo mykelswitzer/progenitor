@@ -45,14 +45,19 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	dir := cfg.GetString("projectDir")
 
 	grpcProject := Scaffold{
-		Source:       g,
-		Config:       cfg,
-		BaseDir:      Dir{Name: dir},
-		TemplatePath: "go-grpc",
-		Fs:           SetBasePath(dir),
+		Source:        g,
+		Config:        cfg,
+		BaseDir:       Dir{Name: dir},
+		TemplatePath:  "go-grpc",
+		SkipTemplates: []string{},
+		Fs:            SetBasePath(dir),
 		ProcessHooks: map[string]func(*Scaffold) error{
 			"postBuildFiles": postBuildFiles,
 		},
+	}
+
+	if cfg.GetBool("dbRequired") == false {
+		grpcProject.SkipTemplates = append(grpcProject.SkipTemplates, "terraform/rds.tf.tmpl")
 	}
 
 	cmdDir := Dir{Name: "cmd"}
