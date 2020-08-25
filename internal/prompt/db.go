@@ -8,25 +8,7 @@ import (
 )
 
 func UseDB(config *config.Config) error {
-
-	output := map[string]bool{"Yes": true, "No": false}
-	var keys []string
-	for k := range output {
-		keys = append(keys, k)
-	}
-
-	prompt := promptui.Select{
-		Label: "Do you need a database?",
-		Items: keys,
-	}
-	_, result, err := prompt.Run()
-	if err != nil {
-		return errors.Wrap(err, "Error in executing database prompt")
-	}
-	config.Set("dbRequired", output[result])
-
-	return nil
-
+	return boolPrompt("Do you need a database?", "dbRequired", config)
 }
 
 func CoreDBObject(config *config.Config) error {
