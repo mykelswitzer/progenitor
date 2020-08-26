@@ -29,7 +29,20 @@ func trimTmplSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)
 }
 
-func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
+func contains(a []string, x string) bool {
+	if len(a) == 0 {
+		return false
+	}
+
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
+
+func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
 	var templates = map[string]*txttmpl.Template{}
 
@@ -53,22 +66,22 @@ func getLatestTemplates(token string, templatePath string, basePath afero.Fs) (m
 
 		if !walker.Stat().IsDir() {
 			// get && check path
-			dirpath := filepath.Dir(walker.Path())
-			log.Println(dirpath)
-			ex, err := DirExists(filepath.Dir(walker.Path()), basePath)
+			//dirpath := filepath.Dir(walker.Path())
+			file := walker.Path()
+			ex, err := DirExists(filepath.Dir(file), basePath)
 			if err != nil {
 				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
 			// if the path exists, parse the templates
-			if ex {
-				log.Println("Fetching template: ", trimTmplSuffix(walker.Path()))
+			if ex && contains(skipTemplates, file) == false {
+				log.Println("Fetching template: ", trimTmplSuffix(file))
 
-				tmpl, err := TmplParse(fs, TemplateFunctions(), nil, walker.Path())
+				tmpl, err := TmplParse(fs, TemplateFunctions(), nil, file)
 				if err != nil {
-					werr := errors.Wrapf(err, "Unable to parse template %s", walker.Path())
+					werr := errors.Wrapf(err, "Unable to parse template %s", file)
 					log.Println(werr)
 				}
-				templates[walker.Path()] = tmpl
+				templates[file] = tmpl
 			}
 		}
 	}

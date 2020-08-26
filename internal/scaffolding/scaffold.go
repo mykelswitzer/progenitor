@@ -22,12 +22,13 @@ type Dir struct {
 }
 
 type Scaffold struct {
-	Source       scaffold
-	Config       *config.Config
-	BaseDir      Dir
-	Fs           afero.Fs
-	TemplatePath string
-	ProcessHooks map[string]func(*Scaffold) error
+	Source        scaffold
+	Config        *config.Config
+	BaseDir       Dir
+	Fs            afero.Fs
+	TemplatePath  string
+	SkipTemplates []string
+	ProcessHooks  map[string]func(*Scaffold) error
 }
 
 var scaffoldingTypes = map[string]scaffold{
@@ -94,7 +95,7 @@ func createDirs(dirs []Dir, parent afero.Fs) error {
 func (s *Scaffold) BuildFiles(token string) error {
 
 	base := "github.com/caring/progenitor/internal/templates"
-	templates, err := getLatestTemplates(token, filepath.Join(base, s.TemplatePath), s.Fs)
+	templates, err := getLatestTemplates(token, filepath.Join(base, s.TemplatePath), s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
 	}
