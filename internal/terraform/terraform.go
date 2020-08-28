@@ -18,16 +18,17 @@ func isTerraformInstalled() error {
     }
     return nil
 }
-
-func getTerraformVersion() (string, error) {
+// TODO: Add timeout and better OS signal handling
+// getTerraformVersion executes the command `terraform version` and
+// returns the version parsed from the output
+func getTerraformVersion() ([]byte, error) {
     tf := exec.Command("terraform", "version")
     out, err := tf.Output()
 
     if err != nil {
-        return "", errors.Wrap(err, "Error encountered while get Terraform version!")
+        return nil, errors.Wrap(err, "Error encountered while get Terraform version!")
     }
 
-    OutStr := string(out)
-    pattern := regexp.MustCompile(`^Terraform (v[0-9]\.[0-9]+\.[0-9]+$)`)
-    return pattern.FindString(OutStr), nil
+    pattern := regexp.MustCompile(`v[0-9]\.[0-9]+\.[0-9]+`)
+    return pattern.Find(out), nil
 }
