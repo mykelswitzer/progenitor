@@ -1,8 +1,9 @@
 package repo
 
-import "os/exec"
-import "context"
-import "time"
+import (
+    "os/exec"
+    "regexp"
+)
 
 import "github.com/caring/go-packages/pkg/errors"
 
@@ -19,16 +20,14 @@ func isTerraformInstalled() error {
 }
 
 func getTerraformVersion() (string, error) {
-    ctx, cancel := context.WithTimeout(context.Background(), 1500*time.Microsecond)
-    defer cancel()
-
-    tf := exec.CommandContext(ctx, "terraform", "version")
+    tf := exec.Command("terraform", "version")
     out, err := tf.Output()
 
     if err != nil {
         return "", errors.Wrap(err, "Error encountered while get Terraform version!")
     }
 
-    out_str := string(out)
-
+    OutStr := string(out)
+    pattern := regexp.MustCompile(`^Terraform (v[0-9]\.[0-9]+\.[0-9]+$)`)
+    return pattern.FindString(OutStr), nil
 }

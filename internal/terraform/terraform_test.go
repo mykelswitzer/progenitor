@@ -12,3 +12,15 @@ func Test_isTerraformInstalled(t *testing.T) {
         t.Fatal("Expected nil but got error instead")
     }
 }
+
+func Test_getTerraformVersion(t *testing.T)  {
+    version, err := getTerraformVersion()
+
+    if err != nil {
+       t.Fatal("Unexpected error encountered!")
+    }
+
+    if version != "v0.12.29" {
+       t.Fatal("Incorrect version returned!")
+    }
+}
