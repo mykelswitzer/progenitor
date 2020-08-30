@@ -19,9 +19,9 @@ func isTerraformInstalled() error {
     return nil
 }
 // TODO: Add timeout and better OS signal handling
-// getTerraformVersion executes the command `terraform version` and
+// tfGetVersion executes the command `terraform version` and
 // returns the version parsed from the output
-func getTerraformVersion() ([]byte, error) {
+func tfGetVersion() ([]byte, error) {
     tf := exec.Command("terraform", "version")
     out, err := tf.Output()
 
@@ -34,10 +34,10 @@ func getTerraformVersion() ([]byte, error) {
 }
 
 // TODO: Add timeout and better OS signal handling
-// initTerraform initializes the Terraform directory of the newly
+// tfInit initializes the Terraform directory of the newly
 // created project repository. The var tfDir is the absolute path
 // of the Terraform directory.
-func initTerraform(tfDir string) error {
+func tfInit(tfDir string) error {
     tf := exec.Command("terraform", "init", tfDir)
     err := tf.Run()
 

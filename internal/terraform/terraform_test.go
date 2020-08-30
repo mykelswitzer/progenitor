@@ -18,11 +18,11 @@ func Test_isTerraformInstalled(t *testing.T) {
 }
 
 // TODO: Find a better method of testing that doesn't hard code version
-// Verifies that the getTerraformVersion function returns the installed
+// Verifies that the tfGetVersion function returns the installed
 // version of Terraform. Its not exactly a unit test since it depends on
 // on the host running it.
-func Test_getTerraformVersion(t *testing.T)  {
-    version, err := getTerraformVersion()
+func Test_tfGetVersion(t *testing.T)  {
+    version, err := tfGetVersion()
 
     if err != nil {
        t.Fatal("Unexpected error encountered!")
@@ -39,16 +39,16 @@ func Test_getTerraformVersion(t *testing.T)  {
 }
 
 // TODO: Find a way to mock this so the test can run in any environment
-// Verifies the initTerraform function successfully executes the command
+// Verifies the tfInit function successfully executes the command
 // `terraform init` inside the Terraform directory of the newly create
 // repository
-func Test_initTerraform(t *testing.T) {
+func Test_tfInit(t *testing.T) {
     tfDir := os.Getenv("TF_DIR")
     if len(tfDir) < 1 {
         t.Fatal("Aborting test, the environment variable TF_DIR not set!")
     }
 
-    err := initTerraform(tfDir)
+    err := tfInit(tfDir)
     if err != nil {
         t.Fatal("Unexpected error encountered!")
     }
