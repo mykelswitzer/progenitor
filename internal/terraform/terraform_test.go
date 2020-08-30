@@ -53,3 +53,19 @@ func Test_initTerraform(t *testing.T) {
         t.Fatal("Unexpected error encountered!")
     }
 }
+
+// TODO: Find a way to mock this so the test can run in any environment
+// Verifies the tfNewWorkspace function successfully executes the command
+// `terraform workspace new <name>` inside the Terraform directory fo the
+// newly created repsoitory.
+func Test_tfNewWorkspace(t *testing.T) {
+    tfDir := os.Getenv("TF_DIR")
+    if len(tfDir) < 1 {
+        t.Fatal("Aborting test, the environment variable TF_DIR not set!")
+    }
+
+    err := tfNewWorkspace(tfDir, "example")
+    if err != nil {
+        t.Fatal("Unexpected error encountered!")
+    }
+}
