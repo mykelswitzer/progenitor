@@ -115,3 +115,18 @@ func tfPlan(tfDir string) (string, error) {
     plan := string(out)
     return strings.TrimSpace(plan), nil
 }
+
+// TODO: Add timeout and better OS signal handling
+// tfApply runs the Terraform plan for the newly generated project
+// tfDir: the absolute path of the Terraform directory to run the command in
+func tfApply(tfDir string) error {
+    tf := exec.Command("terraform", "apply", "y")
+    tf.Dir = tfDir
+    err := tf.Run()
+
+    if err != nil {
+        return errors.Wrap(err, "Error encountering while applying Terraform plan!")
+    }
+
+    return nil
+}
