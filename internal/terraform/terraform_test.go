@@ -70,6 +70,21 @@ func Test_tfNewWorkspace(t *testing.T) {
    }
 }
 
+// TODO: Find a way to mock this so the test can be run in any environment
+// Verifies the tfSelectWorkspace function successfully changes the Terraform
+// workspace
+func Test_tfSelectWorkspace(t *testing.T) {
+    tfDir := os.Getenv("TF_DIR")
+
+    if len(tfDir) < 1 {
+        t.Fatal("Aborting test, the environment variable TD_DIR is not set!")
+    }
+    err := tfSelectWorkspace(tfDir, "caring-dev")
+    if err != nil {
+        t.Fatal("Unexpected error encountered!")
+    }
+}
+
 // TODO: Find a way to mock this so the test can run in any environment
 // Verifies the tfPlan function successfully generates a plan from the
 // Terraform files.

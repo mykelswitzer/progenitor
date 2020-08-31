@@ -38,7 +38,8 @@ func tfGetVersion() ([]byte, error) {
 // created project repository. The var tfDir is the absolute path
 // of the Terraform directory.
 func tfInit(tfDir string) error {
-    tf := exec.Command("terraform", "init", tfDir)
+    tf := exec.Command("terraform", "init")
+    tf.Dir = tfDir
     err := tf.Run()
 
     if err != nil {
@@ -63,10 +64,26 @@ func tfNewWorkspace(tfDir string, name string) error {
 }
 
 // TODO: Add timeout and better OS signal handling
+// tfSelectWorkspace set the current workspace to the supplied workspace name
+// tfDir: the absolute path of the Terraform directory to run the command in
+// name: the name of the Terraform workspace to select
+func tfSelectWorkspace(tfDir string, name string) error {
+    tf := exec.Command("terraform", "workspace", "select", name)
+    tf.Dir = tfDir
+    err := tf.Run()
+
+    if err != nil {
+        return errors.Wrap(err, "Error encountered while selecting Terraform workspace!")
+    }
+    return nil
+}
+
+// TODO: Add timeout and better OS signal handling
 // tfPlan generates a plan via the command 'terraform plan'
 // tfDir: the absolute path of the Terraform directory to run the command in
 func tfPlan(tfDir string) (string, error) {
-    tf := exec.Command("terraform", "plan", tfDir)
+    tf := exec.Command("terraform", "plan")
+    tf.Dir = tfDir
     out, err := tf.Output()
 
     if err != nil {
