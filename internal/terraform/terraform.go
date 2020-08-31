@@ -52,7 +52,7 @@ func tfInit(tfDir string) error {
 // tfDir: the absolute path of the Terraform directory to run the command in
 // name: the name of the new Terraform workspace
 func tfNewWorkspace(tfDir string, name string) error {
-    tf :=exec.Command("terraform", "workspace", "new", name)
+    tf := exec.Command("terraform", "workspace", "new", name)
     tf.Dir = tfDir
     err := tf.Run()
 
@@ -60,4 +60,22 @@ func tfNewWorkspace(tfDir string, name string) error {
         return errors.Wrap(err, "Error encountered while creating Terraform workspace!")
     }
     return nil
+}
+
+// TODO: Add timeout and better OS signal handling
+// tfPlan generates a plan via the command 'terraform plan'
+// tfDir: the absolute path of the Terraform directory to run the command in
+func tfPlan(tfDir string) (string, error) {
+    tf := exec.Command("terraform", "plan", tfDir)
+    out, err := tf.Output()
+
+    if err != nil {
+       return "", errors.Wrap(err, "Error encountered while running terraform plan!")
+    }
+
+    if len(out) < 1 {
+        return "", errors.New("Terraform failed to generate a plan!")
+    }
+
+    return string(out), nil
 }

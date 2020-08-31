@@ -45,7 +45,7 @@ func Test_tfGetVersion(t *testing.T)  {
 func Test_tfInit(t *testing.T) {
     tfDir := os.Getenv("TF_DIR")
     if len(tfDir) < 1 {
-        t.Fatal("Aborting test, the environment variable TF_DIR not set!")
+        t.Fatal("Aborting test, the environment variable TF_DIR is not set!")
     }
 
     err := tfInit(tfDir)
@@ -59,13 +59,34 @@ func Test_tfInit(t *testing.T) {
 // `terraform workspace new <name>` inside the Terraform directory fo the
 // newly created repsoitory.
 func Test_tfNewWorkspace(t *testing.T) {
+   tfDir := os.Getenv("TF_DIR")
+   if len(tfDir) < 1 {
+       t.Fatal("Aborting test, the environment variable TF_DIR is not set!")
+   }
+
+   err := tfNewWorkspace(tfDir, "example")
+   if err != nil {
+       t.Fatal("Unexpected error encountered!")
+   }
+}
+
+// TODO: Find a way to mock this so the test can run in any environment
+// Verifies the tfPlan function successfully generates a plan from the
+// Terraform files.
+func Test_tfPlan(t *testing.T) {
     tfDir := os.Getenv("TF_DIR")
+
     if len(tfDir) < 1 {
-        t.Fatal("Aborting test, the environment variable TF_DIR not set!")
+        t.Fatal("Aborting test, the environment variable TD_DIR is not set!")
     }
 
-    err := tfNewWorkspace(tfDir, "example")
+    plan, err := tfPlan(tfDir)
+
     if err != nil {
         t.Fatal("Unexpected error encountered!")
+    }
+
+    if len(plan) <1 {
+        t.Fatal("Invalid plan returned!")
     }
 }
