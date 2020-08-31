@@ -3,6 +3,7 @@ package repo
 import (
     "os/exec"
     "regexp"
+    "strings"
 )
 
 import "github.com/caring/go-packages/pkg/errors"
@@ -63,6 +64,23 @@ func tfNewWorkspace(tfDir string, name string) error {
     return nil
 }
 
+// tfGetWorkspace returns the current Terraform workspace
+// tfDir: the absolute path of the Terraform directory to run the command in
+func tfGetWorkspace(tfDir string) (string, error) {
+    tf := exec.Command("terraform", "workspace", "show")
+    tf.Dir = tfDir
+    out, err := tf.Output()
+
+    if err != nil {
+        return "", errors.Wrap(err, "Error encountered while getting active Terraform workspace name!")
+    }
+
+    if len(out) < 1 {
+        return "", errors.New("Could not get active Terraform workspace name!")
+    }
+    return string(out), nil
+}
+
 // TODO: Add timeout and better OS signal handling
 // tfSelectWorkspace set the current workspace to the supplied workspace name
 // tfDir: the absolute path of the Terraform directory to run the command in
@@ -94,5 +112,6 @@ func tfPlan(tfDir string) (string, error) {
         return "", errors.New("Terraform failed to generate a plan!")
     }
 
-    return string(out), nil
+    plan := string(out)
+    return strings.TrimSpace(plan), nil
 }

@@ -2,6 +2,7 @@ package repo
 
 import (
     "os"
+    "strings"
     "testing"
 )
 
@@ -79,9 +80,33 @@ func Test_tfSelectWorkspace(t *testing.T) {
     if len(tfDir) < 1 {
         t.Fatal("Aborting test, the environment variable TD_DIR is not set!")
     }
+
     err := tfSelectWorkspace(tfDir, "caring-dev")
     if err != nil {
         t.Fatal("Unexpected error encountered!")
+    }
+}
+
+// TODO: Find a way to mock this so the test can be run in any environment
+// Verifies the tfGetWorkspace function successfully returns the active
+// Terraform workspace.
+func Test_tfGetWorkspace(t *testing.T) {
+    tfDir := os.Getenv("TF_DIR")
+
+    if len(tfDir) < 1 {
+        t.Fatal("Aborting test, the environment variable TF_DIR is not set!")
+    }
+
+    name, err := tfGetWorkspace(tfDir)
+
+    if err != nil {
+        t.Fatal("Unexpected error encountered!")
+    }
+
+    expectedWorkspace := "caring-dev"
+    if strings.Contains(name, expectedWorkspace) == false {
+        t.Log(name)
+        t.Fatal("Incorrect workspace returned!")
     }
 }
 
