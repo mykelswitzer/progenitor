@@ -156,7 +156,7 @@ func tfRun(s *scaffolding.Scaffold) error {
         return err
     }
 
-    err := tfApply(tfDir)
+    err = tfApply(tfDir)
     if err != nil {
         return err
     }
