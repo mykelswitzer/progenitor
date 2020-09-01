@@ -130,3 +130,19 @@ func Test_tfPlan(t *testing.T) {
         t.Fatal("Invalid plan returned!")
     }
 }
+
+// TODO: Find a way to mock this so the test can run in any environment
+// Verifies the tfApply function successfully applies the Terraform plan
+func Test_tfApply(t *testing.T) {
+    tfDir := os.Getenv("TF_DIR")
+
+    if len(tfDir) < 1 {
+        t.Fatal("Aborting test, the environment variable TF_DIR is not set!")
+    }
+
+    err := tfApply(tfDir)
+
+    if err != nil {
+        t.Fatal("Unexpected error encountered!")
+    }
+}

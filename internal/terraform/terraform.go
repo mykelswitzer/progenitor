@@ -8,6 +8,8 @@ import (
 
 import "github.com/caring/go-packages/pkg/errors"
 
+// TODO: Find a better way to organize these functions. Perhaps make them part of an interface
+
 // isTerraformInstalled checks if Terraform is installed by searching for it
 // in the directories named by the PATH environment variable. If its not found
 // an error is returned, otherwise nil is returned.
@@ -120,7 +122,7 @@ func tfPlan(tfDir string) (string, error) {
 // tfApply runs the Terraform plan for the newly generated project
 // tfDir: the absolute path of the Terraform directory to run the command in
 func tfApply(tfDir string) error {
-    tf := exec.Command("terraform", "apply", "y")
+    tf := exec.Command("terraform", "apply", "-auto-approve")
     tf.Dir = tfDir
     err := tf.Run()
 
