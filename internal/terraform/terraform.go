@@ -1,4 +1,4 @@
-package repo
+package terraform
 
 import (
     "github.com/caring/progenitor/internal/scaffolding"
