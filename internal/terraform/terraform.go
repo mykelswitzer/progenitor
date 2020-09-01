@@ -137,6 +137,7 @@ func tfApply(tfDir string) error {
     return nil
 }
 
+// TfRun chains together all the steps to run the newly generated project's Terraform
 func TfRun(s *scaffolding.Scaffold) error {
     base, _ := os.Getwd()
     tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
