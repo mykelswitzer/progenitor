@@ -1,7 +1,11 @@
 package repo
 
 import (
+    "github.com/caring/progenitor/internal/scaffolding"
+    "log"
+    "os"
     "os/exec"
+    "path/filepath"
     "regexp"
     "strings"
 )
@@ -130,5 +134,31 @@ func tfApply(tfDir string) error {
         return errors.Wrap(err, "Error encountering while applying Terraform plan!")
     }
 
+    return nil
+}
+
+func tfRun(s *scaffolding.Scaffold) error {
+    base, _ := os.Getwd()
+    tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
+    awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
+
+    log.Println("Creating Terraform workspaces.")
+    for _, s := range awsEnvs {
+        err := tfNewWorkspace(tfDir, s)
+        if err != nil {
+            return err
+        }
+    }
+
+    log.Println("Applying Terraform plan to 'caring-dev' environment")
+    err := tfSelectWorkspace(tfDir, "caring-dev")
+    if err != nil {
+        return err
+    }
+
+    err := tfApply(tfDir)
+    if err != nil {
+        return err
+    }
     return nil
 }
