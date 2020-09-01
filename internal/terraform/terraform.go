@@ -137,7 +137,7 @@ func tfApply(tfDir string) error {
     return nil
 }
 
-func tfRun(s *scaffolding.Scaffold) error {
+func TfRun(s *scaffolding.Scaffold) error {
     base, _ := os.Getwd()
     tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
     awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}

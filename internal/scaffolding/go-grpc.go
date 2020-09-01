@@ -9,7 +9,7 @@ import (
 import (
 	_ "github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
-	"github.com/caring/progenitor/internal/terraform
+	"github.com/caring/progenitor/internal/terraform"
 )
 
 type goGrpcTemplateData struct {
@@ -103,7 +103,9 @@ func postBuildFiles(s *Scaffold) error {
 		return err
 	}
 
-	err := tfRun()
+	if err := terraform.TfRun(s); err != nil {
+		return err
+	}
 
 	return nil
 }
