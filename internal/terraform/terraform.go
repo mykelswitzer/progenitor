@@ -1,11 +1,8 @@
 package terraform
 
 import (
-    "github.com/caring/progenitor/internal/scaffolding"
     "log"
-    "os"
     "os/exec"
-    "path/filepath"
     "regexp"
     "strings"
 )
@@ -138,9 +135,7 @@ func tfApply(tfDir string) error {
 }
 
 // TfRun chains together all the steps to run the newly generated project's Terraform
-func TfRun(s *scaffolding.Scaffold) error {
-    base, _ := os.Getwd()
-    tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
+func TfRun(tfDir string) error {
     awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 
     log.Println("Creating Terraform workspaces.")
