@@ -155,24 +155,6 @@ func TfRun(tfDir string) error {
         return err
     }
 
-    //log.Println("Creating Terraform  workspace: caring-prod.")
-    //err = tfNewWorkspace(tfDir, "caring-prod")
-    //if err != nil {
-    //    return err
-    //}
-    //
-    //log.Println("Creating Terraform workspace: caring-stg.")
-    //err = tfNewWorkspace(tfDir, "caring-stg")
-    //if err != nil {
-    //    return err
-    //}
-    //
-    //log.Println("Creating Terraform workspace: caring-dev.")
-    //err = tfNewWorkspace(tfDir, "caring-dev")
-    //if err != nil {
-    //    return err
-    //}
-
     for _, s := range awsEnvs {
        log.Println("Creating Terraform workspace: ", s)
        err := tfNewWorkspace(tfDir, s)
@@ -191,5 +173,6 @@ func TfRun(tfDir string) error {
     if err != nil {
         return err
     }
+
     return nil
 }
