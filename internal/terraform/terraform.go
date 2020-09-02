@@ -2,6 +2,7 @@ package terraform
 
 import (
     "log"
+    "os"
     "os/exec"
     "regexp"
     "strings"
@@ -44,6 +45,8 @@ func tfGetVersion() ([]byte, error) {
 func tfInit(tfDir string) error {
     tf := exec.Command("terraform", "init")
     tf.Dir = tfDir
+    tf.Stdout = os.Stdout
+    tf.Stderr = os.Stdout
     err := tf.Run()
 
     if err != nil {
@@ -59,6 +62,8 @@ func tfInit(tfDir string) error {
 func tfNewWorkspace(tfDir string, name string) error {
     tf := exec.Command("terraform", "workspace", "new", name)
     tf.Dir = tfDir
+    tf.Stdout = os.Stdout
+    tf.Stderr = os.Stdout
     err := tf.Run()
 
     if err != nil {
@@ -91,6 +96,8 @@ func tfGetWorkspace(tfDir string) (string, error) {
 func tfSelectWorkspace(tfDir string, name string) error {
     tf := exec.Command("terraform", "workspace", "select", name)
     tf.Dir = tfDir
+    tf.Stdout = os.Stdout
+    tf.Stderr = os.Stdout
     err := tf.Run()
 
     if err != nil {
@@ -105,6 +112,8 @@ func tfSelectWorkspace(tfDir string, name string) error {
 func tfPlan(tfDir string) (string, error) {
     tf := exec.Command("terraform", "plan")
     tf.Dir = tfDir
+    tf.Stdout = os.Stdout
+    tf.Stderr = os.Stdout
     out, err := tf.Output()
 
     if err != nil {
@@ -125,6 +134,8 @@ func tfPlan(tfDir string) (string, error) {
 func tfApply(tfDir string) error {
     tf := exec.Command("terraform", "apply", "-auto-approve")
     tf.Dir = tfDir
+    tf.Stdout = os.Stdout
+    tf.Stderr = os.Stdout
     err := tf.Run()
 
     if err != nil {
@@ -136,7 +147,7 @@ func tfApply(tfDir string) error {
 
 // TfRun chains together all the steps to run the newly generated project's Terraform
 func TfRun(tfDir string) error {
-    awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
+    //awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 
     log.Println("Initializing Terraform directory!")
      err := tfInit(tfDir)
@@ -145,21 +156,21 @@ func TfRun(tfDir string) error {
      }
 
     log.Println("Creating Terraform  workspace: caring-prod.")
-    err = tfNewWorkspace(tfDir, awsEnvs[2])
+    err = tfNewWorkspace(tfDir, "caring-prod")
     if err != nil {
-        return nil
+        return err
     }
 
     log.Println("Creating Terraform workspace: caring-stg.")
-    err = tfNewWorkspace(tfDir, awsEnvs[1])
+    err = tfNewWorkspace(tfDir, "caring-stg")
     if err != nil {
-        return nil
+        return err
     }
 
     log.Println("Creating Terraform workspace: caring-dev.")
-    err = tfNewWorkspace(tfDir, awsEnvs[0])
+    err = tfNewWorkspace(tfDir, "caring-dev")
     if err != nil {
-        return nil
+        return err
     }
 
     //for _, s := range awsEnvs {
