@@ -147,38 +147,39 @@ func tfApply(tfDir string) error {
 
 // TfRun chains together all the steps to run the newly generated project's Terraform
 func TfRun(tfDir string) error {
-    //awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
+    awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 
     log.Println("Initializing Terraform directory!")
-     err := tfInit(tfDir)
-     if err != nil {
-         return err
-     }
-
-    log.Println("Creating Terraform  workspace: caring-prod.")
-    err = tfNewWorkspace(tfDir, "caring-prod")
+    err := tfInit(tfDir)
     if err != nil {
         return err
     }
 
-    log.Println("Creating Terraform workspace: caring-stg.")
-    err = tfNewWorkspace(tfDir, "caring-stg")
-    if err != nil {
-        return err
-    }
-
-    log.Println("Creating Terraform workspace: caring-dev.")
-    err = tfNewWorkspace(tfDir, "caring-dev")
-    if err != nil {
-        return err
-    }
-
-    //for _, s := range awsEnvs {
-    //    err := tfNewWorkspace(tfDir, s)
-    //    if err != nil {
-    //        return err
-    //    }
+    //log.Println("Creating Terraform  workspace: caring-prod.")
+    //err = tfNewWorkspace(tfDir, "caring-prod")
+    //if err != nil {
+    //    return err
     //}
+    //
+    //log.Println("Creating Terraform workspace: caring-stg.")
+    //err = tfNewWorkspace(tfDir, "caring-stg")
+    //if err != nil {
+    //    return err
+    //}
+    //
+    //log.Println("Creating Terraform workspace: caring-dev.")
+    //err = tfNewWorkspace(tfDir, "caring-dev")
+    //if err != nil {
+    //    return err
+    //}
+
+    for _, s := range awsEnvs {
+       log.Println("Creating Terraform workspace: ", s)
+       err := tfNewWorkspace(tfDir, s)
+       if err != nil {
+           return err
+       }
+    }
 
     log.Println("Applying Terraform plan to 'caring-dev' environment")
     err = tfSelectWorkspace(tfDir, "caring-dev")
