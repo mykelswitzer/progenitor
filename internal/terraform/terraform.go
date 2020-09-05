@@ -24,9 +24,9 @@ func isTerraformInstalled() error {
     return nil
 }
 // TODO: Add timeout and better OS signal handling
-// tfGetVersion executes the command `terraform version` and
+// getVersion executes the command `terraform version` and
 // returns the version parsed from the output
-func tfGetVersion() ([]byte, error) {
+func getVersion() ([]byte, error) {
     tf := exec.Command("terraform", "version")
     out, err := tf.Output()
 
@@ -39,10 +39,10 @@ func tfGetVersion() ([]byte, error) {
 }
 
 // TODO: Add timeout and better OS signal handling
-// tfInit initializes the Terraform directory of the newly
+// initTf initializes the Terraform directory of the newly
 // created project repository. The var tfDir is the absolute path
 // of the Terraform directory.
-func tfInit(tfDir string) error {
+func initTf(tfDir string) error {
     tf := exec.Command("terraform", "init")
     tf.Dir = tfDir
     tf.Stdout = os.Stdout
@@ -56,10 +56,10 @@ func tfInit(tfDir string) error {
 }
 
 // TODO: Add timeout and better OS signal handling
-// tfNewWorkspace adds a new workspace.
+// newWorkspace adds a new workspace.
 // tfDir: the absolute path of the Terraform directory to run the command in
 // name: the name of the new Terraform workspace
-func tfNewWorkspace(tfDir string, name string) error {
+func newWorkspace(tfDir string, name string) error {
     tf := exec.Command("terraform", "workspace", "new", name)
     tf.Dir = tfDir
     tf.Stdout = os.Stdout
@@ -72,9 +72,9 @@ func tfNewWorkspace(tfDir string, name string) error {
     return nil
 }
 
-// tfGetWorkspace returns the current Terraform workspace
+// getWorkspace returns the current Terraform workspace
 // tfDir: the absolute path of the Terraform directory to run the command in
-func tfGetWorkspace(tfDir string) (string, error) {
+func getWorkspace(tfDir string) (string, error) {
     tf := exec.Command("terraform", "workspace", "show")
     tf.Dir = tfDir
     out, err := tf.Output()
@@ -90,10 +90,10 @@ func tfGetWorkspace(tfDir string) (string, error) {
 }
 
 // TODO: Add timeout and better OS signal handling
-// tfSelectWorkspace set the current workspace to the supplied workspace name
+// selectWorkspace set the current workspace to the supplied workspace name
 // tfDir: the absolute path of the Terraform directory to run the command in
 // name: the name of the Terraform workspace to select
-func tfSelectWorkspace(tfDir string, name string) error {
+func selectWorkspace(tfDir string, name string) error {
     tf := exec.Command("terraform", "workspace", "select", name)
     tf.Dir = tfDir
     tf.Stdout = os.Stdout
@@ -107,9 +107,9 @@ func tfSelectWorkspace(tfDir string, name string) error {
 }
 
 // TODO: Add timeout and better OS signal handling
-// tfPlan generates a plan via the command 'terraform plan'
+// plan generates a plan via the command 'terraform plan'
 // tfDir: the absolute path of the Terraform directory to run the command in
-func tfPlan(tfDir string) (string, error) {
+func plan(tfDir string) (string, error) {
     tf := exec.Command("terraform", "plan")
     tf.Dir = tfDir
     tf.Stdout = os.Stdout
@@ -129,9 +129,9 @@ func tfPlan(tfDir string) (string, error) {
 }
 
 // TODO: Add timeout and better OS signal handling
-// tfApply runs the Terraform plan for the newly generated project
+// apply runs the Terraform plan for the newly generated project
 // tfDir: the absolute path of the Terraform directory to run the command in
-func tfApply(tfDir string) error {
+func apply(tfDir string) error {
     tf := exec.Command("terraform", "apply", "-auto-approve")
     tf.Dir = tfDir
     tf.Stdout = os.Stdout
@@ -150,26 +150,26 @@ func TfRun(tfDir string) error {
     awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 
     log.Println("Initializing Terraform directory!")
-    err := tfInit(tfDir)
+    err := initTf(tfDir)
     if err != nil {
         return err
     }
 
     for _, s := range awsEnvs {
        log.Println("Creating Terraform workspace: ", s)
-       err := tfNewWorkspace(tfDir, s)
+       err := newWorkspace(tfDir, s)
        if err != nil {
            return err
        }
     }
 
     log.Println("Applying Terraform plan to 'caring-dev' environment")
-    err = tfSelectWorkspace(tfDir, "caring-dev")
+    err = selectWorkspace(tfDir, "caring-dev")
     if err != nil {
         return err
     }
 
-    err = tfApply(tfDir)
+    err = apply(tfDir)
     if err != nil {
         return err
     }
