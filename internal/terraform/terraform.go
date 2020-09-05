@@ -149,6 +149,10 @@ func apply(tfDir string) error {
 func TfRun(tfDir string) error {
     awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 
+    if isTerraformInstalled() != nil {
+        return errors.New("Could not find Terraform installed on PATH")
+    }
+
     log.Println("Initializing Terraform directory!")
     err := initTf(tfDir)
     if err != nil {
