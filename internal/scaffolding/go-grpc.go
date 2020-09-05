@@ -9,6 +9,7 @@ import (
 import (
 	_ "github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
+	"github.com/caring/progenitor/internal/terraform"
 )
 
 type goGrpcTemplateData struct {
@@ -99,6 +100,14 @@ func postBuildFiles(s *Scaffold) error {
 	}
 
 	if err := renameServiceFiles(s); err != nil {
+		return err
+	}
+
+	// Had to move this from TfRun() because of circular imports
+	base, _ := os.Getwd()
+	tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
+
+	if err := terraform.TfRun(tfDir); err != nil {
 		return err
 	}
 
