@@ -1,12 +1,12 @@
 package terraform
 
 import (
-    "context"
-    "log"
-    "os"
-    "os/exec"
-    "regexp"
-    "strings"
+	"context"
+	"log"
+	"os"
+	"os/exec"
+	"regexp"
+	"strings"
 )
 
 import "github.com/caring/go-packages/pkg/errors"
@@ -18,26 +18,27 @@ import "github.com/hashicorp/terraform-exec/tfexec"
 //by the PATH environment variable. If found the path of the Terraform executable is returned. If it's
 // not found, an error is returned.
 func isTerraformInstalled() (string, error) {
-    path, err := exec.LookPath("terraform")
+	path, err := exec.LookPath("terraform")
 
-    if err != nil {
-        return "", errors.Wrap(err, "Terraform not found in PATH")
-    }
-    return path, nil
+	if err != nil {
+		return "", errors.Wrap(err, "Terraform not found in PATH")
+	}
+	return path, nil
 }
+
 // TODO: Add timeout and better OS signal handling
 // getVersion executes the command `terraform version` and
 // returns the version parsed from the output
 func getVersion() ([]byte, error) {
-    tf := exec.Command("terraform", "version")
-    out, err := tf.Output()
+	tf := exec.Command("terraform", "version")
+	out, err := tf.Output()
 
-    if err != nil {
-        return nil, errors.Wrap(err, "Error encountered while get Terraform version!")
-    }
+	if err != nil {
+		return nil, errors.Wrap(err, "Error encountered while get Terraform version!")
+	}
 
-    pattern := regexp.MustCompile(`v[0-9]\.[0-9]+\.[0-9]+`)
-    return pattern.Find(out), nil
+	pattern := regexp.MustCompile(`v[0-9]\.[0-9]+\.[0-9]+`)
+	return pattern.Find(out), nil
 }
 
 // TODO: Add timeout and better OS signal handling
@@ -45,16 +46,16 @@ func getVersion() ([]byte, error) {
 // created project repository. The var tfDir is the absolute path
 // of the Terraform directory.
 func initTf(tfDir string) error {
-    tf := exec.Command("terraform", "init")
-    tf.Dir = tfDir
-    tf.Stdout = os.Stdout
-    tf.Stderr = os.Stdout
-    err := tf.Run()
+	tf := exec.Command("terraform", "init")
+	tf.Dir = tfDir
+	tf.Stdout = os.Stdout
+	tf.Stderr = os.Stdout
+	err := tf.Run()
 
-    if err != nil {
-        return errors.Wrap(err, "Error encountered while initializing Terraform directory!")
-    }
-    return nil
+	if err != nil {
+		return errors.Wrap(err, "Error encountered while initializing Terraform directory!")
+	}
+	return nil
 }
 
 // TODO: Add timeout and better OS signal handling
@@ -62,33 +63,33 @@ func initTf(tfDir string) error {
 // tfDir: the absolute path of the Terraform directory to run the command in
 // name: the name of the new Terraform workspace
 func newWorkspace(tfDir string, name string) error {
-    tf := exec.Command("terraform", "workspace", "new", name)
-    tf.Dir = tfDir
-    tf.Stdout = os.Stdout
-    tf.Stderr = os.Stdout
-    err := tf.Run()
+	tf := exec.Command("terraform", "workspace", "new", name)
+	tf.Dir = tfDir
+	tf.Stdout = os.Stdout
+	tf.Stderr = os.Stdout
+	err := tf.Run()
 
-    if err != nil {
-        return errors.Wrap(err, "Error encountered while creating Terraform workspace!")
-    }
-    return nil
+	if err != nil {
+		return errors.Wrap(err, "Error encountered while creating Terraform workspace!")
+	}
+	return nil
 }
 
 // getWorkspace returns the current Terraform workspace
 // tfDir: the absolute path of the Terraform directory to run the command in
 func getWorkspace(tfDir string) (string, error) {
-    tf := exec.Command("terraform", "workspace", "show")
-    tf.Dir = tfDir
-    out, err := tf.Output()
+	tf := exec.Command("terraform", "workspace", "show")
+	tf.Dir = tfDir
+	out, err := tf.Output()
 
-    if err != nil {
-        return "", errors.Wrap(err, "Error encountered while getting active Terraform workspace name!")
-    }
+	if err != nil {
+		return "", errors.Wrap(err, "Error encountered while getting active Terraform workspace name!")
+	}
 
-    if len(out) < 1 {
-        return "", errors.New("Could not get active Terraform workspace name!")
-    }
-    return string(out), nil
+	if len(out) < 1 {
+		return "", errors.New("Could not get active Terraform workspace name!")
+	}
+	return string(out), nil
 }
 
 // TODO: Add timeout and better OS signal handling
@@ -96,93 +97,93 @@ func getWorkspace(tfDir string) (string, error) {
 // tfDir: the absolute path of the Terraform directory to run the command in
 // name: the name of the Terraform workspace to select
 func selectWorkspace(tfDir string, name string) error {
-    tf := exec.Command("terraform", "workspace", "select", name)
-    tf.Dir = tfDir
-    tf.Stdout = os.Stdout
-    tf.Stderr = os.Stdout
-    err := tf.Run()
+	tf := exec.Command("terraform", "workspace", "select", name)
+	tf.Dir = tfDir
+	tf.Stdout = os.Stdout
+	tf.Stderr = os.Stdout
+	err := tf.Run()
 
-    if err != nil {
-        return errors.Wrap(err, "Error encountered while selecting Terraform workspace!")
-    }
-    return nil
+	if err != nil {
+		return errors.Wrap(err, "Error encountered while selecting Terraform workspace!")
+	}
+	return nil
 }
 
 // TODO: Add timeout and better OS signal handling
 // plan generates a plan via the command 'terraform plan'
 // tfDir: the absolute path of the Terraform directory to run the command in
 func plan(tfDir string) (string, error) {
-    tf := exec.Command("terraform", "plan")
-    tf.Dir = tfDir
-    tf.Stdout = os.Stdout
-    tf.Stderr = os.Stdout
-    out, err := tf.Output()
+	tf := exec.Command("terraform", "plan")
+	tf.Dir = tfDir
+	tf.Stdout = os.Stdout
+	tf.Stderr = os.Stdout
+	out, err := tf.Output()
 
-    if err != nil {
-       return "", errors.Wrap(err, "Error encountered while running terraform plan!")
-    }
+	if err != nil {
+		return "", errors.Wrap(err, "Error encountered while running terraform plan!")
+	}
 
-    if len(out) < 1 {
-        return "", errors.New("Terraform failed to generate a plan!")
-    }
+	if len(out) < 1 {
+		return "", errors.New("Terraform failed to generate a plan!")
+	}
 
-    plan := string(out)
-    return strings.TrimSpace(plan), nil
+	plan := string(out)
+	return strings.TrimSpace(plan), nil
 }
 
 // TODO: Add timeout and better OS signal handling
 // apply runs the Terraform plan for the newly generated project
 // tfDir: the absolute path of the Terraform directory to run the command in
 func apply(tfDir string) error {
-    tf := exec.Command("terraform", "apply", "-auto-approve")
-    tf.Dir = tfDir
-    tf.Stdout = os.Stdout
-    tf.Stderr = os.Stdout
-    err := tf.Run()
+	tf := exec.Command("terraform", "apply", "-auto-approve")
+	tf.Dir = tfDir
+	tf.Stdout = os.Stdout
+	tf.Stderr = os.Stdout
+	err := tf.Run()
 
-    if err != nil {
-        return errors.Wrap(err, "Error encountering while applying Terraform plan!")
-    }
+	if err != nil {
+		return errors.Wrap(err, "Error encountering while applying Terraform plan!")
+	}
 
-    return nil
+	return nil
 }
 
 // TfRun chains together all the steps to run the newly generated project's Terraform
 func TfRun(tfDir string) error {
-    awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
-    installedPath, err := isTerraformInstalled()
-    if err != nil {
-        return errors.New("Could not find Terraform installed on PATH")
-    }
+	awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
+	installedPath, err := isTerraformInstalled()
+	if err != nil {
+		return errors.New("Could not find Terraform installed on PATH")
+	}
 
-    tf, err := tfexec.NewTerraform(tfDir, installedPath)
-    log.Println("Initializing Terraform directory!")
-    if tf == nil {
-        return errors.New("Error encountered when initializing Terraform!")
-    }
-    err = tf.Init(context.Background())
-    if err != nil {
-        return err
-    }
+	tf, err := tfexec.NewTerraform(tfDir, installedPath)
+	log.Println("Initializing Terraform directory!")
+	if tf == nil {
+		return errors.New("Error encountered when initializing Terraform!")
+	}
+	err = tf.Init(context.Background())
+	if err != nil {
+		return err
+	}
 
-    for _, s := range awsEnvs {
-       log.Println("Creating Terraform workspace: ", s)
-       err := tf.WorkspaceNew(context.Background(), s)
-       if err != nil {
-           return err
-       }
-    }
+	for _, s := range awsEnvs {
+		log.Println("Creating Terraform workspace: ", s)
+		err := tf.WorkspaceNew(context.Background(), s)
+		if err != nil {
+			return err
+		}
+	}
 
-    log.Println("Applying Terraform plan to 'caring-dev' environment")
-    err = tf.WorkspaceSelect(context.Background(), awsEnvs[2])
-    if err != nil {
-        return err
-    }
+	log.Println("Applying Terraform plan to 'caring-dev' environment")
+	err = tf.WorkspaceSelect(context.Background(), awsEnvs[2])
+	if err != nil {
+		return err
+	}
 
-    err = tf.Apply(context.Background())
-    if err != nil {
-        return err
-    }
+	err = tf.Apply(context.Background())
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }
