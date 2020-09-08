@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"os/exec"
-	"regexp"
 )
 
 import "github.com/caring/go-packages/pkg/errors"
@@ -22,21 +21,6 @@ func isTerraformInstalled() (string, error) {
 		return "", errors.Wrap(err, "Terraform not found in PATH")
 	}
 	return path, nil
-}
-
-// TODO: Add timeout and better OS signal handling
-// getVersion executes the command `terraform version` and
-// returns the version parsed from the output
-func getVersion() ([]byte, error) {
-	tf := exec.Command("terraform", "version")
-	out, err := tf.Output()
-
-	if err != nil {
-		return nil, errors.Wrap(err, "Error encountered while get Terraform version!")
-	}
-
-	pattern := regexp.MustCompile(`v[0-9]\.[0-9]+\.[0-9]+`)
-	return pattern.Find(out), nil
 }
 
 // TfRun chains together all the steps to run the newly generated project's Terraform
