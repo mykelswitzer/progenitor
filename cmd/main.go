@@ -25,6 +25,7 @@ var prompts = map[string][]func(*config.Config) error{
     prompt.UseDB,
     prompt.CoreDBObject,
     prompt.UseReporting,
+    prompt.RunTerraform,
   },
 }
 
