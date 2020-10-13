@@ -32,7 +32,6 @@ func createRepo(token string, config *config.Config) (*github.Repository, error)
 
 	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
 	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "Engineers", "caring", *repo.Name, opts)
-	// ci, resp, err := client.Repositories.AddCollaborator(ctx, "caring", *repo.Name, "Engineers", opts)
 	if err != nil {
 		log.Println(err, resp)
 	}
