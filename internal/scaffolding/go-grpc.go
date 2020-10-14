@@ -103,12 +103,11 @@ func postBuildFiles(s *Scaffold) error {
 		return err
 	}
 
-	// Had to move this from TfRun() because of circular imports
-	base, _ := os.Getwd()
-	tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
-
 	if s.Config.GetBool("runTerraform") {
-		if err := terraform.TfRun(tfDir); err != nil {
+		base, err := os.Getwd()
+		tfDir := filepath.Join(base, s.Config.GetString("projectDir"), "terraform")
+
+		if err := terraform.Run(tfDir); err != nil {
 			return err
 		}
 	}

@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func Clone(directory string, repo *github.Repository) error {
+func Clone(token string, directory string, repo *github.Repository) error {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -32,6 +32,10 @@ func Clone(directory string, repo *github.Repository) error {
 	}()
 
 	_, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
+		Auth: &http.BasicAuth{
+			Username: "caring-engineering",
+			Password: token,
+		},
 		URL:      *repo.CloneURL,
 		Progress: os.Stdout,
 	})

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"log"
 )
 import (
 	"github.com/caring/go-packages/pkg/errors"
@@ -18,7 +19,7 @@ func createRepo(token string, config *config.Config) (*github.Repository, error)
 	client := rp.GithubClient(oauth)
 
 	var name string = config.GetString("projectName")
-	var private bool = false
+	var private bool = true
 	var description string = "Caring, LLC service for " + name
 	var autoInit bool = true
 	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit}
@@ -29,7 +30,14 @@ func createRepo(token string, config *config.Config) (*github.Repository, error)
 
 	config.Set("projectRepo", repo)
 
-	if err = rp.Clone(config.GetString("projectDir"), repo); err != nil {
+	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
+	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "Engineers", "caring", *repo.Name, opts)
+	if err != nil {
+		log.Println(err, resp)
+	}
+	log.Println(resp)
+
+	if err = rp.Clone(token, config.GetString("projectDir"), repo); err != nil {
 		return nil, errors.Wrap(err, "Failed to clone the repo")
 	}
 

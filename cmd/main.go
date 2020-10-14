@@ -84,7 +84,11 @@ func generate(cfg *config.Config) error {
     return handleError(err)
   }
 
-  createRepo(*token.SecretString, cfg)
+  _, err = createRepo(*token.SecretString, cfg)
+  if err != nil {
+    log.Println(err.Error())
+    return err
+  }
 
   scaffold, err := scaffolding.New(cfg)
   if err != nil {
