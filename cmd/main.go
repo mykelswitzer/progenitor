@@ -3,12 +3,14 @@ package cmd
 import (
   "log"
   "os"
+  "path/filepath"
 )
 
 import (
   "github.com/caring/progenitor/internal/config"
   "github.com/caring/progenitor/internal/prompt"
   "github.com/caring/progenitor/internal/scaffolding"
+  "github.com/caring/progenitor/internal/terraform"
   "github.com/caring/progenitor/pkg/aws"
   "github.com/urfave/cli/v2"
 )
@@ -120,9 +122,14 @@ func generate(cfg *config.Config) error {
   // inverst in if it continues to create issues
   if scaffold.Config.GetBool("runTerraform") {
     base, err := os.Getwd()
+    if err != nil {
+      log.Println(err.Error())
+      return err
+    }
     tfDir := filepath.Join(base, scaffold.Config.GetString("projectDir"), "terraform")
 
     if err := terraform.Run(tfDir); err != nil {
+      log.Println(err.Error())
       return err
     }
   }
