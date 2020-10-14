@@ -111,6 +111,22 @@ func generate(cfg *config.Config) error {
     return err
   }
 
+  // moved to here, note that this assumes that all projects will store
+  // the terraform code in a /terraform folder in the root directory
+  // of the project... while this appears true at this time, it may not
+  // be in the future. This change enables committing code to the repo
+  // independent of the success of terraform running... which was previously
+  // breaing the code. There is probably a better long term fix, which we can
+  // inverst in if it continues to create issues
+  if scaffold.Config.GetBool("runTerraform") {
+    base, err := os.Getwd()
+    tfDir := filepath.Join(base, scaffold.Config.GetString("projectDir"), "terraform")
+
+    if err := terraform.Run(tfDir); err != nil {
+      return err
+    }
+  }
+
   return nil
 }
 
