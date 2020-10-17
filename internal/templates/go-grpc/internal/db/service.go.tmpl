@@ -32,7 +32,7 @@ type proto{{$pascalDbModel}} interface {
 
 // New{{$pascalDbModel}} is a convenience helper cast a proto {{.DBModel}} to it's DB layer struct
 func New{{$pascalDbModel}}(ID string, proto proto{{$pascalDbModel}}) (*{{$pascalDbModel}}, error) {
-	mID, err := uuid.ParseUUID(ID)
+	mID, err := uuid.Parse(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (svc *{{.DBModel}}Service) get(ctx context.Context, useTx bool, ID uuid.UUI
 	p := {{$pascalDbModel}}{}
 
 	err = stmt.QueryRowContext(ctx, ID).
-		Scan(&m.ID, &m.Name)
+		Scan(&p.ID, &p.Name)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
