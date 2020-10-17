@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/google/uuid"
+	"github.com/caring/go-packages/pkg/uuid"
 
 	"github.com/caring/{{.Name}}/pb"
 )
@@ -32,7 +32,7 @@ type proto{{$pascalDbModel}} interface {
 
 // New{{$pascalDbModel}} is a convenience helper cast a proto {{.DBModel}} to it's DB layer struct
 func New{{$pascalDbModel}}(ID string, proto proto{{$pascalDbModel}}) (*{{$pascalDbModel}}, error) {
-	mID, err := ParseUUID(ID)
+	mID, err := uuid.ParseUUID(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (svc *{{.DBModel}}Service) get(ctx context.Context, useTx bool, ID uuid.UUI
 	p := {{$pascalDbModel}}{}
 
 	err = stmt.QueryRowContext(ctx, ID).
-		Scan(&m.{{$pascalDbModel}}ID, &m.Name)
+		Scan(&m.ID, &m.Name)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -130,7 +130,7 @@ func (svc *{{.DBModel}}Service) create(ctx context.Context, useTx bool, input *{
 		stmt = svc.stmts["create-{{.DBModel}}"]
 	}
 
-	result, err := stmt.ExecContext(ctx, input.{{$pascalDbModel}}ID, input.Name)
+	result, err := stmt.ExecContext(ctx, input.ID, input.Name)
 	if err != nil {
 		return errors.Wrap(err, errMsg())
 	}
@@ -179,7 +179,7 @@ func (svc *{{.DBModel}}Service) update(ctx context.Context, useTx bool, input *{
 		stmt = svc.stmts["update-{{.DBModel}}"]
 	}
 
-	result, err := stmt.ExecContext(ctx, input.Name, input.{{$pascalDbModel}}ID)
+	result, err := stmt.ExecContext(ctx, input.Name, input.ID)
 	if err != nil {
 		return errors.Wrap(err, errMsg())
 	}

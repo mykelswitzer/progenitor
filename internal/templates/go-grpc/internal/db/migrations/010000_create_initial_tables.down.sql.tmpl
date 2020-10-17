@@ -1,7 +1,6 @@
-USE products;
+USE {{.Name}};
 
-DROP TABLE IF EXISTS products;
+-- Drop Tables
 
-DROP TABLE IF EXISTS categories;
-
-DROP SCHEMA IF EXISTS products;
+-- Drop schema
+DROP SCHEMA IF EXISTS {{.Name}};

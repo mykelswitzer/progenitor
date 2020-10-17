@@ -75,7 +75,7 @@ func (s *Store) Close() error {
 
 // Ping will check the connection to the underlying database
 func (s *Store) Ping(ctx context.Context) error {
-	if err = s.db.PingContext(ctx); err != nil {
+	if err := s.db.PingContext(ctx); err != nil {
     return err
   }
   return nil
