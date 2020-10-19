@@ -1,10 +1,13 @@
 package main
 
 import (
-  _ "context"
+  "context"
+  "fmt"
+  "time"
 {{if .UseDB}}
   _ "github.com/caring/{{tolower .Name}}/internal/db"
 {{end}}
+
   _ "github.com/caring/{{tolower .Name}}/internal/handlers"
   "github.com/caring/{{tolower .Name}}/pb"
   _ "github.com/caring/go-packages/pkg/errors"
@@ -15,7 +18,7 @@ type service struct {
 }
 
 func (s *service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
-    l.Printf("Received: %v", in.Data)
+    l.Debug(fmt.Sprintf("Received: %v", in.Data))
     resp := "Data: " + in.Data
     {{if .UseDB}}
     ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
@@ -28,4 +31,20 @@ func (s *service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingRespons
     {{else}}
     return &pb.PingResponse{Data: resp}, nil
     {{end}}
+}
+
+func (s *service)  Create{{topascal .DBModel}}(ctx context.Context, in *pb.Create{{topascal .DBModel}}Request) (*pb.{{topascal .DBModel}}Response, error) {
+  return nil, nil
+}
+
+func (s *service)  Update{{topascal .DBModel}}(ctx context.Context, in *pb.Update{{topascal .DBModel}}Request) (*pb.{{topascal .DBModel}}Response, error) {
+  return nil, nil
+}
+
+func (s *service)  Delete{{topascal .DBModel}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
+  return nil, nil
+}
+
+func (s *service)  Get{{topascal .DBModel}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
+  return nil, nil
 }

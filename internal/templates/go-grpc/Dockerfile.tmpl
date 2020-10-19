@@ -1,7 +1,7 @@
 # Dockerfile References: https://docs.docker.com/engine/reference/builder/
 
 # Start from the latest golang base image
-FROM golang:latest as builder
+FROM golang:1.14 as builder
 
 # ARG security: https://bit.ly/2oY3pCn
 ARG DOCKER_GIT_CREDENTIALS
