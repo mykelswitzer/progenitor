@@ -15,6 +15,8 @@ import (
 )
 
 type service struct {
+  // uncomment the line below if running grpc ^v1.33 
+  // pb.Unimplemented{{topascal .Name}}ServiceServer
 }
 
 func (s *service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
