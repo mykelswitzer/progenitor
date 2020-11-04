@@ -3,10 +3,22 @@ if [ -f "$(command -v protoc)" ]; then
     VER=$(protoc --version)
     PBDIR="{{.LocalPath}}/pb/"
     echo "Using protoc version: $VER"
-    protoc \
-      --proto_path=$PBDIR \
-      --go_out=plugins=grpc:$PBDIR \
-      --go_opt=paths=source_relative $PBDIR*.proto
+    if [ -f "$(command -v protoc-gen-go-grpc)" ]; then
+      echo "Using protoc-gen-go-grpc"
+      protoc \
+        --proto_path=$PBDIR \
+        --plugin=grpc \
+        --go_out=$PBDIR --go_opt=paths=source_relative \
+        --go-grpc_out=$PBDIR --go-grpc_opt=paths=source_relative \
+        $PBDIR*.proto
+    else
+      echo "Not using protoc-gen-go-grpc"
+      protoc \
+        --proto_path=$PBDIR \
+        --go_out=plugins=grpc:$PBDIR \
+        --go_opt=paths=source_relative \
+        $PBDIR*.proto
+    fi
 else
     echo "Error: protoc was not found. Please check that it is installed."
 fi
