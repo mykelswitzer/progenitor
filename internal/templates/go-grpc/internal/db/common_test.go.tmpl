@@ -28,6 +28,7 @@ func NewTestDB(stmts map[string]string) (*Store, sqlmock.Sqlmock, error) {
 	s := Store{
 		db:    db,
 		stmts: prepared,
+		{{topascal .DBModel}}:	&{{.DBModel}}Service{db, stmts},
 	}
 
 	return &s, mock, nil
