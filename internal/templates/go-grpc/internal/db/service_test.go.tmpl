@@ -22,11 +22,11 @@ func TestNew{{$pascalDbModel}}(t *testing.T) {
     Name:       "Foobar",
   }
 
-  r, err := New{{$pascalDbModel}}({{.DBModel}}ID.String(), &proto)
+  res, err := New{{$pascalDbModel}}({{.DBModel}}ID.String(), &proto)
 
   assert.NoError(t, err, "Expected NewCategory not to error")
-  assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected UUIDs to match")
-  assert.Equal(t, proto.Name, r.Name, "Expected name to be correctly assigned")
+  assert.Equal(t, {{.DBModel}}ID, res.ID, "Expected UUIDs to match")
+  assert.Equal(t, proto.Name, res.Name, "Expected name to be correctly assigned")
 }
 
 // ensures that casting from store to proto response occurs correctly
@@ -38,10 +38,10 @@ func Test{{$pascalDbModel}}_ToProto(t *testing.T) {
     Name:       "foobar",
   }
 
-  r := {{.DBModel}}.ToProto()
+  res := {{.DBModel}}.ToProto()
 
-  assert.Equal(t, {{.DBModel}}ID.String(), r.{{$pascalDbModel}}Id, "Expected field to be mapped back to proto object correctly")
-  assert.Equal(t, "foobar", r.Name, "Expected field to be mapped back to proto object correctly")
+  assert.Equal(t, {{.DBModel}}ID.String(), res.{{$pascalDbModel}}Id, "Expected field to be mapped back to proto object correctly")
+  assert.Equal(t, "foobar", res.Name, "Expected field to be mapped back to proto object correctly")
 }
 
 func Test{{$pascalDbModel}}Service_get(t *testing.T) {
@@ -73,11 +73,11 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
       assert.FailNow(t, "transaction setup failed")
     }
 
-    result, err := store.{{$pascalDbModel}}.GetTx(ToCtx(context.Background(), tx), {{.DBModel}}ID)
+    res, err := store.{{$pascalDbModel}}.GetTx(ToCtx(context.Background(), tx), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
-    assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected correct {{.DBModel}} ID to be returned")
-    assert.Equal(t, "Foobar", r.Name, "Expected correct name to be returned")
+    assert.Equal(t, {{.DBModel}}ID, res.ID, "Expected correct {{.DBModel}} ID to be returned")
+    assert.Equal(t, "Foobar", res.Name, "Expected correct name to be returned")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
@@ -97,11 +97,11 @@ func Test{{$pascalDbModel}}Service_get(t *testing.T) {
           AddRow({{.DBModel}}ID, "Foobar"),
       )
 
-    result, err := store.{{$pascalDbModel}}.Get(context.Background(), {{.DBModel}}ID)
+    res, err := store.{{$pascalDbModel}}.Get(context.Background(), {{.DBModel}}ID)
     assert.NoError(t, err, "Expecting no query error")
 
-    assert.Equal(t, {{.DBModel}}ID, r.ID, "Expected correct {{.DBModel}} ID to be returned")
-    assert.Equal(t, "Foobar", r.Name, "Expected correct name to be returned")
+    assert.Equal(t, {{.DBModel}}ID, res.ID, "Expected correct {{.DBModel}} ID to be returned")
+    assert.Equal(t, "Foobar", res.Name, "Expected correct name to be returned")
 
     err = mock.ExpectationsWereMet()
     assert.NoError(t, err, "Expecting all mock conditions to be met")
