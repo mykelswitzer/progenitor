@@ -6,14 +6,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	txttmpl "text/template"
-)
-import (
+
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
 	rp "github.com/caring/progenitor/internal/repo"
+	str "github.com/caring/progenitor/internal/strings"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	"github.com/spf13/afero"
@@ -91,25 +90,10 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 
 func TemplateFunctions() txttmpl.FuncMap {
 	return txttmpl.FuncMap{
-		"tolower":   strings.ToLower,
-		"topascal":  ToPascal,
-		"topackage": ToPackage,
+		"tolower":     strings.ToLower,
+		"tocamel":     str.ToCamel,
+		"topascal":    str.ToPascal,
+		"topackage":   str.ToPackage,
+		"tosnakecase": str.ToSnakeCase,
 	}
-}
-
-// Converts a string to Pascal case
-func ToPascal(s string) string {
-	a := regexp.MustCompile(`-`)
-	words := a.Split(s, -1)
-	for index, word := range words {
-		words[index] = strings.Title(word)
-	}
-	return strings.Join(words, "")
-}
-
-// Formats string into acceptable go package name
-func ToPackage(s string) string {
-	a := regexp.MustCompile(`-`)
-	words := a.Split(s, -1)
-	return strings.Join(words, "")
 }

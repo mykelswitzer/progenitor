@@ -94,11 +94,12 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 // postBuildFiles will run the protoc to build the proto-generated
 // go code
 func postBuildFiles(s *Scaffold) error {
-	if err := generateProto(s); err != nil {
+
+	if err := renameServiceFiles(s); err != nil {
 		return err
 	}
 
-	if err := renameServiceFiles(s); err != nil {
+	if err := generateProto(s); err != nil {
 		return err
 	}
 
@@ -115,13 +116,6 @@ func renameServiceFiles(s *Scaffold) error {
 
 	oldName := filepath.Join(path, "pb/service.proto")
 	newName := filepath.Join(path, "pb", s.Config.GetString("projectName")+".proto")
-	err = os.Rename(oldName, newName)
-	if err != nil {
-		log.Println(err)
-	}
-
-	oldName := filepath.Join(path, "pb/service.pb.go")
-	newName := filepath.Join(path, "pb", s.Config.GetString("projectName")+".pb.go")
 	err = os.Rename(oldName, newName)
 	if err != nil {
 		log.Println(err)

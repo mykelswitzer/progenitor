@@ -3,6 +3,7 @@ package prompt
 import (
 	"os"
 	"regexp"
+	"strings"
 )
 import (
 	"github.com/caring/go-packages/pkg/errors"
@@ -33,7 +34,7 @@ func ProjectName(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing project name prompt")
 	}
 
-	config.Set("projectName", name)
+	config.Set("projectName", strings.ToLower(name))
 
 	return nil
 

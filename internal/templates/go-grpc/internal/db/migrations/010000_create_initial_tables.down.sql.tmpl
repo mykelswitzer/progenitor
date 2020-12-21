@@ -1,6 +1,6 @@
-USE {{.Name}};
+USE {{tosnakecase .Name}};
 
 -- Drop Tables
 
 -- Drop schema
-DROP SCHEMA IF EXISTS {{.Name}};
+DROP SCHEMA IF EXISTS {{tosnakecase .Name}};

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package {{topackage .Name}};
 
-option go_package = "pb";
+option go_package = "github.com/caring/{{.Name}}/pb";
 
 service {{topascal .Name}}Service {
   rpc Ping (PingRequest)                  returns (PingResponse);

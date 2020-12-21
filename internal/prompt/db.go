@@ -4,6 +4,7 @@ import "regexp"
 import (
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
+	str "github.com/caring/progenitor/internal/strings"
 	"github.com/manifoldco/promptui"
 )
 
@@ -21,7 +22,7 @@ func CoreDBObject(config *config.Config) error {
 		if len(input) < 5 {
 			return errors.New("Name must have more than 5 characters")
 		}
-		re := regexp.MustCompile(`^[a-z]+$`)
+		re := regexp.MustCompile(`^[a-zA-Z]+$`)
 		if match := re.MatchString(input); !match {
 			return errors.New("DB core object name must contain only lowercase alphabetical characters.")
 		}
@@ -32,7 +33,7 @@ func CoreDBObject(config *config.Config) error {
 		Label:    "What is your core DB object named (singular)?",
 		Validate: validate,
 		// in most cases the core object is named same as service
-		Default: config.GetString("projectName"),
+		Default: str.ToPascal(config.GetString("projectName")),
 	}
 
 	name, err := prompt.Run()

@@ -9,9 +9,9 @@ import (
 	"log"
 
 {{if .UseDB}}
-	"github.com/caring/{{tolower .Name}}/internal/db"
+	"github.com/caring/{{.Name}}/internal/db"
 {{end}}
-	"github.com/caring/{{tolower .Name}}/pb"
+	"github.com/caring/{{.Name}}/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
 	"github.com/getsentry/sentry-go"

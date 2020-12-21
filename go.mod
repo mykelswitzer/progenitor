@@ -12,6 +12,7 @@ require (
 	github.com/posener/gitfs v1.2.1
 	github.com/spf13/afero v1.3.1
 	github.com/spf13/cast v1.3.1
+	github.com/stretchr/testify v1.6.0
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 )
