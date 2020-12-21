@@ -1,7 +1,6 @@
 package strings
 
 import (
-	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -38,14 +37,16 @@ func ToPascal(s string) string {
 		return s
 	}
 
-	a := regexp.MustCompile(`-`)
-
-	buf := &stringBuilder{}
-	words := a.Split(s, -1)
-	for _, word := range words {
-		buf.WriteString(strings.Title(word))
+	if strings.Contains(s, "-") {
+		buf := &stringBuilder{}
+		words := strings.Split(s, "-")
+		for _, word := range words {
+			buf.WriteString(strings.Title(word))
+		}
+		return buf.String()
 	}
-	return buf.String()
+
+	return s
 }
 
 // Formats string into acceptable go package name
