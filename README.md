@@ -5,6 +5,8 @@ Based on the available commands, and by answering the prompts, it will create a 
 
 In most cases, the code generated will be a functioning service or application, to which the engineer need only add business logic.
 
+See our [Getting Started Guide here](https://github.com/caring/progenitor/wiki/Getting-Started-with-Progenitor).
+
 Following are a list of commands that can by run by Progenitor to create code scaffolds:
 
 ## go-grpc
