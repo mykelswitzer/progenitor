@@ -44,7 +44,7 @@ resource "aws_secretsmanager_secret" "db_migration_src_string" {
 
 resource "aws_secretsmanager_secret_version" "db_migration_src_version" {
   secret_id      = aws_secretsmanager_secret.db_migration_src_string.id
-  secret_string  = "github://${data.aws_secretsmanager_secret_version.github_user.secret_string}:${data.aws_secretsmanager_secret_version.github_token.secret_string}@caring/${local.service_name}/internal/db/migrations"
+  secret_string  = "github://${data.aws_secretsmanager_secret_version.github_user.secret_string}:${data.aws_secretsmanager_secret_version.github_token.secret_string}@caring/${local.repo_name}/internal/db/migrations"
   version_stages = [
     module.workspace_context.workspace_deploy_env[ terraform.workspace ]
   ]

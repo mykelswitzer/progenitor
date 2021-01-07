@@ -26,7 +26,7 @@ module ecs_service {
   ##################################
   # service variables
   ##################################
-  service_name       = local.service_name
+  service_name       = local.repo_name
   ecs_cluster_id     = data.terraform_remote_state.network.outputs.ecs_cluster_id
   container_port     = var.ecs_task_port
   container_count    = 2
@@ -130,16 +130,16 @@ data template_file "task_definition" {
     ##################
     # Tracing
     ##################
-    trace_destination_dns  = var.trace_destination_dns[ terraform.workspace ]
-    trace_destination_port = var.trace_destination_port[ terraform.workspace ]
-    trace_disable          = var.trace_disable[ terraform.workspace ]
-    trace_sample_rate      = var.trace_sample_rate[ terraform.workspace ]
+    trace_destination_dns  = var.trace_destination_dns[terraform.workspace]
+    trace_destination_port = var.trace_destination_port[terraform.workspace]
+    trace_disable          = var.trace_disable[terraform.workspace]
+    trace_sample_rate      = var.trace_sample_rate[terraform.workspace]
 
     #################
     # sentry
     #################
     sentry_dsn     = data.aws_secretsmanager_secret.sentry_dsn.arn
     sentry_env     = local.env_name
-    sentry_disable = var.sentry_disable[ terraform.workspace ]
+    sentry_disable = var.sentry_disable[terraform.workspace]
   }
 }
