@@ -13,13 +13,13 @@ import (
 
 {{$pascalDbModel := topascal .DBModel}}
 
-// {{.DBModel}}Service provides an API for interacting with the {{.DBModel}}s table
+// {{.DBModel}}Service provides an API for interacting with the {{toplural .DBModel}} table
 type {{.DBModel}}Service struct {
 	db    *sql.DB
 	stmts map[string]*sql.Stmt
 }
 
-// {{$pascalDbModel}} is a struct representation of a row in the {{.DBModel}}s table
+// {{$pascalDbModel}} is a struct representation of a row in the {{toplural .DBModel}} table
 type {{$pascalDbModel}} struct {
 	ID  	uuid.UUID
 	Name  string
@@ -196,12 +196,12 @@ func (svc *{{.DBModel}}Service) update(ctx context.Context, useTx bool, input *{
 	return nil
 }
 
-// Delete sets deleted_at for a single {{.DBModel}}s row
+// Delete sets deleted_at for a single {{toplural .DBModel}} row
 func (svc *{{.DBModel}}Service) Delete(ctx context.Context, ID uuid.UUID) error {
 	return svc.delete(ctx, false, ID)
 }
 
-// DeleteTx sets deleted_at for a single {{.DBModel}}s row within a tx from ctx
+// DeleteTx sets deleted_at for a single {{toplural .DBModel}} row within a tx from ctx
 func (svc *{{.DBModel}}Service) DeleteTx(ctx context.Context, ID uuid.UUID) error {
 	return svc.delete(ctx, true, ID)
 }

@@ -1,15 +1,15 @@
 package db
 
 var statements = map[string]string{
-  // inserts a new row into the {{.DBModel}}s table
+  // inserts a new row into the {{toplural .DBModel}} table
   "create-{{.DBModel}}": `
-  INSERT INTO {{.DBModel}}s ({{.DBModel}}_id, name)
+  INSERT INTO {{toplural .DBModel}} ({{.DBModel}}_id, name)
     values(UUID_TO_BIN(?), ?)
   `,
   // soft deletes a {{.DBModel}} by id
   "delete-{{.DBModel}}": `
   UPDATE
-    {{.DBModel}}s
+    {{toplural .DBModel}}
   SET
     deleted_at = NOW()
   WHERE
@@ -21,7 +21,7 @@ var statements = map[string]string{
   SELECT
     {{.DBModel}}_id, name
   FROM
-    {{.DBModel}}s
+    {{toplural .DBModel}}
   WHERE
     {{.DBModel}}_id = UUID_TO_BIN(?)
     AND deleted_at IS NULL
@@ -29,7 +29,7 @@ var statements = map[string]string{
   // update a single {{.DBModel}} row by ID
   "update-{{.DBModel}}": `
   UPDATE
-    {{.DBModel}}s
+    {{toplural .DBModel}}
   SET
     name = ?
   WHERE

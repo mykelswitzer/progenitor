@@ -4,6 +4,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	pl "github.com/gertd/go-pluralize"
 )
 
 type stringBuilder = strings.Builder
@@ -47,6 +49,26 @@ func ToPascal(s string) string {
 	}
 
 	return s
+}
+
+func ToPlural(s string) string {
+
+	var singular string = s
+	var prefix string = ""
+	if strings.Contains(s, "-") {
+		parts := strings.SplitAfterN(s, "-", -1)
+		max := len(parts) - 1
+		singular = parts[max]
+		for i, v := range parts {
+			if i < max {
+				prefix = prefix + v
+			}
+		}
+	}
+
+	plural := pl.NewClient().Plural(singular)
+
+	return prefix + plural
 }
 
 // Formats string into acceptable go package name

@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/aws/aws-sdk-go-v2 v0.23.0
 	github.com/caring/go-packages v1.6.2
+	github.com/gertd/go-pluralize v0.1.7
 	github.com/go-git/go-git/v5 v5.1.0
 	github.com/google/go-github/v32 v32.0.0
 	github.com/hashicorp/terraform-exec v0.8.0

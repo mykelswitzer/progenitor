@@ -93,6 +93,7 @@ func TemplateFunctions() txttmpl.FuncMap {
 		"tolower":     strings.ToLower,
 		"tocamel":     str.ToCamel,
 		"topascal":    str.ToPascal,
+		"toplural":    str.ToPlural,
 		"topackage":   str.ToPackage,
 		"tosnakecase": str.ToSnakeCase,
 	}

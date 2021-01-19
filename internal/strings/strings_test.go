@@ -33,6 +33,33 @@ func TestToPascal(t *testing.T) {
 
 }
 
+func TestToPlural(t *testing.T) {
+	str1 := "box"
+	str2 := "boxes"
+
+	strout := ToPlural(str1)
+	assert.Equal(t, strout, str2, "Expected string to be Pluralized")
+
+	str1 = "partner-community"
+	str2 = "partner-communities"
+
+	strout = ToPlural(str1)
+	assert.Equal(t, strout, str2, "Expected string to be Pluralized")
+
+	str1 = "addresses"
+	str2 = "addresses"
+
+	strout = ToPlural(str1)
+	assert.Equal(t, strout, str2, "Expected string to be Pluralized")
+
+	str1 = "weekday"
+	str2 = "weekdays"
+
+	strout = ToPlural(str1)
+	assert.Equal(t, strout, str2, "Expected string to be Pluralized")
+
+}
+
 func TestSnakeCase(t *testing.T) {
 	str1 := "test-string"
 	str2 := "test_string"
