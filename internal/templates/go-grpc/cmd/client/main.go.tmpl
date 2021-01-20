@@ -32,7 +32,7 @@ func main() {
 
     index := 0
     for {
-        trip_time := time.Now()
+        tripTime := time.Now()
         ctx, cancel := context.WithTimeout(context.Background(), time.Second)
         defer cancel()
         r, err := c.Ping(ctx, &pb.PingRequest{Data: data})
@@ -40,7 +40,7 @@ func main() {
             log.Fatalf("could not connect to: %v", err)
         }
 
-        log.Printf("%d characters roundtrip to (%s): seq=%d time=%s", len(data), address, index, time.Since(trip_time))
+        log.Printf("%d characters roundtrip to (%s): seq=%d time=%s", len(data), address, index, time.Since(tripTime))
         log.Print(r.Data)
         time.Sleep(1 * time.Second)
         index++
