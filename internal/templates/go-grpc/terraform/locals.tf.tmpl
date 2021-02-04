@@ -70,6 +70,12 @@ locals {
     caring-prod : "262144"
   }
 
+  trace_destination_dns = {
+    caring-dev : "",
+    caring-stg : "",
+    caring-prod : ""
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,
