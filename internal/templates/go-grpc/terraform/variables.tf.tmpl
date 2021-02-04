@@ -1,35 +1,3 @@
-{{if .UseReporting}}
-variable "storage_aws_iam_user_arn" {
-  description = "The AWS IAM user created for your Snowflake account to use with storage integrations"
-  type        = map(string)
-  default = {
-    caring-dev: "",
-    caring-stg: "",
-    caring-prod: ""
-  }
-}
-
-variable "storage_aws_external_id" {
-  description = "The external ID that is needed to establish a trust relationship with Snowflake"
-  type = map(string)
-  default = {
-    caring-dev: "",
-    caring-stg: "",
-    caring-prod: ""
-  }
-}
-
-variable "snowpipe_sqs_arn" {
-  description = "The ARN of the SQS queue created for automating snowpipe ingestion from S3"
-  type = map(string)
-  default = {
-    caring-dev: "",
-    caring-stg: "",
-    caring-prod: ""
-  }
-}
-{{end}}
-
 variable "aws_region" {
   description = "The AWS region to use for this plan."
   type        = string

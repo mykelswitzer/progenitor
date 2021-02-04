@@ -19,6 +19,26 @@ locals {
     "caring-prod" = 30
   }
 
+{{if .UseReporting}}
+  storage_aws_iam_user_arn = {
+    "caring-dev": "",
+    "caring-stg": "",
+    "caring-prod": ""
+  }
+
+  storage_aws_external_id = {
+    "caring-dev": "",
+    "caring-stg": "",
+    "caring-prod": ""
+  }
+
+  snowpipe_sqs_arn = {
+    "caring-dev": "",
+    "caring-stg": "",
+    "caring-prod": ""
+  }
+{{end}}
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,
