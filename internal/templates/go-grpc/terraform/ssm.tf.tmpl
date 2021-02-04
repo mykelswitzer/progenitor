@@ -1,7 +1,7 @@
 resource "aws_ssm_parameter" "dns" {
   name      = "/${local.service_name}/dns"
   type      = "String"
-  value     = module.ecs_service.nlb_dns_name
+  value     = "${local.dns_record[terraform.workspace]}.caring.com"
   overwrite = true
   tags      = local.tags
 }
