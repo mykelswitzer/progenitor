@@ -4,21 +4,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "az_count" {
-  type    = number
-  default = 2
-}
-
-variable "log_level" {
-  description = "Log level to use for contain based Go applications using Caring's logging package"
-  type        = map(string)
-  default     = {
-    caring-dev : "DEBUG",
-    caring-stg : "DEBUG",
-    caring-prod : "INFO"
-  }
-}
-
 variable "log_enable_dev" {
   description = "If set to TRUE, outputs will use Zap's pretty print functionality"
   type        = map(string)

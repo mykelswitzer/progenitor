@@ -4,40 +4,47 @@ locals {
   deploy_env_name = module.workspace_context.workspace_deploy_env[terraform.workspace]
   subdomain       = module.workspace_context.env_subdomain[terraform.workspace]
   env_name        = module.workspace_context.env_name[terraform.workspace]
-  app_count       = 3
+  container_count = 3
   ecs_task_port   = 443
+  aws_region      = "us-east-1"
 
   dns_record = {
-    "caring-prod": local.repo_name
-    "caring-stg": "${local.repo_name}.${local.subdomain}"
-    "caring-dev": "${local.repo_name}.${local.subdomain}"
+    caring-prod: local.repo_name
+    caring-stg: "${local.repo_name}.${local.subdomain}"
+    caring-dev: "${local.repo_name}.${local.subdomain}"
   }
 
   secretsmanager_recovery_window = {
-    "caring-dev"  = 0
-    "caring-stg"  = 0
-    "caring-prod" = 30
+    caring-dev  = 0
+    caring-stg  = 0
+    caring-prod = 30
   }
 
 {{if .UseReporting}}
   storage_aws_iam_user_arn = {
-    "caring-dev": "",
-    "caring-stg": "",
-    "caring-prod": ""
+    caring-dev: "",
+    caring-stg: "",
+    caring-prod: ""
   }
 
   storage_aws_external_id = {
-    "caring-dev": "",
-    "caring-stg": "",
-    "caring-prod": ""
+    caring-dev: "",
+    caring-stg: "",
+    caring-prod: ""
   }
 
   snowpipe_sqs_arn = {
-    "caring-dev": "",
-    "caring-stg": "",
-    "caring-prod": ""
+    caring-dev: "",
+    caring-stg: "",
+    caring-prod: ""
   }
 {{end}}
+
+  log_level = {
+    caring-dev : "DEBUG",
+    caring-stg : "DEBUG",
+    caring-prod : "INFO"
+  }
 
   tags = {
     service_name = local.service_name,
