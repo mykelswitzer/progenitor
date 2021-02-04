@@ -153,16 +153,6 @@ variable "trace_sample_rate" {
   }
 }
 
-variable "sentry_disable" {
-  description = "If set to TRUE, Sentry will be disabled"
-  type        = map(string)
-  default     = {
-    caring-dev : "TRUE",
-    caring-stg : "TRUE",
-    caring-prod : "TRUE"
-  }
-}
-
 {{if .UseDB}}
 variable "rds_instance_class" {
   description = "The EC2 instance type to use for the RDS instance"

@@ -27,9 +27,7 @@
       { "name": "TRACE_DESTINATION_PORT", "value": "${trace_destination_port}"},
       { "name": "TRACE_DISABLE", "value": "${trace_disable}"},
       { "name": "TRACE_SAMPLE_RATE", "value": "${trace_sample_rate}"},
-      { "name": "SENTRY_DSN", "value": "${sentry_dsn}"},
-      { "name": "SENTRY_ENV", "value": "${sentry_env}"},
-      { "name": "SENTRY_DISABLE", "value": "${sentry_disable}"}
+      { "name": "ENV", "value": "${env}"}
     ],
 {{if .UseDB}}
     "secrets": [
