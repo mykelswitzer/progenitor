@@ -119,7 +119,7 @@ data template_file "task_definition" {
 {{end}}
     log_disable_kinesis   = local.log_disable_kinesis[terraform.workspace]
     log_flush_interval    = local.log_flush_interval[terraform.workspace]
-    log_buffer_size       = var.log_buffer_size[terraform.workspace]
+    log_buffer_size       = local.log_buffer_size[terraform.workspace]
     env                   = local.env_name
 
     ##################

@@ -64,6 +64,12 @@ locals {
     caring-prod : "5"
   }
 
+  log_buffer_size = {
+    caring-dev : "262144",
+    caring-stg : "262144",
+    caring-prod : "262144"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,
