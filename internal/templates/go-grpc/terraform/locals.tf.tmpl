@@ -58,6 +58,12 @@ locals {
     caring-prod : "FALSE"
   }
 
+  log_flush_interval = {
+    caring-dev : "5",
+    caring-stg : "5",
+    caring-prod : "5"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,

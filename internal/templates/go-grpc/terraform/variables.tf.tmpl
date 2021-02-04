@@ -1,13 +1,3 @@
-variable "log_flush_interval" {
-  description = "The interval in seconds to flush the log buffer"
-  type        = map(string)
-  default     = {
-    caring-dev : "10",
-    caring-stg : "10",
-    caring-prod : "10"
-  }
-}
-
 variable "log_buffer_size" {
   description = "The size in bytes of the log buffer"
   type        = map(string)
