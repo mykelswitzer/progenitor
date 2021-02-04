@@ -46,6 +46,12 @@ locals {
     caring-prod : "INFO"
   }
 
+  log_enable_dev = {
+    caring-dev : "FALSE",
+    caring-stg : "FALSE",
+    caring-prod : "FALSE"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,

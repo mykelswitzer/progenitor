@@ -4,16 +4,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "log_enable_dev" {
-  description = "If set to TRUE, outputs will use Zap's pretty print functionality"
-  type        = map(string)
-  default     = {
-    caring-dev : "FALSE",
-    caring-stg : "FALSE",
-    caring-prod : "FALSE"
-  }
-}
-
 variable "log_disable_kinesis" {
   description = "If set to TRUE, containerized application will not log via Kinesis"
   type        = map(string)

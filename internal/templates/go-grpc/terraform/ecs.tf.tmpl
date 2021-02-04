@@ -112,7 +112,7 @@ data template_file "task_definition" {
     #########################
     log_name              = local.service_name
     log_level             = local.log_level[terraform.workspace]
-    log_enable_dev        = var.log_enable_dev[terraform.workspace]
+    log_enable_dev        = local.log_enable_dev[terraform.workspace]
     log_stream_monitoring = module.firehose.firehose_monitoring_stream_name
 {{if .UseReporting}}
     log_stream_reporting  = module.firehose.firehose_reporting_stream_name
