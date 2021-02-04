@@ -1,11 +1,18 @@
 resource "aws_ssm_parameter" "dns" {
   name      = "/${local.service_name}/dns"
   type      = "String"
-  value     = "${local.dns_record[terraform.workspace]}.caring.com"
+  value     = module.service_dns_record.fqdn
   overwrite = true
   tags      = local.tags
 }
 
+resource "aws_ssm_parameter" "port" {
+  name      = "/${local.service_name}/port"
+  type      = "String"
+  value     = local.ecs_task_port
+  overwrite = true
+  tags      = local.tags
+}
 
 data "aws_secretsmanager_secret_version" "github_user" {
   secret_id     = data.terraform_remote_state.secrets.outputs.github_user_string_arn
