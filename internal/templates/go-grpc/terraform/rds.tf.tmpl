@@ -41,11 +41,11 @@ module rds_db {
   source = "git@github.com:caring/tf-modules.git//aws/rds?ref=v1.8.0"
 
   rds_instance_name     = "${local.repo_name}-db"
-  rds_allocated_storage = var.rds_disk_size
+  rds_allocated_storage = local.rds_disk_size
   rds_engine_type       = "mysql"
   rds_engine_version    = "8.0.17"
   db_parameter_group    = aws_db_parameter_group.stored-procedures-enabled.id
-  rds_instance_class    = var.rds_instance_class[terraform.workspace]
+  rds_instance_class    = local.rds_instance_class[terraform.workspace]
   skip_final_snapshot   = true
   database_name         = local.service_name
   database_user         = local.service_name

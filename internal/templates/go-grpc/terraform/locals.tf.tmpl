@@ -14,6 +14,15 @@ locals {
     caring-dev: "${local.repo_name}.${local.subdomain}"
   }
 
+{{if .UseDB}}
+  rds_disk_size = 20
+  rds_instance_class = {
+    caring-dev : "db.t3.micro",
+    caring-stg : "db.t3.micro",
+    caring-prod : "db.t3.micro"
+  }
+{{end}}
+
   secretsmanager_recovery_window = {
     caring-dev  = 0
     caring-stg  = 0
