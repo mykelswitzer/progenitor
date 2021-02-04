@@ -76,6 +76,12 @@ locals {
     caring-prod : ""
   }
 
+  trace_destination_port = {
+    caring-dev : "",
+    caring-stg : "",
+    caring-prod : ""
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,

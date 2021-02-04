@@ -1,13 +1,3 @@
-variable "trace_destination_port" {
-  description = "TCP port of the trace destination"
-  type        = map(string)
-  default     = {
-    caring-dev : "",
-    caring-stg : "",
-    caring-prod : ""
-  }
-}
-
 variable "trace_disable" {
   description = "If set to TRUE, trace aggregation will be disabled."
   type        = map(string)
