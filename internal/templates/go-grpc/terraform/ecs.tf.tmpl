@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "service_log_group" {
 }
 
 module ecs_service {
-  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v1.6.0"
+  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v1.8.0"
   vpc_id = data.terraform_remote_state.network.outputs.vpc_id
   tags   = local.tags
 
@@ -134,12 +134,5 @@ data template_file "task_definition" {
     trace_destination_port = var.trace_destination_port[terraform.workspace]
     trace_disable          = var.trace_disable[terraform.workspace]
     trace_sample_rate      = var.trace_sample_rate[terraform.workspace]
-
-    #################
-    # sentry
-    #################
-    sentry_dsn     = data.aws_secretsmanager_secret.sentry_dsn.arn
-    sentry_env     = local.env_name
-    sentry_disable = var.sentry_disable[terraform.workspace]
   }
 }
