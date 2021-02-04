@@ -82,6 +82,12 @@ locals {
     caring-prod : ""
   }
 
+  trace_disable = {
+    caring-dev : "TRUE",
+    caring-stg : "TRUE",
+    caring-prod : "TRUE"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,

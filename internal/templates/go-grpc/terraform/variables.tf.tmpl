@@ -1,13 +1,3 @@
-variable "trace_disable" {
-  description = "If set to TRUE, trace aggregation will be disabled."
-  type        = map(string)
-  default     = {
-    caring-dev : "TRUE",
-    caring-stg : "TRUE",
-    caring-prod : "TRUE"
-  }
-}
-
 variable "trace_sample_rate" {
   description = "The sample rate per second to use for trace aggregation"
   type        = map(string)
