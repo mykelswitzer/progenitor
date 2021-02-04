@@ -117,7 +117,7 @@ data template_file "task_definition" {
 {{if .UseReporting}}
     log_stream_reporting  = module.firehose.firehose_reporting_stream_name
 {{end}}
-    log_disable_kinesis   = var.log_disable_kinesis[terraform.workspace]
+    log_disable_kinesis   = local.log_disable_kinesis[terraform.workspace]
     log_flush_interval    = var.log_flush_interval[terraform.workspace]
     log_buffer_size       = var.log_buffer_size[terraform.workspace]
     env                   = local.env_name

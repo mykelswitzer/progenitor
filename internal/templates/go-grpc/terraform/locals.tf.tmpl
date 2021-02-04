@@ -52,6 +52,12 @@ locals {
     caring-prod : "FALSE"
   }
 
+  log_disable_kinesis = {
+    caring-dev : "FALSE",
+    caring-stg : "FALSE",
+    caring-prod : "FALSE"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,

@@ -1,19 +1,3 @@
-variable "aws_region" {
-  description = "The AWS region to use for this plan."
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "log_disable_kinesis" {
-  description = "If set to TRUE, containerized application will not log via Kinesis"
-  type        = map(string)
-  default     = {
-    caring-dev : "FALSE",
-    caring-stg : "FALSE",
-    caring-prod : "FALSE"
-  }
-}
-
 variable "log_flush_interval" {
   description = "The interval in seconds to flush the log buffer"
   type        = map(string)
