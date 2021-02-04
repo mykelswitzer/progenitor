@@ -128,6 +128,6 @@ data template_file "task_definition" {
     trace_destination_dns  = local.trace_destination_dns[terraform.workspace]
     trace_destination_port = local.trace_destination_port[terraform.workspace]
     trace_disable          = local.trace_disable[terraform.workspace]
-    trace_sample_rate      = var.trace_sample_rate[terraform.workspace]
+    trace_sample_rate      = local.trace_sample_rate[terraform.workspace]
   }
 }

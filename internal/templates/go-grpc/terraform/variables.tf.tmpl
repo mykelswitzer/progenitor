@@ -1,13 +1,3 @@
-variable "trace_sample_rate" {
-  description = "The sample rate per second to use for trace aggregation"
-  type        = map(string)
-  default     = {
-    caring-dev : "1.0",
-    caring-stg : "1.0",
-    caring-prod : "1.0"
-  }
-}
-
 {{if .UseDB}}
 variable "rds_instance_class" {
   description = "The EC2 instance type to use for the RDS instance"

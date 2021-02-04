@@ -88,6 +88,12 @@ locals {
     caring-prod : "TRUE"
   }
 
+  trace_sample_rate = {
+    caring-dev : "1.0",
+    caring-stg : "1.0",
+    caring-prod : "1.0"
+  }
+
   tags = {
     service_name = local.service_name,
     env          = terraform.workspace,
