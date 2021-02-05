@@ -1,12 +1,12 @@
 module "firehose" {
   source = "git@github.com:caring/tf-modules.git//aws/firehose_monitoring{{if .UseReporting}}_reporting{{end}}?ref=v1.8.0"
   
-  service_name              = local.service_name
-  task_role_name            = aws_iam_role.ecs_task_role.name
+  service_name                  = local.service_name
+  task_role_name                = aws_iam_role.ecs_task_role.name
 {{if .UseReporting}}
-  storage_aws_iam_user_arn  = local.storage_aws_iam_user_arn[terraform.workspace]
-  storage_aws_external_id   = local.storage_aws_external_id[terraform.workspace]
-  snowpipe_sqs_arn          = local.snowpipe_sqs_arn[terraform.workspace]
+  snowflake_int_user_role_arn   = local.snowflake_int_user_role_arn[terraform.workspace]
+  snowflake_users_role_arn      = local.snowflake_users_role_arn[terraform.workspace]
+  snowpipe_sqs_arn              = local.snowpipe_sqs_arn[terraform.workspace]
 {{end}}
   tags = local.tags
 }

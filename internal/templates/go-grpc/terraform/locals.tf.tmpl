@@ -29,16 +29,16 @@ locals {
   }
 
 {{if .UseReporting}}
-  storage_aws_iam_user_arn = {
-    caring-dev: "",
-    caring-stg: "",
-    caring-prod: ""
+  snowflake_int_role_arn = {
+    "caring-prod": "arn:aws:iam::928074183842:role/snowflake-int-role",
+    "caring-stg": "arn:aws:iam::445934931244:role/snowflake-int-role",
+    "caring-dev": "arn:aws:iam::182565773517:role/snowflake-int-role"
   }
 
-  storage_aws_external_id = {
-    caring-dev: "",
-    caring-stg: "",
-    caring-prod: ""
+  snowflake_users_role = {
+    "caring-prod": "arn:aws:iam::928074183842:role/snowflake-users-role",
+    "caring-stg": "arn:aws:iam::445934931244:role/snowflake-users-role",
+    "caring-dev": "arn:aws:iam::182565773517:role/snowflake-users-role"
   }
 
   snowpipe_sqs_arn = {
