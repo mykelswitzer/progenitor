@@ -4,7 +4,6 @@ locals {
   deploy_env_name = module.workspace_context.workspace_deploy_env[terraform.workspace]
   subdomain       = module.workspace_context.env_subdomain[terraform.workspace]
   env_name        = module.workspace_context.env_name[terraform.workspace]
-  container_count = 3
   ecs_task_port   = 443
   aws_region      = "us-east-1"
 

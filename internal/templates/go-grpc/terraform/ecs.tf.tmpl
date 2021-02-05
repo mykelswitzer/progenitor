@@ -29,7 +29,7 @@ module ecs_service {
   service_name       = local.repo_name
   ecs_cluster_id     = data.terraform_remote_state.network.outputs.ecs_cluster_id
   container_port     = local.ecs_task_port
-  container_count    = local.container_count
+  container_count    = 3
   # iam_role         = ecs_iam_role_arn
   #health_check_grace_period_seconds = (using default)
   #cpu                   = (using default)
