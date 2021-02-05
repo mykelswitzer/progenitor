@@ -2,3 +2,14 @@
 output "service_url" {
   value = module.service_dns_record.fqdn
 }
+
+output "env_vars" {
+  value = [{
+    "name" = "${upper(local.service_name)}_DNS",
+    "value" = "${module.service_dns_record.fqdn}"
+  },
+  {
+    "name" = "${upper(local.service_name)}_PORT",
+    "value" = "${local.ecs_task_port}"
+  }]
+}
