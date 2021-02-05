@@ -14,7 +14,6 @@ import (
 	"github.com/caring/{{.Name}}/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
-	"github.com/getsentry/sentry-go"
 
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
@@ -38,7 +37,6 @@ var (
 
 func init() {
 	l = initLogger()
-	initSentry(l)
 {{if .UseDB}}
 	dbConnection = setDBConnectionString(l)
 	migrateDatabase(l, dbConnection)
@@ -49,7 +47,6 @@ func init() {
 }
 
 func main() {
-	defer sentry.Flush(5 * time.Second)
 	defer t.Close()
 	defer l.Sync()
 	defer l.Close()
@@ -57,7 +54,6 @@ func main() {
 	// main listener
 	lis, err := net.Listen("tcp", ":"+envMust("PORT"))
 	if err != nil {
-		sentry.CaptureException(err)
 		l.Fatal("Failed to initialize net listener:" + err.Error())
 	}
 
@@ -94,7 +90,6 @@ func main() {
 
 	for err := range eChan {
 		if err != nil {
-			sentry.CaptureException(err)
 			l.Error("Error from one of the HTTP protocols:" + err.Error())
 		}
 	}
@@ -107,7 +102,6 @@ func envMust(varName string) string {
 	value := os.Getenv(varName)
 	if value == "" {
 		e := errors.New("environment variable missing - " + varName)
-		sentry.CaptureException(e)
 		if l != nil {
 			l.Fatal(e.Error())
 		} else {
