@@ -27,6 +27,7 @@ module ecs_service {
   # service variables
   ##################################
   service_name       = local.repo_name
+  ecs_cluster_name   = "main"
   ecs_cluster_id     = data.terraform_remote_state.network.outputs.ecs_cluster_id
   container_port     = local.ecs_task_port
   container_count    = 3
