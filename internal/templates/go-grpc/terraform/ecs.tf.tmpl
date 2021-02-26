@@ -13,7 +13,7 @@ module ecs_service {
   # load balancer variables
   ##################################
   internal            = "false"
-  nlb_listener_port   = var.ecs_task_port
+  nlb_listener_port   = local.ecs_task_port
   # nlb_protocol          = "TCP" (Default)
   listener_protocl    = "TLS"
   nlb_subnets         = data.terraform_remote_state.network.outputs.vpc_public_subnet_ids
@@ -76,7 +76,7 @@ data template_file "task_definition" {
     #########################
     image_url      = "${aws_ecr_repository.ecr.repository_url}:latest"
     container_name = local.service_name
-    container_port = var.ecs_task_port
+    container_port = local.ecs_task_port
 
     ########################
     # Logging (ECS)

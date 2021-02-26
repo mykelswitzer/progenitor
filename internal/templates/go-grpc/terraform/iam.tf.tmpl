@@ -32,8 +32,8 @@ data "aws_iam_policy_document" "ecs_task_role" {
     ]
     resources = [
 {{if .UseDB}}
-      "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${local.service_name}_rds_db_pass-??????",
-      "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${local.service_name}_db_migration_src-??????",
+      "arn:aws:secretsmanager:${local.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${local.service_name}_rds_db_pass-??????",
+      "arn:aws:secretsmanager:${local.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${local.service_name}_db_migration_src-??????",
 {{end}}
     ]
   }
