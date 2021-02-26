@@ -1,14 +1,14 @@
 syntax = "proto3";
 package {{topackage .Name}};
 
-option go_package = "github.com/caring/{{.Name}}/pb";
+option go_package = "github.com/caring/{{.Name}}/api/pb";
 
 service {{topascal .Name}}Service {
   rpc Ping (PingRequest)                  returns (PingResponse);
   rpc Create{{topascal .DBModel}}(Create{{topascal .DBModel}}Request) returns ({{topascal .DBModel}}Response) {}
   rpc Update{{topascal .DBModel}}(Update{{topascal .DBModel}}Request) returns ({{topascal .DBModel}}Response) {}
-  rpc Delete{{topascal .DBModel}}(ByIDRequest)          returns ({{topascal .DBModel}}Response) {}
-  rpc Get{{topascal .DBModel}}(ByIDRequest)             returns ({{topascal .DBModel}}Response) {}
+  rpc Delete{{topascal .DBModel}}(ByUUIDRequest)          returns ({{topascal .DBModel}}Response) {}
+  rpc Get{{topascal .DBModel}}(ByUUIDRequest)             returns ({{topascal .DBModel}}Response) {}
 }
 
 // #################################
@@ -26,7 +26,11 @@ message PingResponse {
 // #################################
 //          Shared Messages
 // #################################
-message ByIDRequest {
+message ByIntIDRequest {
+  int64 id = 1;
+}
+
+message ByUUIDRequest {
   string id = 1;
 }
 

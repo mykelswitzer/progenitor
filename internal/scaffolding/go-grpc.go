@@ -9,6 +9,7 @@ import (
 import (
 	_ "github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
+	"github.com/caring/progenitor/internal/strings"
 )
 
 type goGrpcTemplateData struct {
@@ -60,6 +61,10 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		grpcProject.SkipTemplates = append(grpcProject.SkipTemplates, "terraform/rds.tf.tmpl")
 	}
 
+	apiDir := Dir{Name: "api"}
+	apiDir.SubDirs = append(apiDir.SubDirs, Dir{Name: "pb"})
+	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, apiDir)
+
 	cmdDir := Dir{Name: "cmd"}
 	cmdClientDir := Dir{Name: "client"}
 	cmdDir.SubDirs = append(cmdDir.SubDirs, cmdClientDir)
@@ -77,7 +82,6 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	internalDir.SubDirs = append(internalDir.SubDirs, Dir{Name: "handlers"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, internalDir)
 
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pb"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
 	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: ".circleci"})
 
@@ -114,8 +118,8 @@ func renameServiceFiles(s *Scaffold) error {
 	base, err := os.Getwd()
 	path := filepath.Join(base, s.Config.GetString("projectDir"))
 
-	oldName := filepath.Join(path, "pb/service.proto")
-	newName := filepath.Join(path, "pb", s.Config.GetString("projectName")+".proto")
+	oldName := filepath.Join(path, "api/pb/service.proto")
+	newName := filepath.Join(path, "api/pb", strings.ToPackage(s.Config.GetString("projectName"))+".proto")
 	err = os.Rename(oldName, newName)
 	if err != nil {
 		log.Println(err)
@@ -150,7 +154,7 @@ func generateProto(s *Scaffold) error {
 		log.Println("Relative path provided, unable to determine root.")
 		os.Exit(1)
 	}
-	genProtoPath := "pb"
+	genProtoPath := "api/pb"
 	path := filepath.Join(base, s.Config.GetString("projectDir"), genProtoPath)
 
 	if err := os.Chmod(path, 0777); err != nil {
