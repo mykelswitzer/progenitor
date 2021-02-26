@@ -30,3 +30,17 @@ data "terraform_remote_state" "secrets" {
     encrypt = true
   }
 }
+
+#####################################################
+###################### Logging ######################
+#####################################################
+data "terraform_remote_state" "logging" {
+  backend   = "s3"
+  workspace = terraform.workspace
+  config = {
+    bucket  = "caring-tf-state"
+    key     = "tf-core/logging/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
+  }
+}
