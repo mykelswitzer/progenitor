@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "service_log_group" {
 }
 
 module ecs_service {
-  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v1.8.0"
+  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v1.9.2"
   vpc_id = data.terraform_remote_state.network.outputs.vpc_id
   tags   = local.tags
 
@@ -21,6 +21,7 @@ module ecs_service {
     data.terraform_remote_state.network.outputs.nlb_sg_id,
     data.terraform_remote_state.network.outputs.ecs_sg_id
   ]
+  lb_access_logs_bucket_name  = data.terraform_remote_state.logging.outputs.lb_access_logs_bucket.name
   ssl_certificate_arn = module.ssl_cert.valid_cert_arn
 
   ##################################
@@ -39,10 +40,12 @@ module ecs_service {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_task_role.arn
 
+  #################################
+  # CloudWatch Variables
   ##################################
-  # logging variables
-  ##################################
-  log_retention = 30
+  db_instance_identifier          = "${local.service_name}-db"
+  aws_region                      = "us-east-1"
+  firehose_reporting_stream_name  = module.firehose.firehose_monitoring_stream_name
 }
 
 {{if .UseDB}}
