@@ -38,7 +38,7 @@ resource "aws_db_parameter_group" "stored-procedures-enabled" {
 }
 
 module rds_db {
-  source = "git@github.com:caring/tf-modules.git//aws/rds?ref=v1.8.0"
+  source = "git@github.com:caring/tf-modules.git//aws/rds?ref=v1.9.2"
 
   rds_instance_name     = "${local.repo_name}-db"
   rds_allocated_storage = local.rds_disk_size
