@@ -78,7 +78,7 @@ data template_file "task_definition" {
     # container info
     #########################
     image_url      = "${aws_ecr_repository.ecr.repository_url}:latest"
-    container_name = local.service_name
+    container_name = local.repo_name
     container_port = local.ecs_task_port
 
     ########################
