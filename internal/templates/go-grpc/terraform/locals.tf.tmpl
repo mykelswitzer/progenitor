@@ -20,6 +20,11 @@ locals {
     caring-stg : "db.t3.micro",
     caring-prod : "db.t3.micro"
   }
+  public_rds = {
+    caring-dev : "true",
+    caring-stg : "false",
+    caring-prod : "false"
+  }
 {{end}}
 
   secretsmanager_recovery_window = {
