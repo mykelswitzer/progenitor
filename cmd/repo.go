@@ -2,49 +2,72 @@ package cmd
 
 import (
 	"context"
-	"log"
-)
-import (
+
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
-	rp "github.com/caring/progenitor/internal/repo"
+	"github.com/caring/progenitor/internal/repo"
 	"github.com/caring/progenitor/internal/scaffolding"
-	"github.com/google/go-github/v32/github"
 )
 
-func createRepo(token string, config *config.Config) (*github.Repository, error) {
+func setupRepo(token string, config *config.Config) error {
 
 	ctx := context.Background()
-	oauth := rp.GithubAuth(token, ctx)
-	client := rp.GithubClient(oauth)
 
-	var name string = config.GetString("projectName")
-	var private bool = true
-	var description string = "Caring, LLC service for " + name
-	var autoInit bool = true
-	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit}
-	repo, _, err := client.Repositories.Create(ctx, "caring", r)
+	// r here is the remote github repo
+	r, err := repo.New(
+		ctx,
+		token,
+		config.GetString("projectName"),
+		true,
+		"Caring, LLC service for "+config.GetString("projectName"),
+		true,
+	)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to create the repo")
+		return errors.Wrap(err, "failed to create the repo")
 	}
 
-	config.Set("projectRepo", repo)
+	config.Set("projectRepo", r)
 
-	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
-	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "Engineers", "caring", *repo.Name, opts)
+	// note `lr` is the locally cloned repo, not the same as `repo` returned from
+	// github create, which is remote only, largely  because the github library is
+	// mostly around github setting, and less about actually working with git...
+	lr, err := repo.Clone(ctx, token, config.GetString("projectDir"), r)
 	if err != nil {
-		log.Println(err, resp)
-	}
-	log.Println(resp)
-
-	if err = rp.Clone(token, config.GetString("projectDir"), repo); err != nil {
-		return nil, errors.Wrap(err, "Failed to clone the repo")
+		return err
 	}
 
-	return repo, nil
+	err = repo.CreateBranch(token, lr, "development")
+	if err != nil {
+		return err
+	}
+
+	err = repo.RequireBranchPRApproval(ctx, token, config.GetString("projectName"), "main")
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }
 
-func commitCodeToRepo(token string, s *scaffolding.Scaffold) error {
-	return rp.AddAll(token, s.BaseDir.Name, s.Fs)
+func commitCodeToRepo(token string, config *config.Config, s *scaffolding.Scaffold) error {
+
+	ctx := context.Background()
+
+	err := repo.AddAll(token, s.BaseDir.Name, s.Fs)
+	if err != nil {
+		return err
+	}
+
+	err = repo.SetDefaultBranch(ctx, token, config.GetString("projectName"), "development")
+	if err != nil {
+		return err
+	}
+
+	err = repo.RequireBranchPRApproval(ctx, token, config.GetString("projectName"), "development")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

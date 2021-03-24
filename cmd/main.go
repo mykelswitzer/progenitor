@@ -38,19 +38,19 @@ func Execute() {
   app := &cli.App{
     Name: "progenitor",
     Usage: `
-             @@@@,             
-           (@@@@@@@           
+             @@@@,
+           (@@@@@@@
  ,##%.     (@@@@@@@,     *###    Hello, I am the Progenitor!!!
-  #####*     @@@@@    *#####* 
+  #####*     @@@@@    *#####*
     ######          *####*       Please answer my questions, and
-       ####*       ####*         I will set up a nice set of 
-        .####    .####           boilerplate code, so that you 
+       ####*       ####*         I will set up a nice set of
+        .####    .####           boilerplate code, so that you
           ####  .###*            do not need to do that awful
           .###  ####             copy pasta you used to do.
-           '###*###           
-           .### ###           
+           '###*###
+           .### ###
            ###* ###.
-          .###  ####          
+          .###  ####
           ###,   ###,          `,
     Commands: []*cli.Command{
       {
@@ -86,7 +86,7 @@ func generate(cfg *config.Config) error {
     return handleError(err)
   }
 
-  _, err = createRepo(*token.SecretString, cfg)
+  err = setupRepo(*token.SecretString, cfg)
   if err != nil {
     log.Println(err.Error())
     return err
@@ -108,7 +108,7 @@ func generate(cfg *config.Config) error {
     return err
   }
 
-  if err = commitCodeToRepo(*token.SecretString, scaffold); err != nil {
+  if err = commitCodeToRepo(*token.SecretString, cfg, scaffold); err != nil {
     log.Println(err.Error())
     return err
   }
@@ -119,7 +119,7 @@ func generate(cfg *config.Config) error {
   // be in the future. This change enables committing code to the repo
   // independent of the success of terraform running... which was previously
   // breaing the code. There is probably a better long term fix, which we can
-  // inverst in if it continues to create issues
+  // invest in if it continues to create issues
   if scaffold.Config.GetBool("runTerraform") {
     base, err := os.Getwd()
     if err != nil {

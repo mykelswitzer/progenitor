@@ -7,23 +7,47 @@ import (
 	"os/signal"
 	"path/filepath"
 	"time"
-)
-import (
+
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/go-git/go-git/v5"
+	_ "github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
-	"github.com/google/go-github/v32/github"
+	"github.com/google/go-github/v33/github"
 	"github.com/spf13/afero"
 )
 
-func Clone(token string, directory string, repo *github.Repository) error {
+func New(ctx context.Context, token string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+
+	oauth := GithubAuth(token, ctx)
+	client := GithubClient(oauth)
+
+	mainBranch := "main"
+
+	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit, MasterBranch: &mainBranch}
+	repo, _, err := client.Repositories.Create(ctx, "caring", r)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create the repo")
+	}
+
+	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
+	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "Engineers", "caring", *repo.Name, opts)
+	if err != nil {
+		log.Println(err, resp)
+	}
+
+	return repo, err
+
+}
+
+func Clone(ctx context.Context, token string, directory string, repo *github.Repository) (*git.Repository, error) {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // cancel when we are finished consuming integers
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel() // cancel when we are finished
 
 	go func() {
 		<-stop
@@ -31,7 +55,7 @@ func Clone(token string, directory string, repo *github.Repository) error {
 		cancel()
 	}()
 
-	_, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
+	cloned, err := git.PlainCloneContext(ctx, directory, false, &git.CloneOptions{
 		Auth: &http.BasicAuth{
 			Username: "caring-engineering",
 			Password: token,
@@ -40,9 +64,52 @@ func Clone(token string, directory string, repo *github.Repository) error {
 		Progress: os.Stdout,
 	})
 
-	// note that err is nil, WithStack returns nil
-	return errors.Wrap(err, "Failed to clone repository")
+	// note that if err is nil, WithStack also returns nil
+	return cloned, errors.Wrap(err, "failed to clone repository")
 
+}
+
+func CreateBranch(token string, repo *git.Repository, name string) error {
+
+	// get the repo worktree
+	w, err := repo.Worktree()
+	if err != nil {
+		return errors.Wrap(err, "failed to access repository worktree")
+	}
+
+	opts := &git.CheckoutOptions{
+		Branch: plumbing.NewBranchReferenceName(name),
+		Create: true,
+	}
+
+	err = w.Checkout(opts)
+	return errors.Wrap(err, "failed to checkout new branch")
+
+}
+
+func RequireBranchPRApproval(ctx context.Context, token string, repoName string, branchName string) error {
+	oauth := GithubAuth(token, ctx)
+	client := GithubClient(oauth)
+
+	allowDeletions := false
+	preq := &github.ProtectionRequest{
+		RequiredPullRequestReviews: &github.PullRequestReviewsEnforcementRequest{
+			RequiredApprovingReviewCount: 2,
+		},
+		AllowDeletions: &allowDeletions,
+	}
+
+	_, _, err := client.Repositories.UpdateBranchProtection(ctx, "caring", repoName, branchName, preq)
+
+	return errors.Wrap(err, "failed to setup pr approval requirements for branch "+branchName)
+}
+
+func SetDefaultBranch(ctx context.Context, token string, repoName string, branchName string) error {
+
+	oauth := GithubAuth(token, ctx)
+	client := GithubClient(oauth)
+	_, _, err := client.Repositories.Edit(ctx, "caring", repoName, &github.Repository{DefaultBranch: &branchName})
+	return errors.Wrap(err, "failed to set default branch as  "+branchName)
 }
 
 func AddAll(token string, directory string, fs afero.Fs) error {
@@ -89,12 +156,12 @@ func AddAll(token string, directory string, fs afero.Fs) error {
 		},
 	})
 	if err != nil {
-		return errors.Wrap(err, "Failed worktree commit")
+		return errors.Wrap(err, "failed worktree commit")
 	}
 
 	obj, err := r.CommitObject(commit)
 	if err != nil {
-		return errors.Wrap(err, "Failed commit")
+		return errors.Wrap(err, "failed commit")
 	}
 	log.Println(obj)
 
@@ -106,7 +173,7 @@ func AddAll(token string, directory string, fs afero.Fs) error {
 		},
 	})
 	if err != nil {
-		return errors.Wrap(err, "Failed push")
+		return errors.Wrap(err, "failed push")
 	}
 
 	return nil
