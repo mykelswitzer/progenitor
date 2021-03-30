@@ -22,9 +22,7 @@ type Dir struct {
 }
 
 func (d *Dir) AddSubDirs(subdirs ...Dir) *Dir {
-	for _, sd := range subdirs {
-		d.SubDirs = append(d.SubDirs, sd)
-	}
+	d.SubDirs = append(d.SubDirs, subdirs...)
 	return d
 }
 

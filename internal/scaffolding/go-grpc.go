@@ -69,7 +69,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	}
 
 	cmdDir := Dir{Name: "cmd"}
-	cmdDir.AddSubDirs(Dir{Name: "client"}, Dir{Name: "server"})
+	cmdDir.AddSubDirs(Dir{Name: "server"})
 
 	internalDir := Dir{Name: "internal"}
 	if cfg.GetBool("dbRequired") == true {
@@ -77,7 +77,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
 		internalDir.AddSubDirs(dbDir)
 	}
-	internalDir.AddSubDirs(Dir{Name: "handlers"})
+	internalDir.AddSubDirs(Dir{Name: "handlers"}, Dir{Name: "service"})
 
 	pkgDir := Dir{Name: "pkg"}
 	pkgDir.AddSubDirs(Dir{Name: "client"})

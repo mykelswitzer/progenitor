@@ -10,6 +10,8 @@ import (
 {{if .UseDB}}
 	"github.com/caring/{{.Name}}/internal/db"
 {{end}}
+
+	"github.com/caring/{{.Name}}/internal/service"
 	"github.com/caring/{{.Name}}/api/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
@@ -64,7 +66,11 @@ func main() {
 	httpL := m.Match(cmux.HTTP1Fast())
 
 	// register the server with gRPC
-	pb.Register{{topascal .Name}}ServiceServer(g, &service{})
+	grpcService := &service.{{topascal .Name}}Service{
+  {{if .UseDB}}Store: store,{{end}}
+  Log:   l,
+	}
+	pb.Register{{topascal .Name}}ServiceServer(g, grpcService)
 
 	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
