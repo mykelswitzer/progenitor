@@ -21,6 +21,13 @@ type Dir struct {
 	SubDirs []Dir
 }
 
+func (d *Dir) AddSubDirs(subdirs ...Dir) *Dir {
+	for _, sd := range subdirs {
+		d.SubDirs = append(d.SubDirs, sd)
+	}
+	return d
+}
+
 type Scaffold struct {
 	Source        scaffold
 	Config        *config.Config

@@ -48,7 +48,7 @@ func ToPascal(s string) string {
 		return buf.String()
 	}
 
-	return s
+	return strings.Title(s)
 }
 
 func ToPlural(s string) string {

@@ -29,7 +29,13 @@ func TestToPascal(t *testing.T) {
 	str2 := "TestString"
 
 	strout := ToPascal(str1)
-	assert.Equal(t, strout, str2, "Expected string to be formatted in PascalCase")
+	assert.Equal(t, strout, str2, "Expected hyphenated string to be formatted in PascalCase")
+
+	str1 = "teststring"
+	str2 = "Teststring"
+
+	strout = ToPascal(str1)
+	assert.Equal(t, strout, str2, "Expected non-hyphenated string to be formatted in PascalCase")
 
 }
 

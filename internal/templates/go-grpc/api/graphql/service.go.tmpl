@@ -1,0 +1,30 @@
+package graphql
+
+import (
+  "net/http"
+
+  "github.com/caring/{{.Name}}/api/pb"
+  grpcclient "github.com/caring/{{.Name}}/pkg/client"
+)
+
+type {{topascal .Name}}Service struct {
+  client pb.{{topascal .Name}}ServiceClient
+}
+
+// Get{{topascal .Name}}ServiceClient returns a {{topascal .Name}} client instance
+// which is used to perform gRPC calls in mutations
+func (svc *{{topascal .Name}}Service) Get{{topascal .Name}}ServiceClient() (client pb.{{topascal .Name}}ServiceClient, err error) {
+  if svc.client == nil {
+    svc.client, err = (&grpcclient.{{topascal .Name}}ServiceClient{}).Init()
+    return svc.client, err
+  }
+  return svc.client, nil
+}
+
+// Middleware wraps middleware func so it can be used as a router middleware
+// this is how we allow for composable structs that call data loaders
+func (svc *{{topascal .Name}}Service) GetMiddleware() func(http.Handler) http.Handler {
+  return func(next http.Handler) http.Handler {
+    return middlewareFunc(svc, next)
+  }
+}

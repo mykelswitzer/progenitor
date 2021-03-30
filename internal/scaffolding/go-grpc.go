@@ -62,38 +62,35 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	}
 
 	apiDir := Dir{Name: "api"}
-	apiDir.SubDirs = append(apiDir.SubDirs, Dir{Name: "pb"})
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, apiDir)
+	apiDir.AddSubDirs(Dir{Name: "pb"})
+
+	if cfg.GetBool("gqlRequired") == true {
+		apiDir.AddSubDirs(Dir{Name: "graphql"})
+	}
 
 	cmdDir := Dir{Name: "cmd"}
-	cmdClientDir := Dir{Name: "client"}
-	cmdDir.SubDirs = append(cmdDir.SubDirs, cmdClientDir)
-	cmdServerDir := Dir{Name: "server"}
-	cmdDir.SubDirs = append(cmdDir.SubDirs, cmdServerDir)
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, cmdDir)
+	cmdDir.AddSubDirs(Dir{Name: "client"}, Dir{Name: "server"})
 
 	internalDir := Dir{Name: "internal"}
 	if cfg.GetBool("dbRequired") == true {
 		dbDir := Dir{Name: "db"}
-		dbMigrationsDir := Dir{Name: "migrations"}
-		dbDir.SubDirs = append(dbDir.SubDirs, dbMigrationsDir)
-		internalDir.SubDirs = append(internalDir.SubDirs, dbDir)
+		dbDir.AddSubDirs(Dir{Name: "migrations"})
+		internalDir.AddSubDirs(dbDir)
 	}
-	internalDir.SubDirs = append(internalDir.SubDirs, Dir{Name: "handlers"})
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, internalDir)
+	internalDir.AddSubDirs(Dir{Name: "handlers"})
 
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: "pkg"})
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, Dir{Name: ".circleci"})
+	pkgDir := Dir{Name: "pkg"}
+	pkgDir.AddSubDirs(Dir{Name: "client"})
 
-	// Construct and append Terraform directory to project directory
 	tfDir := Dir{Name: "terraform"}
-	tfTmplDir := Dir{Name: "templates"}
-	tfDir.SubDirs = append(tfDir.SubDirs, tfTmplDir)
-	grpcProject.BaseDir.SubDirs = append(grpcProject.BaseDir.SubDirs, tfDir)
+	tfDir.AddSubDirs(Dir{Name: "templates"})
+
+	grpcProject.BaseDir.AddSubDirs(apiDir, cmdDir, internalDir, pkgDir, Dir{Name: ".circleci"}, tfDir)
 
 	return &grpcProject, nil
-
 }
+
+///// Scaffold Methods /////
 
 // postBuildFiles will run the protoc to build the proto-generated
 // go code
@@ -111,8 +108,6 @@ func postBuildFiles(s *Scaffold) error {
 }
 
 // we have a few files named generically that we need to rename
-// pb/service.pb should be pb/{{config.projectName}}.pb
-// internal/db/service*.go should be internal/db/{{config.dbObject}}.go
 func renameServiceFiles(s *Scaffold) error {
 
 	base, err := os.Getwd()
@@ -123,6 +118,15 @@ func renameServiceFiles(s *Scaffold) error {
 	err = os.Rename(oldName, newName)
 	if err != nil {
 		log.Println(err)
+	}
+
+	if s.Config.GetBool("gqlRequired") == true {
+		oldName = filepath.Join(path, "api/graphql/service.graphqls")
+		newName = filepath.Join(path, "api/graphql", strings.ToPackage(s.Config.GetString("projectName"))+".graphqls")
+		err = os.Rename(oldName, newName)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	if s.Config.GetBool("dbRequired") == true {

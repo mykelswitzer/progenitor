@@ -2,7 +2,9 @@ package main
 
 // This file contains helpers to initialize application code that is specific to this service
 import (
+{{if .UseDB}}
 	"github.com/caring/{{tolower .Name}}/internal/db"
+{{end}}
 	"github.com/caring/go-packages/pkg/logging"
 )
 

@@ -1,0 +1,129 @@
+package client
+
+import (
+  "context"
+  "fmt"
+  "log"
+  "os"
+  "strconv"
+  "time"
+
+  "github.com/caring/go-packages/pkg/errors"
+  "github.com/caring/go-packages/pkg/grpc_middleware/dialconn"
+  "github.com/caring/{{.Name}}/api/pb"
+  "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+  "google.golang.org/grpc"
+  "google.golang.org/grpc/codes"
+)
+
+const (
+  dnsVar  = "{{toupper .Name}}_DNS"
+  portVar = "{{toupper .Name}}_PORT"
+)
+
+var (
+  retriableErrors = []codes.Code{codes.Unavailable, codes.DataLoss}
+  retryTimeout    = 500 * time.Millisecond
+)
+
+// New accepts a connection builder and an override flag.
+// If override is TRUE, the builder settings will override
+// all default settings in the Init method
+func New(cnxnbldr dialconn.Builder, override bool) (pb.{{topascal .Name}}ServiceClient, error) {
+  c := {{topascal .Name}}ServiceClient{}
+  if cnxnbldr != nil {
+    c.cnxnbldr = cnxnbldr
+  }
+  c.override = override
+  return c.Init()
+}
+
+type {{topascal .Name}}ServiceClient struct {
+  cnxnbldr dialconn.Builder
+  override bool
+}
+
+// method is public, so we don't need to use the New() method to get this going
+// can just setup the struct and then call Init
+func (c *{{topascal .Name}}ServiceClient) Init() (pb.{{topascal .Name}}ServiceClient, error) {
+
+  var useTLS = !isTLSDisabled()
+
+  // init builder if none wa passed in
+  if c.cnxnbldr == nil {
+    c.cnxnbldr = &dialconn.ConnBuilder{}
+  }
+
+  // fetch or set connection info
+  dns, port, err := c.cnxnbldr.GetConnInfo()
+  if err != nil {
+    err2 := c.cnxnbldr.SetConnInfo(
+      os.Getenv(dnsVar),
+      os.Getenv(portVar),
+    )
+    if err2 != nil {
+      return nil, errors.Wrap(
+        err2,
+        fmt.Sprintf("could not establish grpc connection: Invalid dns or port."),
+      )
+    }
+  }
+
+  // add in the unary interceptors if enabled
+  if c.override == false {
+    unaryInterceptor := grpc_retry.UnaryClientInterceptor(
+      grpc_retry.WithCodes(retriableErrors...),
+      grpc_retry.WithMax(3),
+      grpc_retry.WithBackoff(grpc_retry.BackoffLinear(retryTimeout)),
+    )
+    inter := []grpc.UnaryClientInterceptor{
+      unaryInterceptor,
+    }
+    inter = append(inter, c.cnxnbldr.GetUnaryInterceptors()...)
+    c.cnxnbldr.WithUnaryInterceptors(inter)
+  }
+
+  // override context set
+  ctx := c.cnxnbldr.GetContext()
+  if ctx == nil {
+    ctx = context.Background()
+  }
+  ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+  c.cnxnbldr.WithContext(ctx)
+  defer cancel()
+
+  if useTLS {
+    if c.cnxnbldr.GetClientTransportCredentials() == nil {
+      c.cnxnbldr.WithClientTransportCredentials(false, nil)
+    }
+  }
+
+  dns, port, err = c.cnxnbldr.GetConnInfo()
+  if err != nil {
+    return nil, errors.Wrap(
+      err,
+      fmt.Sprintf("could not establish grpc connection: Missing dns or port in address."),
+    )
+  }
+  conn, err := c.cnxnbldr.GetConnection(useTLS)
+  if err != nil {
+    return nil, errors.Wrap(
+      err,
+      fmt.Sprintf("could not establish grpc connection %s:%s using TLS: %t", dns, port, useTLS),
+    )
+  }
+
+  return pb.New{{topascal .Name}}ServiceClient(conn), nil
+}
+
+func isTLSDisabled() bool {
+  s := os.Getenv("DISABLE_TLS")
+  if s == "" {
+    return false
+  }
+  b, err := strconv.ParseBool(s)
+  if err != nil {
+    log.Fatal(errors.Wrap(err, "failed to parse os variable DISABLE_TLS").Error())
+  }
+  return b
+}

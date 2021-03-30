@@ -24,6 +24,7 @@ var prompts = map[string][]func(*config.Config) error{
   "go-grpc": {
     prompt.ProjectName,
     prompt.ProjectDir,
+    prompt.SetupGraphql,
     prompt.UseDB,
     prompt.CoreDBObject,
     prompt.UseReporting,

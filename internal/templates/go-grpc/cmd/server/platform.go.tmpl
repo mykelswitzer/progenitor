@@ -2,9 +2,10 @@ package main
 
 // This file contains helpers that initialize app insight, developer tooling and database set up that might be run on any given app
 import (
+{{if .UseDB}}
 	"fmt"
+{{end}}
 	"log"
-	"strconv"
 
 	"github.com/caring/go-packages/pkg/grpc_middleware"
 	"github.com/caring/go-packages/pkg/logging"

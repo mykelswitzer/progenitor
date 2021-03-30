@@ -5,13 +5,12 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"time"
 	"log"
 
 {{if .UseDB}}
 	"github.com/caring/{{.Name}}/internal/db"
 {{end}}
-	"github.com/caring/{{.Name}}/pb"
+	"github.com/caring/{{.Name}}/api/pb"
 	"github.com/caring/go-packages/pkg/logging"
 	"github.com/caring/go-packages/pkg/tracing"
 

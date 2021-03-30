@@ -1,0 +1,73 @@
+package graphql
+
+import (
+  "context"
+  "net/http"
+
+  _ "github.com/caring/{{.Name}}/api/pb"
+)
+
+/***************************************************************************
+ * Note, to use this file you must first generate a loader using
+ * this package - github.com/vektah/dataloaden
+ * please see docs here: https://caring.atlassian.net/l/c/RoyuMUYd
+ ****************************************************************************/
+
+// A private key for context that only this package can access. This is important
+// to prevent collisions between different context uses
+type contextKey struct {}
+var loadersCtxKey = &contextKey{}
+
+// LoaderCtx returns the loaders stored in ctx
+func loaderCtx(ctx context.Context) *loaders {
+  return ctx.Value(loadersCtxKey).(*loaders)
+}
+
+// Holds all the loader methods
+type loaders struct {
+/* An EXAMPLE embedded loader
+ * identityTypeByID     *IdentityTypeLoader
+ */
+}
+
+/*
+ * This is an EXAMPLE loader config setup 
+ * func defaultIdentityTypeLoaderConfig(ctx context.Context, svc *IdentityService) IdentityTypeLoaderConfig {
+ *   return IdentityTypeLoaderConfig{
+ *     Fetch: func(keys []int64) ([]*IdentityType, []error) {
+ *       c, err := svc.GetIdentityServiceClient()
+ *       if err != nil {
+ *         return nil, []error{err}
+ *       }
+ *       res, err := c.LoadIdentityTypes(
+ *         ctx,
+ *         &pb.LoadIDRequest{Ids: keys},
+ *       )
+ *       if err != nil {
+ *         return nil, []error{err}
+ *       }
+ *       return protoToIdentityTypesSlice(res), nil
+ *     },
+ *     Wait:     3 * time.Millisecond,
+ *     MaxBatch: 1000,
+ *   }
+ * }
+*/
+
+// MiddlewareFunc supplies api data dependencies to loader initializers. 
+// The loaders are then stored in request context for use by GraphQL queries
+// place your logic inside the internal anomuymous function before next is called
+func middlewareFunc(svc *{{topascal .Name}}Service, next http.Handler) http.HandlerFunc {
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    /*
+     * This is an EXAMPLE of how to put your loader in context
+     * ctx := context.WithValue(r.Context(), loadersCtxKey, &loaders{
+     * identityTypeByID: NewIdentityTypeLoader(
+     *   defaultIdentityTypeLoaderConfig(r.Context(), svc),
+     * ),
+     * })
+     * r = r.WithContext(ctx)
+     */
+    next.ServeHTTP(w, r)
+  })
+}

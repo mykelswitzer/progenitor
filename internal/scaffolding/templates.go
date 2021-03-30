@@ -96,5 +96,6 @@ func TemplateFunctions() txttmpl.FuncMap {
 		"toplural":    str.ToPlural,
 		"topackage":   str.ToPackage,
 		"tosnakecase": str.ToSnakeCase,
+		"toupper":     strings.ToUpper,
 	}
 }

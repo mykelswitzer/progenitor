@@ -3,13 +3,13 @@ package main
 import (
   "context"
   "fmt"
-  "time"
 {{if .UseDB}}
+  "time"
+
   _ "github.com/caring/{{.Name}}/internal/db"
 {{end}}
-
   _ "github.com/caring/{{.Name}}/internal/handlers"
-  "github.com/caring/{{.Name}}/pb"
+  "github.com/caring/{{.Name}}/api/pb"
   _ "github.com/caring/go-packages/pkg/errors"
   _ "google.golang.org/grpc/codes"
 )
@@ -43,10 +43,10 @@ func (s *service)  Update{{topascal .DBModel}}(ctx context.Context, in *pb.Updat
   return nil, nil
 }
 
-func (s *service)  Delete{{topascal .DBModel}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
+func (s *service)  Delete{{topascal .DBModel}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
   return nil, nil
 }
 
-func (s *service)  Get{{topascal .DBModel}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
+func (s *service)  Get{{topascal .DBModel}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .DBModel}}Response, error) {
   return nil, nil
 }
