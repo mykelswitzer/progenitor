@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func New(ctx context.Context, token string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+func New(ctx context.Context, token string, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
 	oauth := GithubAuth(token, ctx)
 	client := GithubClient(oauth)
@@ -28,11 +28,17 @@ func New(ctx context.Context, token string, name string, private bool, descripti
 	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit, MasterBranch: &mainBranch}
 	repo, _, err := client.Repositories.Create(ctx, "caring", r)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to create the repo")
+		return nil, errors.Wrap(err, "failed to create the repo")
 	}
 
 	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
-	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "Engineers", "caring", *repo.Name, opts)
+	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "engineers", "caring", *repo.Name, opts)
+	if err != nil {
+		log.Println(err, resp)
+	}
+
+	opts = &github.TeamAddTeamRepoOptions{Permission: "admin"}
+	resp, err = client.Teams.AddTeamRepoBySlug(ctx, "caring", team, "caring", *repo.Name, opts)
 	if err != nil {
 		log.Println(err, resp)
 	}
@@ -94,6 +100,7 @@ func RequireBranchPRApproval(ctx context.Context, token string, repoName string,
 	allowDeletions := false
 	preq := &github.ProtectionRequest{
 		RequiredPullRequestReviews: &github.PullRequestReviewsEnforcementRequest{
+			RequireCodeOwnerReviews:      true,
 			RequiredApprovingReviewCount: 2,
 		},
 		AllowDeletions: &allowDeletions,
@@ -117,13 +124,13 @@ func AddAll(token string, directory string, fs afero.Fs) error {
 	// Opens an already existing repository.
 	r, err := git.PlainOpen(directory)
 	if err != nil {
-		return errors.Wrap(err, "Failed to open repository")
+		return errors.Wrap(err, "failed to open repository")
 	}
 
 	// get the repo worktree
 	w, err := r.Worktree()
 	if err != nil {
-		return errors.Wrap(err, "Failed to access repository worktree")
+		return errors.Wrap(err, "failed to access repository worktree")
 	}
 
 	// add all files in the project
@@ -143,7 +150,7 @@ func AddAll(token string, directory string, fs afero.Fs) error {
 	// check the status
 	status, err := w.Status()
 	if err != nil {
-		return errors.Wrap(err, "Failed git status")
+		return errors.Wrap(err, "failed git status")
 	}
 	log.Println(status)
 

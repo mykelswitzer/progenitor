@@ -22,6 +22,7 @@ var (
 
 var prompts = map[string][]func(*config.Config) error{
   "go-grpc": {
+    prompt.ProjectTeam,
     prompt.ProjectName,
     prompt.ProjectDir,
     prompt.SetupGraphql,
@@ -74,7 +75,10 @@ func Execute() {
 
 func generate(cfg *config.Config) error {
 
-  awsClient = setupAwsClient()
+  awsClient, err := setupAwsClient()
+  if err != nil {
+    return handleError(err)
+  }
 
   for _, p := range prompts[cfg.GetString("projectType")] {
     if err := p(cfg); err != nil {
@@ -138,15 +142,18 @@ func generate(cfg *config.Config) error {
   return nil
 }
 
-func setupAwsClient() *aws.Client {
+func setupAwsClient() (*aws.Client, error) {
   var region string = "us-east-1"
   var account_id string = "182565773517"
   var role string = "ops-mgmt-admin"
 
   awsClient := aws.New()
-  awsClient.SetConfig(&region, &account_id, &role)
+  _, err := awsClient.SetConfig(&region, &account_id, &role)
+  if err != nil {
+    return nil, err
+  }
 
-  return awsClient
+  return awsClient, nil
 }
 
 func handleError(err error) error {

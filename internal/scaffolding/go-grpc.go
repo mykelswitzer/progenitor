@@ -13,6 +13,7 @@ import (
 )
 
 type goGrpcTemplateData struct {
+	Team         string
 	Name         string
 	LocalPath    string
 	UseDB        bool
@@ -22,6 +23,7 @@ type goGrpcTemplateData struct {
 
 // Init sets the values for the goGrpcTemplateData struct
 func (t goGrpcTemplateData) Init(config *config.Config) templateData {
+	t.Team = config.GetString("projectTeam")
 	t.Name = config.GetString("projectName")
 	t.LocalPath = config.GetString("projectDir")
 	t.UseDB = config.GetBool("dbRequired")

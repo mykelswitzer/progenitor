@@ -11,6 +11,24 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+func ProjectTeam(config *config.Config) error {
+
+	prompt := promptui.Select{
+		Label: "Which team will own this project?",
+		Items: []string{"advisors", "care-recipients", "core-services", "providers"},
+	}
+
+	_, team, err := prompt.Run()
+	if err != nil {
+		return errors.Wrap(err, "Error in executing project team prompt")
+	}
+
+	config.Set("projectTeam", team)
+
+	return nil
+
+}
+
 func ProjectName(config *config.Config) error {
 
 	validate := func(input string) error {

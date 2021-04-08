@@ -17,6 +17,7 @@ func setupRepo(token string, config *config.Config) error {
 	r, err := repo.New(
 		ctx,
 		token,
+		config.GetString("projectTeam"),
 		config.GetString("projectName"),
 		true,
 		"Caring, LLC service for "+config.GetString("projectName"),

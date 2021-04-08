@@ -16,7 +16,7 @@ type Client struct {
 }
 
 func New() *Client {
-	return &Client{config: nil}
+	return &Client{}
 }
 
 func (c *Client) GetConfig() *aws.Config {
