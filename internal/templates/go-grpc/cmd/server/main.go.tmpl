@@ -6,11 +6,8 @@ import (
 	"net/http"
 	"os"
 	"log"
-
 {{if .UseDB}}
-	"github.com/caring/{{.Name}}/internal/db"
-{{end}}
-
+	"github.com/caring/{{.Name}}/internal/db"{{end}}
 	"github.com/caring/{{.Name}}/internal/service"
 	"github.com/caring/{{.Name}}/api/pb"
 	"github.com/caring/go-packages/pkg/logging"
@@ -19,30 +16,23 @@ import (
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
 )
-
 {{if .UseDB}}
 var (
 	store        *db.Store
 	dbConnection string
-)
-{{end}}
+){{end}}
 
 var (
 	l *logging.Logger
 	t *tracing.Tracer
-)
-
-var (
 	g *grpc.Server
 )
 
 func init() {
-	l = initLogger()
-{{if .UseDB}}
+	l = initLogger(){{if .UseDB}}
 	dbConnection = setDBConnectionString(l)
 	migrateDatabase(l, dbConnection)
-	store = initStore(l, dbConnection)
-{{end}}
+	store = initStore(l, dbConnection){{end}}
 	t = initTracing(l)
 	g = createGRPCServer(l, t)
 }

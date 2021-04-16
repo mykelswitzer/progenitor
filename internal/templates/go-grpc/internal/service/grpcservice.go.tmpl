@@ -6,7 +6,6 @@ import (
   "time"
 
   "github.com/caring/{{.Name}}/internal/db"{{end}}
-  "github.com/caring/{{.Name}}/internal/handlers"
   "github.com/caring/{{.Name}}/api/pb"
   "github.com/caring/go-packages/pkg/errors"
   "github.com/caring/go-packages/pkg/logging"
@@ -33,11 +32,6 @@ func (s *{{topascal .Name}}Service) Ping(ctx context.Context, in *pb.PingRequest
     {{else}}
     return &pb.PingResponse{Data: resp}, nil
     {{end}}
-}
-
-// prevents handler import error on defaultbuild
-func (s *{{topascal .Name}}Service)  Unimplemented() (interface{}, error) {
-  return handlers.UnimplementedResponse()
 }
 
 func (s *{{topascal .Name}}Service)  Create{{topascal .DBModel}}(ctx context.Context, in *pb.Create{{topascal .DBModel}}Request) (*pb.{{topascal .DBModel}}Response, error) {

@@ -79,7 +79,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
 		internalDir.AddSubDirs(dbDir)
 	}
-	internalDir.AddSubDirs(Dir{Name: "handlers"}, Dir{Name: "service"})
+	internalDir.AddSubDirs(Dir{Name: "service"})
 
 	pkgDir := Dir{Name: "pkg"}
 	pkgDir.AddSubDirs(Dir{Name: "client"})
