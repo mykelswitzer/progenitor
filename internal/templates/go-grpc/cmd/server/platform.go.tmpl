@@ -4,19 +4,25 @@ package main
 import (
 {{if .UseDB}}
 	"fmt"
+	"database/sql"
 {{end}}
 	"log"
+	"errors"
+	"os"
 
-	"github.com/caring/go-packages/pkg/grpc_middleware"
-	"github.com/caring/go-packages/v2/pkg/logging"
-	"github.com/caring/go-packages/v2/pkg/tracing"
 {{if .UseDB}}
+	"github.com/caring/{{Name}}/internal/db"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/golang-migrate/migrate/v4/source/github"
 {{end}}
+
+	"github.com/caring/go-packages/pkg/grpc_middleware"
+	"github.com/caring/go-packages/v2/pkg/logging"
+	"github.com/caring/go-packages/v2/pkg/tracing"
+
 	"google.golang.org/grpc"
 )
 
@@ -96,6 +102,18 @@ func migrateDatabase(logger *logging.Logger, connectionString string) {
 		logger.Fatal("Migration error: " + mErr.Error())
 	}
 	logger.Debug("Done")
+}
+
+// initialize the store service
+func initDB(logger *logging.Logger, connectionString string) *sql.DB {
+	logger.Debug("Initializing Store")
+	// establish a store and connection to the db
+	db, err := db.Open(connectionString)
+	if err != nil {
+		logger.Fatal("Failed to initialize store:" + err.Error())
+	}
+	logger.Debug("Store established with database connection")
+	return db
 }
 {{end}}
 
