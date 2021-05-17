@@ -73,10 +73,11 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	cmdDir.AddSubDirs(Dir{Name: "server"})
 
 	internalDir := Dir{Name: "internal"}
-	if cfg.GetBool("dbRequired") && cfg.GetBool("domainsRequired") == true {
+	if cfg.GetBool("dbRequired") {
 		dbDir := Dir{Name: "db"}
-		domainsRequired := Dir{Name: "domains"}
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
+
+		domainsRequired := Dir{Name: "domains"}
 		domainsRequired.AddSubDirs(Dir{Name: "domains"})
 		internalDir.AddSubDirs(dbDir, domainsRequired)
 	}
@@ -147,9 +148,7 @@ func renameServiceFiles(s *Scaffold) error {
 		if err != nil {
 			log.Println(err)
 		}
-	}
 
-	if s.Config.GetBool("domainsRequired") == true {
 		oldName = filepath.Join(path, "internal/domains/domains.go")
 		newName = filepath.Join(path, "internal/db", s.Config.GetString("projectName")+".go")
 		err = os.Rename(oldName, newName)
