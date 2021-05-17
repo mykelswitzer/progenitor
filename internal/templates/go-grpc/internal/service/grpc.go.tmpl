@@ -1,0 +1,48 @@
+package service
+
+import (
+  "context"
+  "fmt"{{if .UseDB}}
+  "time"
+
+  "github.com/caring/go-packages/v2/pkg/logging"
+  "github.com/caring/{{.Name}}/api/pb"
+  "github.com/caring/{{.Name}}/internal/handlers"{{end}}
+)
+
+type Service struct {
+  pb.Unimplemented{{topascal .Name}}ServiceServer
+  {{if .UseDB}}{{topascal .Name}} *handlers.{{topascal .Name}}{{end}}
+  Logger   logging.Logging
+}
+
+func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
+    s.Logger.Debug(fmt.Sprintf("Received: %v", in.Data))
+    resp := "Data: " + in.Data
+    {{if .UseDB}}
+    ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+    defer cancel()
+    }
+    return &pb.PingResponse{Data: resp}, nil
+    {{end}}
+}
+
+func (s *Service)  Create{{topascal .Name}}(ctx context.Context, in *pb.Create{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
+  s.Logger.Debug("Create{{topascal .Name}}: " + in.String())
+	return s.{{topascal .Name}}.Create(ctx, in)
+}
+
+func (s *Service)  Update{{topascal .Name}}(ctx context.Context, in *pb.Update{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
+  s.Logger.Debug("Update{{topascal .Name}}: " + in.String())
+  return s.{{topascal .Name}}.Update(ctx, in)
+}
+
+func (s *Service)  Delete{{topascal .Name}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
+  s.Logger.Debug("Delete{{topascal .Name}}: " + in.String())
+  return s.{{topascal .Name}}.Delete(ctx, in)
+}
+
+func (s *Service)  Get{{topascal .Name}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
+  s.Logger.Debug("Get{{topascal .Name}}: " + in.String())
+  return s.{{topascal .Name}}.Get(ctx, in)
+}
