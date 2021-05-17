@@ -1,0 +1,35 @@
+package handlers
+
+import (
+    "context"
+    "github.com/caring/go-packages/pkg/errors"  
+	"github.com/caring/go-packages/pkg/uuid"
+
+    {{if .UseDB}}
+	"github.com/caring/{{.Name}}/api/pb"
+	"github.com/caring/{{.Name}}/internal/db"
+	"github.com/caring/{{.Name}}/internal/domain/{{.Name}}"
+    {{end}}
+
+	"google.golang.org/grpc/codes"
+)
+
+type {{topascal .Name}} struct {
+    Store {{Name}}.Store
+}
+
+func (tmpl {{topascal .Name}}) Create(ctx context.Context, in *pb.Create{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
+
+}
+
+func (tmpl {{topascal .Name}}) Update(ctx context.Context, in *pb.Update{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
+    
+}
+
+func (tmpl {{topascal .Name}}) Delete(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
+    
+}
+
+func (tmpl {{topascal .Name}}) Get(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
+    
+}
