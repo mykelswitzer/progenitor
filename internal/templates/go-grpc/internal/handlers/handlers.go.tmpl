@@ -19,7 +19,29 @@ type {{topascal .Name}} struct {
 }
 
 func (tmpl {{topascal .Name}}) Create(ctx context.Context, in *pb.Create{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
+	id, err := uuid.NewRandom()
+    if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
 
+    {{tocamel .Name}}, err := {{tolower .Name}}.New{{topascal .Name}}(id.String(), in)
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
+	}
+    err = tmpl.Store.Create(ctx, nil, {{tocamel .Name}})
+	if err != nil {
+		if errors.Is(err, db.ErrDuplicate) {
+			return nil, errors.WithGrpcStatus(err, codes.AlreadyExists)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+    created{{topascal .Name}}, err := pn.Store.Get(ctx, nil, id)
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+    return created{{topascal .Name}}.Proto()
 }
 
 func (tmpl {{topascal .Name}}) Update(ctx context.Context, in *pb.Update{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
@@ -31,5 +53,22 @@ func (tmpl {{topascal .Name}}) Delete(ctx context.Context, in *pb.ByUUIDRequest)
 }
 
 func (tmpl {{topascal .Name}}) Get(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
-    
+    id, err := uuid.Parse(in.GetId())
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
+	}
+
+	{{tocamel .Name}}, err := pn.Store.Get(ctx, nil, id)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return nil, errors.WithGrpcStatus(err, codes.NotFound)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+	resp, err := {{tocamel .Name}}.Proto()
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
