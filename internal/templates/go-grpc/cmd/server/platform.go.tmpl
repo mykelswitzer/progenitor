@@ -8,8 +8,8 @@ import (
 	"log"
 
 	"github.com/caring/go-packages/pkg/grpc_middleware"
-	"github.com/caring/go-packages/pkg/logging"
-	"github.com/caring/go-packages/pkg/tracing"
+	"github.com/caring/go-packages/v2/pkg/logging"
+	"github.com/caring/go-packages/v2/pkg/tracing"
 {{if .UseDB}}
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
@@ -98,3 +98,18 @@ func migrateDatabase(logger *logging.Logger, connectionString string) {
 	logger.Debug("Done")
 }
 {{end}}
+
+// fetches and returns the given env variable, fatals and
+// captures an exception if the variable is an empty string
+func envMust(varName string) string {
+	value := os.Getenv(varName)
+	if value == "" {
+		e := errors.New("environment variable missing - " + varName)
+		if l != nil {
+			l.Fatal(e.Error())
+		} else {
+			log.Fatalln(e.Error())
+		}
+	}
+	return value
+}
