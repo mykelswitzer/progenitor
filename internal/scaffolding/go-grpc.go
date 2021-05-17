@@ -5,8 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-)
-import (
+
 	_ "github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
 	"github.com/caring/progenitor/internal/strings"
@@ -74,12 +73,14 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 	cmdDir.AddSubDirs(Dir{Name: "server"})
 
 	internalDir := Dir{Name: "internal"}
-	if cfg.GetBool("dbRequired") == true {
+	if cfg.GetBool("dbRequired") && cfg.GetBool("domainsRequired") == true {
 		dbDir := Dir{Name: "db"}
+		domainsRequired := Dir{Name: "domains"}
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
-		internalDir.AddSubDirs(dbDir)
+		domainsRequired.AddSubDirs(Dir{Name: "domains"})
+		internalDir.AddSubDirs(dbDir, domainsRequired)
 	}
-	internalDir.AddSubDirs(Dir{Name: "service"})
+	internalDir.AddSubDirs(Dir{Name: "handlers"}, Dir{Name: "service"})
 
 	pkgDir := Dir{Name: "pkg"}
 	pkgDir.AddSubDirs(Dir{Name: "client"})
@@ -142,6 +143,15 @@ func renameServiceFiles(s *Scaffold) error {
 
 		oldName = filepath.Join(path, "internal/db/service_test.go")
 		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+"_test.go")
+		err = os.Rename(oldName, newName)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	if s.Config.GetBool("domainsRequired") == true {
+		oldName = filepath.Join(path, "internal/domains/domains.go")
+		newName = filepath.Join(path, "internal/db", s.Config.GetString("projectName")+".go")
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)
