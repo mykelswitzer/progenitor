@@ -9,7 +9,7 @@ import (
 	"database/sql"
 
 	"github.com/caring/{{.Name}}/api/pb"
-	"github.com/caring/{{.Name}}/internal/domain/{{.Name}}"
+	"github.com/caring/{{.Name}}/internal/domain/{{Name}}"
 	"github.com/caring/{{.Name}}/internal/handlers"
 	"github.com/caring/{{.Name}}/internal/service"
 
@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+{{$pascalName := topascal .Name}}
 
 func main() {
 	l := initLogger()
@@ -48,7 +49,7 @@ func main() {
 
 	svc := &service.Service{
 		Logger: l,
-		{{topascal .Name}}: &handlers.{{topascal .Name}}{
+		{{$pascalName}}: &handlers.{{$pascalName}}{
 			{{if .UseDB}}Store: {{Name}}.Service{
 				DB: database,
 				Logger: l,
@@ -57,7 +58,7 @@ func main() {
 	}
 
 	g := createGRPCServer(l, t)
-	pb.Register{{topascal .Name}}ServiceServer(g, svc)
+	pb.Register{{$pascalName}}ServiceServer(g, svc)
 
 	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

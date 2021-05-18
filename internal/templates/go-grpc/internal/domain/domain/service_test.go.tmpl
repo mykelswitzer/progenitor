@@ -1,4 +1,4 @@
-package db
+package {{.Name}}
 
 import (
   "context"
@@ -15,6 +15,19 @@ import (
 
 {{$pascalDbModel := topascal .DBModel}}
 
+func NewTestDB() (Store, sqlmock.Sqlmock, error) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s := Service{
+		DB:    db,
+	}
+
+	return &s, mock, nil
+}
+
 // ensures that casting from proto to store structs occurs correctly
 func TestNew{{$pascalDbModel}}(t *testing.T) {
   {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
@@ -30,7 +43,7 @@ func TestNew{{$pascalDbModel}}(t *testing.T) {
 }
 
 // ensures that casting from store to proto response occurs correctly
-func Test{{$pascalDbModel}}_ToProto(t *testing.T) {
+func Test{{$pascalDbModel}}_Proto(t *testing.T) {
   {{.DBModel}}ID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
 
   {{.DBModel}} := &{{$pascalDbModel}}{
