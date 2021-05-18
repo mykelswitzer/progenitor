@@ -45,11 +45,62 @@ func (tmpl {{topascal .Name}}) Create(ctx context.Context, in *pb.Create{{topasc
 }
 
 func (tmpl {{topascal .Name}}) Update(ctx context.Context, in *pb.Update{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
-    
+    ID, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = tmpl.Store.Get(ctx, nil, ID)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return nil, errors.WithGrpcStatus(err, codes.NotFound)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+	{{tocamel .Name}}, err := {{tolower .Name}}.New{{topascal .Name}}(ID.String(), req)
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
+	}
+	err = tmpl.Store.Update(ctx, nil, {{tocamel .Name}})
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+	updated{{topascal .Name}}, err := tmpl.Store.Get(ctx, nil, ID)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return nil, errors.WithGrpcStatus(err, codes.NotFound)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+	return updated{{topascal .Name}}.Proto(), nil
 }
 
 func (tmpl {{topascal .Name}}) Delete(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
-    
+    ID, err := uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
+	}
+
+	{{tocamel .Name}}, err := tmpl.Store.Get(ctx, nil, ID)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return nil, errors.WithGrpcStatus(err, codes.NotFound)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+
+	err = tmpl.Store.Delete(ctx, nil, ID)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return nil, errors.WithGrpcStatus(err, codes.NotFound)
+		}
+		return nil, errors.WithGrpcStatus(err, codes.Internal)
+	}
+	{{tocamel .Name}}.Deleted = true
+	return {{tocamel .Name}}.Proto(), nil
 }
 
 func (tmpl {{topascal .Name}}) Get(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
@@ -58,7 +109,7 @@ func (tmpl {{topascal .Name}}) Get(ctx context.Context, in *pb.ByUUIDRequest) (*
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
 
-	{{tocamel .Name}}, err := pn.Store.Get(ctx, nil, id)
+	{{tocamel .Name}}, err := tmpl.Store.Get(ctx, nil, id)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			return nil, errors.WithGrpcStatus(err, codes.NotFound)
