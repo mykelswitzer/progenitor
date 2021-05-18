@@ -1,0 +1,84 @@
+package {{tolower .Name}}
+
+import (
+    "context"
+    "database/sql"
+    "fmt"
+    "strings"
+
+    "github.com/caring/go-packages/pkg/errors"
+	"github.com/caring/go-packages/pkg/uuid"
+	"github.com/caring/go-packages/v2/pkg/logging"
+	"github.com/caring/{{tolower .Name}}/internal/db"
+	"github.com/go-sql-driver/mysql"
+)
+
+type Store interface {
+    Create()
+    Update()
+    Delete(context.Context, *sql.Tx, uuid.UUID) error
+    Get()
+}
+
+type Service struct {
+    DB *sql.DB
+    Logger logging.Logging
+}
+
+var _ Store = (*Service)(nil)
+
+func (svc Service) Create() {
+
+}
+
+func (svc Service) Update() {
+
+}
+
+func (svc Service) Delete(ctx context.Context, tx *sql.Tx, ID uuid.UUID) error {
+errMsg := func() string { return "Error executing delete {{.DBModel}} - " + ID.String() }
+
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
+
+    qry := `
+    UPDATE
+        {{toplural .DBModel}}
+    SET
+        deleted_at = NOW()
+    WHERE
+        {{.DBModel}}_id = UUID_TO_BIN(?)
+        AND deleted_at IS NULL
+    `
+
+	stmt, err = svc.DB.PrepareContext(ctx, qry)
+	if err != nil {
+		return nil, errors.Wrap(err, errMsg())
+	}
+	svc.Logger.Debug(fmt.Sprintf("running: %v", stmt))
+	if tx != nil {
+		stmt = tx.Stmt(stmt)
+	}
+
+	result, err := stmt.ExecContext(ctx, ID)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	if rowCount == 0 {
+		return errors.Wrap(db.ErrNotFound, errMsg())
+	}
+
+	return nil
+}
+
+func (svc Service) Get() {
+
+}
