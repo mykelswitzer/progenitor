@@ -14,10 +14,10 @@ import (
 )
 
 type Store interface {
-    Create()
-    Update()
+    Create(context.Context, *sql.Tx, *{{topascal .Name}}) error
+    Update(context.Context, *sql.Tx, *{{topascal .Name}}) error
     Delete(context.Context, *sql.Tx, uuid.UUID) error
-    Get()
+    Get(context.Context, *sql.Tx, uuid.UUID) (*{{topascal .Name}}, error)
 }
 
 type Service struct {
@@ -27,12 +27,78 @@ type Service struct {
 
 var _ Store = (*Service)(nil)
 
-func (svc Service) Create() {
+func (svc Service) Create(ctx context.Context, *sql.Tx, input *{{topascal .Name}}) error {
+errMsg := func() string { return "Error executing create {{.DBModel}} - " + fmt.Sprint(input) }
 
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
+
+	qry := `
+	INSERT INTO {{toplural .DBModel}} ({{.DBModel}}_id, name)
+    values(UUID_TO_BIN(?), ?)
+	`
+
+	stmt, err = svc.DB.PrepareContext(ctx, qry)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+	svc.Logger.Debug(fmt.Sprintf("running: %v", stmt))
+	if tx != nil {
+		stmt = tx.Stmt(stmt)
+	}
+
+	result, err := stmt.ExecContext(ctx, input.ID, input.Name)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	if rowCount == 0 {
+		return errors.Wrap(db.ErrNotCreated, errMsg())
+	}
+
+	return nil
 }
 
-func (svc Service) Update() {
+func (svc Service) Update(ctx context.Context, tx *sql.Tx, input *{{topascal .Name}}) error {
+	errMsg := func() string { return "Error executing update {{.DBModel}} - " + fmt.Sprint(input) }
 
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
+
+	qry := `
+	UPDATE
+    	{{toplural .DBModel}}
+  	SET
+    	name = ?
+  	WHERE
+ 		{{.DBModel}}_id = UUID_TO_BIN(?)
+    AND deleted_at IS NULL
+	`
+
+	result, err := stmt.ExecContext(ctx, input.Name, input.ID)
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return errors.Wrap(err, errMsg())
+	}
+
+	if rowCount == 0 {
+		return errors.Wrap(db.ErrNoRowsAffected, errMsg())
+	}
+
+	return nil
 }
 
 func (svc Service) Delete(ctx context.Context, tx *sql.Tx, ID uuid.UUID) error {
@@ -79,6 +145,41 @@ errMsg := func() string { return "Error executing delete {{.DBModel}} - " + ID.S
 	return nil
 }
 
-func (svc Service) Get() {
+func (svc Service) Get(ctx context.Context, tx *sql.Tx, ID uuid.UUID) (*{{topascal .Name}}, error) {
+	errMsg := func() string { return "Error executing get {{.DBModel}} - " + fmt.Sprint(ID) }
 
+	var (
+		stmt *sql.Stmt
+		err  error
+	)
+
+	qry := `
+	SELECT
+    	{{.DBModel}}_id, name
+  	FROM
+    	{{toplural .DBModel}}
+  	WHERE
+    	{{.DBModel}}_id = UUID_TO_BIN(?)
+    	AND deleted_at IS NULL
+	`
+
+	stmt, err = svc.DB.PrepareContext(ctx, qry)
+	if err != nil {
+		return nil, errors.Wrap(err, errMsg())
+	}
+	svc.Logger.Debug(fmt.Sprintf("running: %v", stmt))
+	if tx != nil {
+		stmt = tx.Stmt(stmt)
+	}
+
+	p := {{topascal .Name}}{}
+	err = stmt.QueryRowContext(ctx, ID)Scan(&p.ID, &p.Name)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.Wrap(db.ErrNotFound, errMsg())
+		}
+		return nil, errors.Wrap(err, errMsg())
+	}
+
+	return &p, nil
 }
