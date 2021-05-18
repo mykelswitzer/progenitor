@@ -21,7 +21,7 @@ type {{$pascalDbModel}} struct {
 
 // proto{{$pascalDbModel}} is an interface that most proto {{.DBModel}} objects will satisfy
 type proto{{$pascalDbModel}} interface {
-	GetName() string
+	Get{{$pascalDbModel}}() string
 }
 
 // New{{$pascalDbModel}} is a convenience helper cast a proto {{.DBModel}} to it's DB layer struct
@@ -33,14 +33,14 @@ func New{{$pascalDbModel}}(ID string, proto proto{{$pascalDbModel}}) (*{{$pascal
 
 	return &{{$pascalDbModel}}{
 		ID:  	mID,
-		Name: proto.GetName(),
+		Name: proto.Get{{$pascalDbModel}}(),
 	}, nil
 }
 
 // Proto casts a db {{.DBModel}} into a proto response object
 func (m *{{$pascalDbModel}}) Proto() *pb.{{$pascalDbModel}}Response {
 	return &pb.{{$pascalDbModel}}Response{
-		Id:  				m.ID.String(),
+		Id:  		m.ID.String(),
 		Name:       m.Name,
 	}
 }

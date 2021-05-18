@@ -1,17 +1,16 @@
 package main
 
+{{$pascalName := topascal .Name}}
+{{$lowerName := tolower .Name}}
+
 import (
-	"errors"
 	"net"
 	"net/http"
-	"os"
-	"log"
-	"database/sql"
 
-	"github.com/caring/{{.Name}}/api/pb"
-	"github.com/caring/{{.Name}}/internal/domain/{{Name}}"
-	"github.com/caring/{{.Name}}/internal/handlers"
-	"github.com/caring/{{.Name}}/internal/service"
+	"github.com/caring/{{$lowerName}}/api/pb"
+	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerName}}"
+	"github.com/caring/{{$lowerName}}/internal/handlers"
+	"github.com/caring/{{$lowerName}}/internal/service"
 
 	"github.com/caring/go-packages/v2/pkg/logging"
 	"github.com/caring/go-packages/v2/pkg/tracing"
@@ -19,8 +18,6 @@ import (
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
 )
-
-{{$pascalName := topascal .Name}}
 
 func main() {
 	l := initLogger()
@@ -50,13 +47,14 @@ func main() {
 	svc := &service.Service{
 		Logger: l,
 		{{$pascalName}}: &handlers.{{$pascalName}}{
-			{{if .UseDB}}Store: {{Name}}.Service{
-				DB: database,
+			{{if .UseDB}}Store: {{tolower .DBModel}}.Service{
+				DB: database,{{end}}
 				Logger: l,
 			},
 		},
 	}
 
+	// register the server with gRPC
 	g := createGRPCServer(l, t)
 	pb.Register{{$pascalName}}ServiceServer(g, svc)
 
