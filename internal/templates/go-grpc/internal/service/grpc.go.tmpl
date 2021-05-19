@@ -27,7 +27,6 @@ func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingRespons
     {{if .UseDB}}
     ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
     defer cancel()
-    }
     return &pb.PingResponse{Data: resp}, nil
     {{end}}
 }
