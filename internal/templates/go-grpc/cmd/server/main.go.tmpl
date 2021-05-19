@@ -55,7 +55,7 @@ func main() {
 
 	// register the server with gRPC
 	g := createGRPCServer(l, t)
-	pb.Register{{$pascalDBModel}}ServiceServer(g, svc)
+	pb.Register{{topascal .Name}}ServiceServer(g, svc)
 
 	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

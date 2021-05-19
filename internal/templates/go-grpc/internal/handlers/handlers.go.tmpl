@@ -1,8 +1,9 @@
 package handlers
 
+{{$lowerDBModel := tolower .DBModel}}
+{{$pascalDBModel := topascal .DBModel}}
+{{$camelDBModel := tocamel .DBModel}}
 {{$lowerName := tolower .Name}}
-{{$pascalName := topascal .Name}}
-{{$camelName := tocamel .Name}}
 
 
 import (
@@ -13,27 +14,27 @@ import (
     {{if .UseDB}}
 	"github.com/caring/{{$lowerName}}/api/pb"
 	"github.com/caring/{{$lowerName}}/internal/db"
-	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerName}}"
+	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerDBModel}}"
     {{end}}
 
 	"google.golang.org/grpc/codes"
 )
 
-type {{$pascalName}} struct {
-    Store {{$lowerName}}.Store
+type {{$pascalDBModel}} struct {
+    Store {{$lowerDBModel}}.Store
 }
 
-func (tmpl {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Create(ctx context.Context, req *pb.Create{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
 	id, err := uuid.NewRandom()
     if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    {{$camelName}}, err := {{tolower .Name}}.New{{$pascalName}}(id.String(), in)
+    {{$camelDBModel}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(id.String(), in)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
-    err = tmpl.Store.Create(ctx, nil, {{$camelName}})
+    err = tmpl.Store.Create(ctx, nil, {{$camelDBModel}})
 	if err != nil {
 		if errors.Is(err, db.ErrDuplicate) {
 			return nil, errors.WithGrpcStatus(err, codes.AlreadyExists)
@@ -41,15 +42,15 @@ func (tmpl {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalN
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    created{{$pascalName}}, err := pn.Store.Get(ctx, nil, id)
+    created{{$pascalDBModel}}, err := pn.Store.Get(ctx, nil, id)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    return created{{$pascalName}}.Proto()
+    return created{{$pascalDBModel}}.Proto()
 }
 
-func (tmpl {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Update(ctx context.Context, req *pb.Update{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
     ID, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, err
@@ -63,16 +64,16 @@ func (tmpl {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalN
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	{{$camelName}}, err := {{tolower .Name}}.New{{$pascalName}}(ID.String(), req)
+	{{$camelDBModel}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(ID.String(), req)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
-	err = tmpl.Store.Update(ctx, nil, {{$camelName}})
+	err = tmpl.Store.Update(ctx, nil, {{$camelDBModel}})
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	updated{{$pascalName}}, err := tmpl.Store.Get(ctx, nil, ID)
+	updated{{$pascalDBModel}}, err := tmpl.Store.Get(ctx, nil, ID)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			return nil, errors.WithGrpcStatus(err, codes.NotFound)
@@ -80,16 +81,16 @@ func (tmpl {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalN
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	return updated{{$pascalName}}.Proto(), nil
+	return updated{{$pascalDBModel}}.Proto(), nil
 }
 
-func (tmpl {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     ID, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
 
-	{{$camelName}}, err := tmpl.Store.Get(ctx, nil, ID)
+	{{$camelDBModel}}, err := tmpl.Store.Get(ctx, nil, ID)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			return nil, errors.WithGrpcStatus(err, codes.NotFound)
@@ -104,24 +105,24 @@ func (tmpl {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (
 		}
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
-	{{$camelName}}.Deleted = true
-	return {{$camelName}}.Proto(), nil
+	{{$camelDBModel}}.Deleted = true
+	return {{$camelDBModel}}.Proto(), nil
 }
 
-func (tmpl {{$pascalName}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     id, err := uuid.Parse(in.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
 
-	{{$camelName}}, err := tmpl.Store.Get(ctx, nil, id)
+	{{$camelDBModel}}, err := tmpl.Store.Get(ctx, nil, id)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			return nil, errors.WithGrpcStatus(err, codes.NotFound)
 		}
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
-	resp, err := {{$camelName}}.Proto()
+	resp, err := {{$camelDBModel}}.Proto()
 	if err != nil {
 		return nil, err
 	}
