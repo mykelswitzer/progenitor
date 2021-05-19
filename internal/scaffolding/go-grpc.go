@@ -77,12 +77,10 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		dbDir := Dir{Name: "db"}
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
 
-		// domainsRequired := Dir{Name: "domain"}
-		// domainsRequired.AddSubDirs(Dir{Name: "testdomain"})
+		domainsDir := Dir{Name: "domain"}
+		domainsDir.AddSubDirs(Dir{Name: "testdomain"})
 
-		internalDir.AddSubDirs(dbDir)
-
-		// internalDir.AddSubDirs(dbDir, domainsRequired)
+		internalDir.AddSubDirs(dbDir, domainsDir)
 	}
 	internalDir.AddSubDirs(Dir{Name: "handlers"}, Dir{Name: "service"})
 
@@ -136,6 +134,13 @@ func renameServiceFiles(s *Scaffold) error {
 		}
 	}
 
+	oldName = filepath.Join(path, "internal/handlers/handlers.go")
+	newName = filepath.Join(path, "internal/handlers", s.Config.GetString("dbModel")+".go")
+	err = os.Rename(oldName, newName)
+	if err != nil {
+		log.Println(err)
+	}
+
 	if s.Config.GetBool("dbRequired") == true {
 
 		oldName = filepath.Join(path, "internal/db/service.go")
@@ -147,13 +152,6 @@ func renameServiceFiles(s *Scaffold) error {
 
 		oldName = filepath.Join(path, "internal/db/service_test.go")
 		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+"_test.go")
-		err = os.Rename(oldName, newName)
-		if err != nil {
-			log.Println(err)
-		}
-
-		oldName = filepath.Join(path, "internal/handlers/handlers.go")
-		newName = filepath.Join(path, "internal/handlers", s.Config.GetString("dbModel")+".go")
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)
