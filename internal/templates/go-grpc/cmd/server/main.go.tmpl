@@ -13,7 +13,6 @@ import (
 	"github.com/caring/{{$lowerName}}/internal/service"
 
 	"github.com/caring/go-packages/v2/pkg/logging"
-	"github.com/caring/go-packages/v2/pkg/tracing"
 
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
@@ -47,9 +46,9 @@ func main() {
 	svc := &service.Service{
 		Logger: l,
 		{{$pascalName}}: &handlers.{{$pascalName}}{
-			{{if .UseDB}}Store: {{tolower .DBModel}}.Service{
-				DB: database,{{end}}
-				Logger: l,
+			{{if .UseDB}}Store: {{$lowerName}}.Service{
+				DB: database,
+				Logger: l,{{end}}
 			},
 		},
 	}

@@ -1,18 +1,23 @@
 package service
 
+{{$lowerName := tolower .Name}}
+{{$pascalName := topascal .Name}}
+
 import (
   "context"
-  "fmt"{{if .UseDB}}
+  "fmt"
   "time"
 
+  _ "google.golang.org/grpc/codes"
+
   "github.com/caring/go-packages/v2/pkg/logging"
-  "github.com/caring/{{.Name}}/api/pb"
-  "github.com/caring/{{.Name}}/internal/handlers"{{end}}
+  "github.com/caring/{{$lowerName}}/api/pb"
+  "github.com/caring/{{$lowerName}}/internal/handlers"
 )
 
 type Service struct {
-  pb.Unimplemented{{topascal .Name}}ServiceServer
-  {{if .UseDB}}{{topascal .Name}} *handlers.{{topascal .Name}}{{end}}
+  pb.Unimplemented{{$pascalName}}ServiceServer
+  {{if .UseDB}}{{$pascalName}} *handlers.{{$pascalName}}{{end}}
   Logger   logging.Logging
 }
 
@@ -27,22 +32,22 @@ func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingRespons
     {{end}}
 }
 
-func (s *Service)  Create{{topascal .Name}}(ctx context.Context, in *pb.Create{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
-  s.Logger.Debug("Create{{topascal .Name}}: " + in.String())
-	return s.{{topascal .Name}}.Create(ctx, in)
+func (s *Service)  Create{{$pascalName}}(ctx context.Context, in *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+  s.Logger.Debug("Create{{$pascalName}}: " + in.String())
+	return s.{{$pascalName}}.Create(ctx, in)
 }
 
-func (s *Service)  Update{{topascal .Name}}(ctx context.Context, in *pb.Update{{topascal .Name}}Request) (*pb.{{topascal .Name}}Response, error) {
-  s.Logger.Debug("Update{{topascal .Name}}: " + in.String())
-  return s.{{topascal .Name}}.Update(ctx, in)
+func (s *Service)  Update{{$pascalName}}(ctx context.Context, in *pb.Update{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+  s.Logger.Debug("Update{{$pascalName}}: " + in.String())
+  return s.{{$pascalName}}.Update(ctx, in)
 }
 
-func (s *Service)  Delete{{topascal .Name}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
-  s.Logger.Debug("Delete{{topascal .Name}}: " + in.String())
-  return s.{{topascal .Name}}.Delete(ctx, in)
+func (s *Service)  Delete{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+  s.Logger.Debug("Delete{{$pascalName}}: " + in.String())
+  return s.{{$pascalName}}.Delete(ctx, in)
 }
 
-func (s *Service)  Get{{topascal .Name}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{topascal .Name}}Response, error) {
-  s.Logger.Debug("Get{{topascal .Name}}: " + in.String())
-  return s.{{topascal .Name}}.Get(ctx, in)
+func (s *Service)  Get{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+  s.Logger.Debug("Get{{$pascalName}}: " + in.String())
+  return s.{{$pascalName}}.Get(ctx, in)
 }
