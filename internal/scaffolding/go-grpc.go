@@ -142,34 +142,19 @@ func renameServiceFiles(s *Scaffold) error {
 	}
 
 	if s.Config.GetBool("dbRequired") == true {
-
-		oldName = filepath.Join(path, "internal/db/service.go")
-		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+".go")
+		oldName = filepath.Join(path, "internal/domain/domain/service_test.go")
+		newName = filepath.Join(path, "internal/domain/domain", s.Config.GetString("dbModel")+"_test.go")
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)
 		}
 
-		oldName = filepath.Join(path, "internal/db/service_test.go")
-		newName = filepath.Join(path, "internal/db", s.Config.GetString("dbModel")+"_test.go")
+		oldName = filepath.Join(path, "internal/domain/domain/")
+		newName = filepath.Join(path, "internal/domain/", s.Config.GetString("dbModel"))
 		err = os.Rename(oldName, newName)
 		if err != nil {
 			log.Println(err)
 		}
-
-		// oldName = filepath.Join(path, "internal/domain/domain/service_test.go")
-		// newName = filepath.Join(path, "internal/domain/domain", s.Config.GetString("dbModel")+"_test.go")
-		// err = os.Rename(oldName, newName)
-		// if err != nil {
-		// 	log.Println(err)
-		// }
-
-		// oldName = filepath.Join(path, "internal/domain/domain/")
-		// newName = filepath.Join(path, "internal/domain/", s.Config.GetString("dbModel"))
-		// err = os.Rename(oldName, newName)
-		// if err != nil {
-		// 	log.Println(err)
-		// }
 	}
 
 	return nil

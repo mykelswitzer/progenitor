@@ -2,7 +2,7 @@
 {{$pascalName := topascal .Name}}
 {{$pluralDBModel := toplural .DBModel}}
 
-package {{$lowerName}}
+package {{tolower .DBModel}}
 
 import (
     "context"
