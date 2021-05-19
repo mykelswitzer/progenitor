@@ -1,16 +1,16 @@
 package main
 
-{{$pascalName := topascal .Name}}
-{{$lowerName := tolower .Name}}
+{{$pascalDBModel := topascal .DBModel}}
+{{$lowerDBModel := tolower .DBModel}}
 
 import (
 	"net"
 	"net/http"
 
-	"github.com/caring/{{$lowerName}}/api/pb"
-	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerName}}"
-	"github.com/caring/{{$lowerName}}/internal/handlers"
-	"github.com/caring/{{$lowerName}}/internal/service"
+	"github.com/caring/{{.Name}}/api/pb"
+	"github.com/caring/{{.Name}}/internal/domain/{{$lowerDBModel}}"
+	"github.com/caring/{{.Name}}/internal/handlers"
+	"github.com/caring/{{.Name}}/internal/service"
 
 	"github.com/caring/go-packages/v2/pkg/logging"
 
@@ -45,8 +45,8 @@ func main() {
 
 	svc := &service.Service{
 		Logger: l,
-		{{$pascalName}}: &handlers.{{$pascalName}}{
-			{{if .UseDB}}Store: {{$lowerName}}.Service{
+		{{$pascalDBModel}}: &handlers.{{$pascalDBModel}}{
+			{{if .UseDB}}Store: {{$lowerDBModel}}.Service{
 				DB: database,
 				Logger: l,{{end}}
 			},
@@ -55,7 +55,7 @@ func main() {
 
 	// register the server with gRPC
 	g := createGRPCServer(l, t)
-	pb.Register{{$pascalName}}ServiceServer(g, svc)
+	pb.Register{{$pascalDBModel}}ServiceServer(g, svc)
 
 	// Add a health check endpoint for automated container monitoring
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
