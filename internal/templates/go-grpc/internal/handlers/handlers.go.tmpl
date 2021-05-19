@@ -42,7 +42,7 @@ func (tmpl {{$pascalDBModel}}) Create(ctx context.Context, req *pb.Create{{$pasc
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    created{{$pascalDBModel}}, err := pn.Store.Get(ctx, nil, id)
+    created{{$pascalDBModel}}, err := tmpl.Store.Get(ctx, nil, id)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
@@ -110,7 +110,7 @@ func (tmpl {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByUUIDRequest
 }
 
 func (tmpl {{$pascalDBModel}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
-    id, err := uuid.Parse(in.GetId())
+    id, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}

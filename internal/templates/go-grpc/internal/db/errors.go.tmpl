@@ -11,4 +11,6 @@ var (
 	ErrNotFound = errors.New("the record you are attempting to find or update is not found")
     // ErrNotCreated occurs when the store fails to create a record
     ErrNotCreated = errors.New("no new rows were created")
+	//ErrDuplicate occurs when a unique constraint fails
+	ErrDuplicate = errors.New("matching existing record found")
 )
