@@ -1,14 +1,10 @@
 package {{tolower .DBModel}}
 
 import (
-    "context"
     "database/sql"
-    "fmt"
 
-    "github.com/caring/go-packages/pkg/errors"
     "github.com/caring/go-packages/pkg/uuid"
-
-    "github.com/caring/{{.Name}}/api/pb"
+    "github.com/caring/{{tolower .Name}}/api/pb"
 )
 
 {{$pascalDbModel := topascal .DBModel}}

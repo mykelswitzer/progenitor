@@ -1,5 +1,5 @@
 {{$lowerName := tolower .Name}}
-{{$pascalName := topascal .Name}}
+{{$pascalDBModel := topascal .DBModel}}
 {{$pluralDBModel := toplural .DBModel}}
 
 package {{tolower .DBModel}}
@@ -18,10 +18,10 @@ import (
 )
 
 type Store interface {
-    Create(context.Context, *sql.Tx, *{{$pascalName}}) error
-    Update(context.Context, *sql.Tx, *{{$pascalName}}) error
+    Create(context.Context, *sql.Tx, *{{$pascalDBModel}}) error
+    Update(context.Context, *sql.Tx, *{{$pascalDBModel}}) error
     Delete(context.Context, *sql.Tx, uuid.UUID) error
-    Get(context.Context, *sql.Tx, uuid.UUID) (*{{$pascalName}}, error)
+    Get(context.Context, *sql.Tx, uuid.UUID) (*{{$pascalDBModel}}, error)
 }
 
 type Service struct {
@@ -31,7 +31,7 @@ type Service struct {
 
 var _ Store = (*Service)(nil)
 
-func (svc Service) Create(ctx context.Context, *sql.Tx, input *{{$pascalName}}) error {
+func (svc Service) Create(ctx context.Context, tx *sql.Tx, input *{{$pascalDBModel}}) error {
 errMsg := func() string { return "Error executing create {{.DBModel}} - " + fmt.Sprint(input) }
 
     var (
@@ -70,7 +70,7 @@ errMsg := func() string { return "Error executing create {{.DBModel}} - " + fmt.
     return nil
 }
 
-func (svc Service) Update(ctx context.Context, tx *sql.Tx, input *{{$pascalName}}) error {
+func (svc Service) Update(ctx context.Context, tx *sql.Tx, input *{{$pascalDBModel}}) error {
     errMsg := func() string { return "Error executing update {{.DBModel}} - " + fmt.Sprint(input) }
 
     var (
@@ -87,6 +87,15 @@ func (svc Service) Update(ctx context.Context, tx *sql.Tx, input *{{$pascalName}
         {{.DBModel}}_id = UUID_TO_BIN(?)
     AND deleted_at IS NULL
     `
+
+	stmt, err = svc.DB.PrepareContext(ctx, qry)
+    if err != nil {
+        return nil, errors.Wrap(err, errMsg())
+    }
+    svc.Logger.Debug(fmt.Sprintf("running: %v", stmt))
+    if tx != nil {
+        stmt = tx.Stmt(stmt)
+    }
 
     result, err := stmt.ExecContext(ctx, input.Name, input.ID)
     if err != nil {
@@ -149,7 +158,7 @@ errMsg := func() string { return "Error executing delete {{.DBModel}} - " + ID.S
     return nil
 }
 
-func (svc Service) Get(ctx context.Context, tx *sql.Tx, ID uuid.UUID) (*{{$pascalName}}, error) {
+func (svc Service) Get(ctx context.Context, tx *sql.Tx, ID uuid.UUID) (*{{$pascalDBModel}}, error) {
     errMsg := func() string { return "Error executing get {{.DBModel}} - " + fmt.Sprint(ID) }
 
     var (
@@ -176,7 +185,7 @@ func (svc Service) Get(ctx context.Context, tx *sql.Tx, ID uuid.UUID) (*{{$pasca
         stmt = tx.Stmt(stmt)
     }
 
-    p := {{$pascalName}}{}
+    p := {{$pascalDBModel}}{}
     err = stmt.QueryRowContext(ctx, ID)Scan(&p.ID, &p.Name)
     if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
