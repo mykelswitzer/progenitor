@@ -30,7 +30,7 @@ func (tmpl {{$pascalDBModel}}) Create(ctx context.Context, req *pb.Create{{$pasc
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    {{$camelDBModel}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(id.String(), in)
+    {{$camelDBModel}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(id.String(), req)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}

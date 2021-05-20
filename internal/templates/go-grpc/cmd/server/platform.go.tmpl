@@ -123,11 +123,7 @@ func envMust(varName string) string {
 	value := os.Getenv(varName)
 	if value == "" {
 		e := errors.New("environment variable missing - " + varName)
-		if l != nil {
-			l.Fatal(e.Error())
-		} else {
-			log.Fatalln(e.Error())
-		}
+		log.Fatalln(e.Error())
 	}
 	return value
 }
