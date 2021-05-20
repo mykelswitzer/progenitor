@@ -13,6 +13,7 @@ import (
 type {{$pascalDbModel}} struct {
     ID      uuid.UUID
     Name    string
+    Deleted      bool
 }
 
 // proto{{$pascalDbModel}} is an interface that most proto {{.DBModel}} objects will satisfy

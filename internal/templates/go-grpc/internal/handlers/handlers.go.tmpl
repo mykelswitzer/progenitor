@@ -10,13 +10,11 @@ import (
     "context"
     "github.com/caring/go-packages/pkg/errors"  
 	"github.com/caring/go-packages/pkg/uuid"
-
     {{if .UseDB}}
 	"github.com/caring/{{$lowerName}}/api/pb"
 	"github.com/caring/{{$lowerName}}/internal/db"
 	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerDBModel}}"
     {{end}}
-
 	"google.golang.org/grpc/codes"
 )
 
@@ -47,7 +45,7 @@ func (tmpl {{$pascalDBModel}}) Create(ctx context.Context, req *pb.Create{{$pasc
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    return created{{$pascalDBModel}}.Proto()
+    return created{{$pascalDBModel}}.Proto(), nil
 }
 
 func (tmpl {{$pascalDBModel}}) Update(ctx context.Context, req *pb.Update{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
@@ -122,10 +120,6 @@ func (tmpl {{$pascalDBModel}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (
 		}
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
-	resp, err := {{$camelDBModel}}.Proto()
-	if err != nil {
-		return nil, err
-	}
 
-	return resp, nil
+	return {{$camelDBModel}}.Proto(), nil
 }
