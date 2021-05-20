@@ -53,7 +53,7 @@ func Test{{$pascalDbModel}}_Proto(t *testing.T) {
 
   res := {{.DBModel}}.Proto()
 
-  assert.Equal(t, {{.DBModel}}ID.String(), res.{{$pascalDbModel}}Id, "Expected field to be mapped back to proto object correctly")
+  assert.Equal(t, {{.DBModel}}ID.String(), res.Id, "Expected field to be mapped back to proto object correctly")
   assert.Equal(t, "foobar", res.Name, "Expected field to be mapped back to proto object correctly")
 }
 
