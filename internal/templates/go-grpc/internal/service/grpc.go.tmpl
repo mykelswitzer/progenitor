@@ -41,12 +41,12 @@ func (s *Service)  Update{{$pascalName}}(ctx context.Context, in *pb.Update{{$pa
   return s.{{$pascalName}}.Update(ctx, in)
 }
 
-func (s *Service)  Delete{{$pascalName}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (s *Service)  Delete{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
   s.Logger.Debug("Delete{{$pascalName}}: " + in.String())
   return s.{{$pascalName}}.Delete(ctx, in)
 }
 
-func (s *Service)  Get{{$pascalName}}(ctx context.Context, in *pb.ByIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (s *Service)  Get{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
   s.Logger.Debug("Get{{$pascalName}}: " + in.String())
   return s.{{$pascalName}}.Get(ctx, in)
 }

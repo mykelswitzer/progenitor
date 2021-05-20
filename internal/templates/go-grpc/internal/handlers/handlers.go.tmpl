@@ -82,7 +82,7 @@ func (tmpl {{$pascalDBModel}}) Update(ctx context.Context, req *pb.Update{{$pasc
 	return updated{{$pascalDBModel}}.Proto(), nil
 }
 
-func (tmpl {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     ID, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
@@ -107,7 +107,7 @@ func (tmpl {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByIDRequest) 
 	return {{$camelDBModel}}.Proto(), nil
 }
 
-func (tmpl {{$pascalDBModel}}) Get(ctx context.Context, req *pb.ByIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
+func (tmpl {{$pascalDBModel}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     id, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
