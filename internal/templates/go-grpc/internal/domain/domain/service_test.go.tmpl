@@ -74,7 +74,7 @@ func Test{{.DBModel}}Service_get(t *testing.T) {
 		mock.ExpectQuery("SELECT {{.DBModel}}s").
 			WillReturnRows(
 				sqlmock.NewRows([]string{"{{.DBModel}}_id", "name"}).
-					AddRow({{.DBModel}}ID, "Foobar"),
+					AddRow({{.DBModel}}TestID, "Foobar"),
 			)
 
 		res, err := store.Get(context.Background(), nil, {{.DBModel}}TestID)
@@ -97,7 +97,7 @@ func Test{{.DBModel}}Service_get(t *testing.T) {
 		mock.ExpectQuery("SELECT {{.DBModel}}s").
 			WithArgs(args...).WillReturnError(sql.ErrNoRows)
 
-		_, err = store.Get(context.Background(), nil, {{.DBModel}}ID)
+		_, err = store.Get(context.Background(), nil, {{.DBModel}}TestID)
 		assert.EqualError(t, err, "Error executing get {{.DBModel}} - 72bc87f3-4a9f-4d05-93fe-844d3cd94c65: the record you are attempting to find or update is not found", "Expecting no query error")
 
 		err = mock.ExpectationsWereMet()
