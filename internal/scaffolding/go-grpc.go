@@ -136,7 +136,7 @@ func renameServiceFiles(s *Scaffold) error {
 	}
 
 	oldName = filepath.Join(path, "internal/handlers/handlers.go")
-	newName = filepath.Join(path, "internal/handlers", s.Config.GetString("projectName")+".go")
+	newName = filepath.Join(path, "internal/handlers", strings.ToPackage(s.Config.GetString("projectName"))+".go")
 	err = os.Rename(oldName, newName)
 	if err != nil {
 		log.Println(err)
