@@ -149,7 +149,7 @@ func renameServiceFiles(s *Scaffold) error {
 	}
 
 	if s.Config.GetBool("dbRequired") == true {
-		oldName = filepath.Join(path, "internal/domain/service/")
+		oldName = filepath.Join(path, "internal/domain/placeholder/")
 		newName = filepath.Join(path, "internal/domain/", s.Config.GetString("dbModel"))
 		err = os.Rename(oldName, newName)
 		if err != nil {
