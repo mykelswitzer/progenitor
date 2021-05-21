@@ -11,7 +11,7 @@ import (
 	"github.com/caring/go-packages/pkg/uuid"
 	"github.com/caring/{{$lowerName}}/api/pb"
 	{{if .UseDB}}"github.com/caring/{{$lowerName}}/internal/db"
-	"github.com/caring/{{$lowerName}}/internal/domain/placeholder"{{end}}
+	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerDBModel}}"{{end}}
 	"google.golang.org/grpc/codes"
 )
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/caring/{{$lowerName}}/api/pb"
-	{{if .UseDB}}"github.com/caring/{{$lowerName}}/internal/domain/placeholder"{{end}}
+	{{if .UseDB}}"github.com/caring/{{$lowerName}}/internal/domain/{{tolower .DBModel}}"{{end}}
 	"github.com/caring/{{$lowerName}}/internal/handlers"
 	"github.com/caring/{{$lowerName}}/internal/service"
 	"github.com/caring/go-packages/v2/pkg/logging"
