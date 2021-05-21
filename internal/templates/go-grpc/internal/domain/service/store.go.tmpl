@@ -1,7 +1,6 @@
 
 package {{tolower .DBModel}}
 
-{{$lowerName := tolower .Name}}
 {{$pascalDBModel := topascal .DBModel}}
 {{$pluralDBModel := toplural .DBModel}}
 
@@ -13,7 +12,7 @@ import (
     "github.com/caring/go-packages/pkg/errors"
     "github.com/caring/go-packages/pkg/uuid"
     "github.com/caring/go-packages/v2/pkg/logging"
-    "github.com/caring/{{$lowerName}}/internal/db"
+    "github.com/caring/{{tolower .Name}}/internal/db"
 )
 
 type Store interface {

@@ -2,16 +2,14 @@ package main
 
 // This file contains helpers that initialize app insight, developer tooling and database set up that might be run on any given app
 import (
-{{if .UseDB}}
-	"fmt"
+	{{if .UseDB}}"fmt"
 	"database/sql"{{end}}
 
 	"log"
 	"errors"
 	"os"
 
-{{if .UseDB}}
-	"github.com/caring/{{tolower .Name}}/internal/db"
+	{{if .UseDB}}"github.com/caring/{{tolower .Name}}/internal/db"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"

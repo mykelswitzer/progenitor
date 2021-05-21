@@ -10,7 +10,7 @@ import (
   "github.com/caring/go-packages/pkg/uuid"
   "github.com/stretchr/testify/assert"
 
-  "github.com/caring/{{.Name}}/api/pb"
+  "github.com/caring/{{tolower .Name}}/api/pb"
 )
 
 {{$pascalDbModel := topascal .DBModel}}

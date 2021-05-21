@@ -17,7 +17,7 @@ import (
 
 type Service struct {
   pb.Unimplemented{{$pascalName}}ServiceServer
-  {{if .UseDB}}{{$pascalName}} *handlers.{{$pascalName}}{{end}}
+  {{$pascalName}} *handlers.{{$pascalName}}
   Logger   logging.Logging
 }
 
