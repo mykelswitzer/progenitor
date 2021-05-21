@@ -10,11 +10,9 @@ import (
     "context"
     "github.com/caring/go-packages/pkg/errors"  
 	"github.com/caring/go-packages/pkg/uuid"
-    {{if .UseDB}}
-	"github.com/caring/{{$lowerName}}/api/pb"
+	{{if .UseDB}}"github.com/caring/{{$lowerName}}/api/pb"
 	"github.com/caring/{{$lowerName}}/internal/db"
-	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerDBModel}}"
-    {{end}}
+	"github.com/caring/{{$lowerName}}/internal/domain/{{$lowerDBModel}}"{{end}}
 	"google.golang.org/grpc/codes"
 )
 

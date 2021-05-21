@@ -4,8 +4,8 @@ package main
 import (
 {{if .UseDB}}
 	"fmt"
-	"database/sql"
-{{end}}
+	"database/sql"{{end}}
+
 	"log"
 	"errors"
 	"os"
@@ -16,8 +16,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/golang-migrate/migrate/v4/source/github"
-{{end}}
+	_ "github.com/golang-migrate/migrate/v4/source/github"{{end}}
 
 	"github.com/caring/go-packages/v2/pkg/grpc_middleware"
 	"github.com/caring/go-packages/v2/pkg/logging"
@@ -114,8 +113,7 @@ func initDB(logger *logging.Logger, connectionString string) *sql.DB {
 	}
 	logger.Debug("Store established with database connection")
 	return db
-}
-{{end}}
+} {{end}}
 
 // fetches and returns the given env variable, fatals and
 // captures an exception if the variable is an empty string
