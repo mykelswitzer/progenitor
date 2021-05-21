@@ -84,7 +84,7 @@ func (g goGrpc) Init(cfg *config.Config) (*Scaffold, error) {
 		dbDir.AddSubDirs(Dir{Name: "migrations"})
 
 		domainsDir := Dir{Name: "domain"}
-		domainsDir.AddSubDirs(Dir{Name: "service"})
+		domainsDir.AddSubDirs(Dir{Name: "placeholder"})
 
 		internalSubDirs = append(internalSubDirs, dbDir, domainsDir)
 	}
