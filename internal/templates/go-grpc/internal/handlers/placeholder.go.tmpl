@@ -11,16 +11,16 @@ import (
 	"github.com/caring/go-packages/pkg/uuid"
 	"github.com/caring/{{$lowerName}}/api/pb"
 	{{if .UseDB}}"github.com/caring/{{$lowerName}}/internal/db"
-	"github.com/caring/{{$lowerName}}/internal/domain/service"{{end}}
+	"github.com/caring/{{$lowerName}}/internal/domain/placeholder"{{end}}
 	"google.golang.org/grpc/codes"
 )
 
 type {{$pascalName}} struct {
-    Store {{$lowerDBModel}}.Store
+    {{if .UseDB}}Store {{$lowerDBModel}}.Store{{end}}
 }
 
 func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
-	id, err := uuid.NewRandom()
+	{{if .UseDB}}id, err := uuid.NewRandom()
     if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
@@ -42,11 +42,11 @@ func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    return created{{$pascalName}}.Proto(), nil
+    return created{{$pascalName}}.Proto(), nil{{end}}
 }
 
 func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
-    ID, err := uuid.Parse(req.Id)
+    {{if .UseDB}}ID, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -76,11 +76,11 @@ func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	return updated{{$pascalName}}.Proto(), nil
+	return updated{{$pascalName}}.Proto(), nil{{end}}
 }
 
 func (h {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
-    ID, err := uuid.Parse(req.GetId())
+    {{if .UseDB}}ID, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
@@ -101,11 +101,11 @@ func (h {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 	
-	return {{$camelName}}.Proto(), nil
+	return {{$camelName}}.Proto(), nil{{end}}
 }
 
 func (h {{$pascalName}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
-    id, err := uuid.Parse(req.GetId())
+    {{if .UseDB}}id, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
@@ -118,5 +118,5 @@ func (h {{$pascalName}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	return {{$camelName}}.Proto(), nil
+	return {{$camelName}}.Proto(), nil{{end}}
 }

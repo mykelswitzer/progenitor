@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/caring/{{$lowerName}}/api/pb"
-	"github.com/caring/{{$lowerName}}/internal/domain/service"
+	{{if .UseDB}}"github.com/caring/{{$lowerName}}/internal/domain/placeholder"{{end}}
 	"github.com/caring/{{$lowerName}}/internal/handlers"
 	"github.com/caring/{{$lowerName}}/internal/service"
 	"github.com/caring/go-packages/v2/pkg/logging"
@@ -45,8 +45,8 @@ func main() {
 		{{$pascalName}}: &handlers.{{$pascalName}}{
 			{{if .UseDB}}Store: {{tolower .DBModel}}.Service{
 				DB: database,
-				Logger: l,{{end}}
-			},
+				Logger: l,
+			},{{end}}
 		},
 	}
 

@@ -23,13 +23,11 @@ type Service struct {
 
 func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
     s.Logger.Debug(fmt.Sprintf("Received: %v", in.Data))
-    resp := "Data: " + in.Data
-    {{if .UseDB}}
+    {{if .UseDB}}resp := "Data: " + in.Data
     ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
     defer cancel()
-    return &pb.PingResponse{Data: resp}, nil
-    {{end}}
-}
+    return &pb.PingResponse{Data: resp}, nil{{end}}
+} 
 
 func (s *Service)  Create{{$pascalName}}(ctx context.Context, in *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
   s.Logger.Debug("Create{{$pascalName}}: " + in.String())
