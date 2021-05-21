@@ -1,6 +1,7 @@
-USE {{tosnakecase .Name}};
+USE {{tolower .DBModel}};
 
 -- Drop Tables
+DROP TABLE IF EXISTS {{tolower .DBModel}}s;
 
 -- Drop schema
-DROP SCHEMA IF EXISTS {{tosnakecase .Name}};
+DROP SCHEMA IF EXISTS {{tolower .DBModel}};
