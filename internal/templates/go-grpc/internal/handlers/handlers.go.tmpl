@@ -101,7 +101,7 @@ func (h {{$pascalDBModel}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (
 		}
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
-	{{$camelDBModel}}.Deleted = true
+	
 	return {{$camelDBModel}}.Proto(), nil
 }
 
