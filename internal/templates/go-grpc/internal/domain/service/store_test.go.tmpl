@@ -57,7 +57,7 @@ func Test{{$pascalDbModel}}_Proto(t *testing.T) {
   assert.Equal(t, "foobar", res.Name, "Expected field to be mapped back to proto object correctly")
 }
 
-func Test{{.DBModel}}Service_get(t *testing.T) {
+func Test{{$pascalDbModel}}Service_get(t *testing.T) {
 	{{.DBModel}}TestID := uuid.MustParse("72bc87f3-4a9f-4d05-93fe-844d3cd94c65")
 
 	args := []driver.Value{
