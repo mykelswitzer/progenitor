@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	_ "github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/internal/config"
 	"github.com/caring/progenitor/internal/strings"
 )

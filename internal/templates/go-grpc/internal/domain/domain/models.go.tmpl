@@ -11,12 +11,11 @@ import (
 type {{$pascalDbModel}} struct {
     ID      uuid.UUID
     Name    string
-    Deleted      bool
 }
 
 // proto{{$pascalDbModel}} is an interface that most proto {{.DBModel}} objects will satisfy
 type proto{{$pascalDbModel}} interface {
-    Get{{$pascalDbModel}}() string
+    GetName() string
 }
 
 // New{{$pascalDbModel}} is a convenience helper cast a proto {{.DBModel}} to it's DB layer struct
@@ -28,7 +27,7 @@ func New{{$pascalDbModel}}(ID string, proto proto{{$pascalDbModel}}) (*{{$pascal
 
     return &{{$pascalDbModel}}{
         ID:     mID,
-        Name: proto.Get{{$pascalDbModel}}(),
+        Name: proto.GetName(),
     }, nil
 }
 

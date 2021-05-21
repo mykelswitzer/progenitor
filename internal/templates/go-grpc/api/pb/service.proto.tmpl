@@ -44,16 +44,13 @@ message LoadKeyRequest {
 message {{topascal .DBModel}}Response {
   string id = 1;
   string name = 2;
-  string {{tolower .DBModel}} = 3;
 }
 
 message Create{{topascal .DBModel}}Request {
   string name = 1;
-  string {{tolower .DBModel}} = 2;
 }
 
 message Update{{topascal .DBModel}}Request {
   string id = 1;
   string name = 2;
-  string {{tolower .DBModel}} = 3;
 }
