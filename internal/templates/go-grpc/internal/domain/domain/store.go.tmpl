@@ -1,8 +1,9 @@
+
+package {{tolower .DBModel}}
+
 {{$lowerName := tolower .Name}}
 {{$pascalDBModel := topascal .DBModel}}
 {{$pluralDBModel := toplural .DBModel}}
-
-package {{tolower .DBModel}}
 
 import (
     "context"
@@ -30,7 +31,7 @@ type Service struct {
 var _ Store = (*Service)(nil)
 
 func (svc Service) Create(ctx context.Context, tx *sql.Tx, input *{{$pascalDBModel}}) error {
-errMsg := func() string { return "Error executing create {{.DBModel}} - " + fmt.Sprint(input) }
+    errMsg := func() string { return "Error executing create {{.DBModel}} - " + fmt.Sprint(input) }
 
     var (
         stmt *sql.Stmt
@@ -113,7 +114,7 @@ func (svc Service) Update(ctx context.Context, tx *sql.Tx, input *{{$pascalDBMod
 }
 
 func (svc Service) Delete(ctx context.Context, tx *sql.Tx, ID uuid.UUID) error {
-errMsg := func() string { return "Error executing delete {{.DBModel}} - " + ID.String() }
+    errMsg := func() string { return "Error executing delete {{.DBModel}} - " + ID.String() }
 
     var (
         stmt *sql.Stmt
