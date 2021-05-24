@@ -3,6 +3,7 @@ package handlers
 {{$lowerDBModel := tolower .DBModel}}
 {{$lowerName := tolower .Name}}
 {{$pascalName := topascal .Name}}
+{{$pascalDBModel := topascal .DBModel}}
 {{$camelName := tocamel .Name}}
 
 import (
@@ -25,7 +26,7 @@ func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-    {{$camelName}}, err := {{$lowerName}}.New{{$pascalName}}(id.String(), req)
+    {{$camelName}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(id.String(), req)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
@@ -59,7 +60,7 @@ func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
 	}
 
-	{{$camelName}}, err := {{$lowerName}}.New{{$pascalName}}(ID.String(), req)
+	{{$camelName}}, err := {{$lowerDBModel}}.New{{$pascalDBModel}}(ID.String(), req)
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
 	}
