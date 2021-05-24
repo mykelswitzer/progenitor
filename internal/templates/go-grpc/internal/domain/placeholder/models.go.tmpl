@@ -1,0 +1,42 @@
+package {{topackage .DBModel}}
+
+import (
+    "github.com/caring/go-packages/pkg/uuid"
+    "github.com/caring/{{tolower .Name}}/api/pb"
+)
+
+{{$pascalDbModel := topascal .DBModel}}
+
+// {{$pascalDbModel}} is a struct representation of a row in the {{toplural .DBModel}} table
+type {{$pascalDbModel}} struct {
+    ID      uuid.UUID
+    Name    string
+}
+
+// proto{{$pascalDbModel}} is an interface that most proto {{.DBModel}} objects will satisfy
+type proto{{$pascalDbModel}} interface {
+    GetName() string
+}
+
+// New{{$pascalDbModel}} is a convenience helper cast a proto {{.DBModel}} to it's DB layer struct
+func New{{$pascalDbModel}}(ID string, proto proto{{$pascalDbModel}}) (*{{$pascalDbModel}}, error) {
+    mID, err := uuid.Parse(ID)
+    if err != nil {
+        return nil, err
+    }
+
+    return &{{$pascalDbModel}}{
+        ID:     mID,
+        Name: proto.GetName(),
+    }, nil
+}
+
+// Proto casts a db {{.DBModel}} into a proto response object
+func (m *{{$pascalDbModel}}) Proto() *pb.{{$pascalDbModel}}Response {
+    return &pb.{{$pascalDbModel}}Response{
+        Id:         m.ID.String(),
+        Name:       m.Name,
+    }
+}
+
+

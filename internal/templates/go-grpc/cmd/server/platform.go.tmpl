@@ -2,21 +2,24 @@ package main
 
 // This file contains helpers that initialize app insight, developer tooling and database set up that might be run on any given app
 import (
-{{if .UseDB}}
-	"fmt"
-{{end}}
-	"log"
+	{{if .UseDB}}"fmt"
+	"database/sql"{{end}}
 
-	"github.com/caring/go-packages/pkg/grpc_middleware"
-	"github.com/caring/go-packages/pkg/logging"
-	"github.com/caring/go-packages/pkg/tracing"
-{{if .UseDB}}
+	"log"
+	"errors"
+	"os"
+
+	{{if .UseDB}}"github.com/caring/{{tolower .Name}}/internal/db"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/golang-migrate/migrate/v4/source/github"
-{{end}}
+	_ "github.com/golang-migrate/migrate/v4/source/github"{{end}}
+
+	"github.com/caring/go-packages/v2/pkg/grpc_middleware"
+	"github.com/caring/go-packages/v2/pkg/logging"
+	"github.com/caring/go-packages/v2/pkg/tracing"
+
 	"google.golang.org/grpc"
 )
 
@@ -97,4 +100,26 @@ func migrateDatabase(logger *logging.Logger, connectionString string) {
 	}
 	logger.Debug("Done")
 }
-{{end}}
+
+// initialize the store service
+func initDB(logger *logging.Logger, connectionString string) *sql.DB {
+	logger.Debug("Initializing Store")
+	// establish a store and connection to the db
+	db, err := db.Open(connectionString)
+	if err != nil {
+		logger.Fatal("Failed to initialize store:" + err.Error())
+	}
+	logger.Debug("Store established with database connection")
+	return db
+} {{end}}
+
+// fetches and returns the given env variable, fatals and
+// captures an exception if the variable is an empty string
+func envMust(varName string) string {
+	value := os.Getenv(varName)
+	if value == "" {
+		e := errors.New("environment variable missing - " + varName)
+		log.Fatalln(e.Error())
+	}
+	return value
+}
