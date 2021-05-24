@@ -30,7 +30,7 @@ func ToPackage(s string) string {
 		return s
 	}
 
-	return strings.ReplaceAll(s, "-", "")
+	return strings.ToLower(strings.ReplaceAll(s, "-", ""))
 }
 
 // Converts a string to Pascal case
