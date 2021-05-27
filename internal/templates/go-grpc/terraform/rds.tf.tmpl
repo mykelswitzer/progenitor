@@ -38,32 +38,28 @@ resource "aws_db_parameter_group" "stored-procedures-enabled" {
 }
 
 module rds_db {
-  source = "git@github.com:caring/tf-modules.git//aws/rds?ref=v1.9.2"
+  source = "git@github.com:caring/tf-modules.git//aws/rds?ref=v2.0.0"
 
   rds_instance_name     = "${local.repo_name}-db"
   rds_instance_class    = local.rds_instance_class[terraform.workspace]
   rds_allocated_storage = local.rds_disk_size
   rds_engine_type       = "mysql"
   rds_engine_version    = "8.0.17"
-
   db_parameter_group    = aws_db_parameter_group.stored-procedures-enabled.id
   skip_final_snapshot   = true
-
   database_name         = local.service_name
   database_user         = local.service_name
   database_password     = random_string.rds_db_password.result
-  
   publicly_accessible   = local.public_rds[terraform.workspace]
-
   rds_security_group_id = local.public_rds[terraform.workspace] ? data.terraform_remote_state.network.outputs.mysql_pub_sg_id : data.terraform_remote_state.network.outputs.mysql_sg_id
-
   subnet_az1            = local.public_rds[terraform.workspace] ? data.terraform_remote_state.network.outputs.vpc_public_subnet_ids[0] : data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[0]
-
   subnet_az2            = local.public_rds[terraform.workspace] ? data.terraform_remote_state.network.outputs.vpc_public_subnet_ids[1] : data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[1]
-  
   subnet_az3            = local.public_rds[terraform.workspace] ? data.terraform_remote_state.network.outputs.vpc_public_subnet_ids[2] : data.terraform_remote_state.network.outputs.vpc_private_subnet_ids[2]
 
   tags                  = local.tags
-
+  depends_on = [
+    aws_db_parameter_group.stored-procedures-enabled,
+    aws_secretsmanager_secret_version.rds_db_pass_version
+  ]
 }
 {{end}}
