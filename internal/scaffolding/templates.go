@@ -48,7 +48,7 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 	ctx := context.Background()
 	oauth := rp.GithubAuth(token, ctx)
 	fs, err := gitfs.New(ctx,
-		templatePath,
+		templatePath + "@heads/PRO-72",
 		gitfs.OptClient(oauth),
 	)
 	if err != nil {
