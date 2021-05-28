@@ -100,7 +100,7 @@ func createDirs(dirs []Dir, parent afero.Fs) error {
 func (s *Scaffold) BuildFiles(token string) error {
 
 	// base := "github.com/caring/progenitor/internal/templates"
-	base := "github.com/caring/progenitor/internal/templates@heads/PRO-72"
+	base := "github.com/caring/progenitor/internal/templates@v0.0.2"
 	templates, err := getLatestTemplates(token, filepath.Join(base, s.TemplatePath), s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
