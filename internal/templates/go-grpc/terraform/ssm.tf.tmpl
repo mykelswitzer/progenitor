@@ -44,7 +44,3 @@ resource "aws_secretsmanager_secret_version" "db_migration_src_version" {
   ]
 }
 {{end}}
-
-data "aws_secretsmanager_secret_version" "acm_ssl_cert" {
-  secret_id = data.terraform_remote_state.secrets.outputs.acm_ssl_cert_arn
-}

@@ -29,7 +29,7 @@ func (c *Config) GetInt(key string) int { return cast.ToInt(c.Get(key)) }
 // GetBool returns the value associated with the key as a boolean.
 func (c *Config) GetBool(key string) bool { return cast.ToBool(c.Get(key)) }
 
-// GetLocal gets a configuration value set on language level. It will
+// Get gets a configuration value set on language level. It will
 // not fall back to any global value.
 // It will return nil if a value with the given key cannot be found.
 func (c *Config) Get(key string) interface{} {

@@ -123,7 +123,7 @@ func generate(cfg *config.Config) error {
   // of the project... while this appears true at this time, it may not
   // be in the future. This change enables committing code to the repo
   // independent of the success of terraform running... which was previously
-  // breaing the code. There is probably a better long term fix, which we can
+  // breaking the code. There is probably a better long term fix, which we can
   // invest in if it continues to create issues
   if scaffold.Config.GetBool("runTerraform") {
     base, err := os.Getwd()

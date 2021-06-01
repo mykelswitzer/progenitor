@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "service_log_group" {
 }
 
 module ecs_service {
-  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v1.9.2"
+  source = "git@github.com:caring/tf-modules.git//aws/ecs_service_with_nlb?ref=v2.0.0"
   vpc_id = data.terraform_remote_state.network.outputs.vpc_id
   tags   = local.tags
 
@@ -15,13 +15,12 @@ module ecs_service {
   internal            = "false"
   nlb_listener_port   = local.ecs_task_port
   # nlb_protocol          = "TCP" (Default)
-  listener_protocl    = "TLS"
+  listener_protocol   = "TLS"
   nlb_subnets         = data.terraform_remote_state.network.outputs.vpc_public_subnet_ids
   nlb_security_groups = [
     data.terraform_remote_state.network.outputs.nlb_sg_id,
     data.terraform_remote_state.network.outputs.ecs_sg_id
   ]
-  lb_access_logs_bucket_name  = data.terraform_remote_state.logging.outputs.lb_access_logs_bucket.name
   ssl_certificate_arn = module.ssl_cert.valid_cert_arn
 
   ##################################
@@ -40,27 +39,23 @@ module ecs_service {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_task_role.arn
 
-  #################################
-  # CloudWatch Variables
-  ##################################
-  db_instance_identifier          = "${local.service_name}-db"
-  aws_region                      = "us-east-1"
-  firehose_reporting_stream_name  = module.firehose.firehose_monitoring_stream_name
+  depends_on = [
+    aws_iam_role.ecs_task_role,
+    aws_ecr_repository.ecr,
+    module.ssl_cert,
+    data.template_file.task_definition
+  ]
 }
 
 {{if .UseDB}}
 data "aws_secretsmanager_secret" "rds_db_pass" {
   name       = "${local.service_name}_rds_db_pass"
-  depends_on = [
-    aws_secretsmanager_secret.rds_db_pass
-  ]
+  depends_on = [aws_secretsmanager_secret_version.rds_db_pass_version]
 }
 
 data "aws_secretsmanager_secret" "db_migration_src" {
   name       = "${local.service_name}_db_migration_src"
-  depends_on = [
-    aws_secretsmanager_secret.db_migration_src_string
-  ]
+  depends_on = [aws_secretsmanager_secret_version.rds_db_pass_version]
 }
 {{end}}
 

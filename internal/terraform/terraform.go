@@ -20,7 +20,7 @@ func isInstalled() (string, error) {
 	return path, nil
 }
 
-// TfRun chains together all the steps to run the newly generated project's Terraform
+// Run chains together all the steps to run the newly generated project's Terraform
 func Run(tfDir string) error {
 	awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
 	installedPath, err := isInstalled()

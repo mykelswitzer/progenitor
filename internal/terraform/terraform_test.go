@@ -9,7 +9,7 @@ import (
 // Terraform is installed on the host running the test. Its not exactly
 // a unit test since it depends on the host running it.
 func Test_isTerraformInstalled(t *testing.T) {
-    _, err := isTerraformInstalled()
+    _, err := isInstalled()
 
     if err != nil {
         t.Fatal("Expected nil but got error instead")

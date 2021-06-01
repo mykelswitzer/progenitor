@@ -1,25 +1,33 @@
 module "workspace_context" {
-  source = "git@github.com:caring/tf-modules.git//aws/workspace?ref=v1.9.2"
+  source = "git@github.com:caring/tf-modules.git//aws/workspace?ref=v2.0.0"
 }
 
 provider "aws" {
   region = "us-east-1"
-  version = "= 3.22.0"
   assume_role {
     role_arn = module.workspace_context.workspace_iam_roles[terraform.workspace]
   }
 }
 
-provider "random" {
-  version = "= 3.0.0"
-}
-
-provider "template" {
-  version = "= 2.2.0"
-}
-
 terraform {
-  required_version = "= 0.12.29"
+  required_version = "= 0.15.4"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "= 3.39.0"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.1.0"
+    }
+
+    template = {
+      source  = "hashicorp/template"
+      version = "= 2.2.0"
+    }
+  }
 
   backend "s3" {
     bucket         = "caring-tf-state"
