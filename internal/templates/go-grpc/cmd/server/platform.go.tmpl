@@ -109,7 +109,7 @@ func initDB(logger *logging.Logger, connectionString string) *sql.DB {
 	if err != nil {
 		logger.Fatal("Failed to initialize DB:" + err.Error())
 	}
-	logger.Debug("DB established with database connection")
+	logger.Debug("DB connection initialized")
 	return db
 } {{end}}
 
