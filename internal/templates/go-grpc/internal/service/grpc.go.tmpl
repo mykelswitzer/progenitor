@@ -1,7 +1,6 @@
 package service
 
 {{$lowerName := tolower .Name}}
-{{$pascalName := topascal .Name}}
 {{$pascalDBModel := topascal .DBModel}}
 
 import (
@@ -17,7 +16,7 @@ import (
 )
 
 type Service struct {
-  pb.Unimplemented{{$pascalName}}ServiceServer
+  pb.Unimplemented{{$pascalDBModel}}ServiceServer
   {{$pascalDBModel}} *handlers.{{$pascalDBModel}}
   Logger   logging.Logging
 }
