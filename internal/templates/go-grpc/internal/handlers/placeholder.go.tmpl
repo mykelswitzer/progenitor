@@ -20,7 +20,7 @@ type {{$pascalName}} struct {
     {{if .UseDB}}Store {{$lowerDBModel}}.Store{{end}}
 }
 
-func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
 	{{if .UseDB}}id, err := uuid.NewRandom()
     if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.Internal)
@@ -46,7 +46,7 @@ func (h {{$pascalName}}) Create(ctx context.Context, req *pb.Create{{$pascalName
     return created{{$pascalName}}.Proto(), nil{{end}}
 }
 
-func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
+func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
     {{if .UseDB}}ID, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (h {{$pascalName}}) Update(ctx context.Context, req *pb.Update{{$pascalName
 	return updated{{$pascalName}}.Proto(), nil{{end}}
 }
 
-func (h {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (h {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     {{if .UseDB}}ID, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
@@ -105,7 +105,7 @@ func (h {{$pascalName}}) Delete(ctx context.Context, req *pb.ByUUIDRequest) (*pb
 	return {{$camelName}}.Proto(), nil{{end}}
 }
 
-func (h {{$pascalName}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
+func (h {{$pascalName}}) Get(ctx context.Context, req *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
     {{if .UseDB}}id, err := uuid.Parse(req.GetId())
 	if err != nil {
 		return nil, errors.WithGrpcStatus(err, codes.InvalidArgument)
