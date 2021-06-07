@@ -2,6 +2,7 @@ package service
 
 {{$lowerName := tolower .Name}}
 {{$pascalName := topascal .Name}}
+{{$pascalDBModel := topascal .DBModel}}
 
 import (
   "context"
@@ -17,17 +18,17 @@ import (
 
 type Service struct {
   pb.Unimplemented{{$pascalName}}ServiceServer
-  {{$pascalName}} *handlers.{{$pascalName}}
+  {{$pascalDBModel}} *handlers.{{$pascalDBModel}}
   Logger   logging.Logging
 }
 
-func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
+{{if .UseDB}}func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
     s.Logger.Debug(fmt.Sprintf("Received: %v", in.Data))
-    {{if .UseDB}}resp := "Data: " + in.Data
+    resp := "Data: " + in.Data
     ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
     defer cancel()
-    return &pb.PingResponse{Data: resp}, nil{{end}}
-} 
+    return &pb.PingResponse{Data: resp}, nil
+}{{end}}
 
 func (s *Service)  Create{{$pascalName}}(ctx context.Context, in *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
   s.Logger.Debug("Create{{$pascalName}}: " + in.String())
