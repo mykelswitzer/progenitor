@@ -1,7 +1,7 @@
 package service
 
 {{$lowerName := tolower .Name}}
-{{$pascalName := topascal .Name}}
+{{$pascalDBModel := topascal .DBModel}}
 
 import (
   "context"
@@ -16,35 +16,35 @@ import (
 )
 
 type Service struct {
-  pb.Unimplemented{{$pascalName}}ServiceServer
-  {{$pascalName}} *handlers.{{$pascalName}}
+  pb.Unimplemented{{$pascalDBModel}}ServiceServer
+  {{$pascalDBModel}} *handlers.{{$pascalDBModel}}
   Logger   logging.Logging
 }
 
-func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
+{{if .UseDB}}func (s *Service) Ping(ctx context.Context, in *pb.PingRequest) (*pb.PingResponse, error) {
     s.Logger.Debug(fmt.Sprintf("Received: %v", in.Data))
-    {{if .UseDB}}resp := "Data: " + in.Data
+    resp := "Data: " + in.Data
     ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
     defer cancel()
-    return &pb.PingResponse{Data: resp}, nil{{end}}
-} 
+    return &pb.PingResponse{Data: resp}, nil
+}{{end}}
 
-func (s *Service)  Create{{$pascalName}}(ctx context.Context, in *pb.Create{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
-  s.Logger.Debug("Create{{$pascalName}}: " + in.String())
-	return s.{{$pascalName}}.Create(ctx, in)
+func (s *Service)  Create{{$pascalDBModel}}(ctx context.Context, in *pb.Create{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
+  s.Logger.Debug("Create{{$pascalDBModel}}: " + in.String())
+	return s.{{$pascalDBModel}}.Create(ctx, in)
 }
 
-func (s *Service)  Update{{$pascalName}}(ctx context.Context, in *pb.Update{{$pascalName}}Request) (*pb.{{$pascalName}}Response, error) {
-  s.Logger.Debug("Update{{$pascalName}}: " + in.String())
-  return s.{{$pascalName}}.Update(ctx, in)
+func (s *Service)  Update{{$pascalDBModel}}(ctx context.Context, in *pb.Update{{$pascalDBModel}}Request) (*pb.{{$pascalDBModel}}Response, error) {
+  s.Logger.Debug("Update{{$pascalDBModel}}: " + in.String())
+  return s.{{$pascalDBModel}}.Update(ctx, in)
 }
 
-func (s *Service)  Delete{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
-  s.Logger.Debug("Delete{{$pascalName}}: " + in.String())
-  return s.{{$pascalName}}.Delete(ctx, in)
+func (s *Service)  Delete{{$pascalDBModel}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
+  s.Logger.Debug("Delete{{$pascalDBModel}}: " + in.String())
+  return s.{{$pascalDBModel}}.Delete(ctx, in)
 }
 
-func (s *Service)  Get{{$pascalName}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalName}}Response, error) {
-  s.Logger.Debug("Get{{$pascalName}}: " + in.String())
-  return s.{{$pascalName}}.Get(ctx, in)
+func (s *Service)  Get{{$pascalDBModel}}(ctx context.Context, in *pb.ByUUIDRequest) (*pb.{{$pascalDBModel}}Response, error) {
+  s.Logger.Debug("Get{{$pascalDBModel}}: " + in.String())
+  return s.{{$pascalDBModel}}.Get(ctx, in)
 }
