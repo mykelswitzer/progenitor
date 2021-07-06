@@ -1,5 +1,13 @@
 # Changelog
 
+
+## [2.0.0]
+
+### Updated
+- Moved scaffold structural logic to pkg level to be used by remote scaffolds
+- Created constants for all config setting keys
+- Removed the go-grpc scaffold file and templates, and moved them to progenitor-tmpl-go-grpc repo
+
 ## [1.0.4]
 
 ### Updated
