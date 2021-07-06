@@ -13,7 +13,7 @@ Following are a list of commands that can by run by Progenitor to create code sc
 
 The go-grpc command will generate a go microservice with a gRPC interface
 
-We currently are building to [go 1.14](https://golang.org/)
+We currently are building to [go 1.16](https://golang.org/)
 
 In order to generate from a protobuf file, you must have [protoc](https://grpc.io/docs/protoc-installation/) installed
 
