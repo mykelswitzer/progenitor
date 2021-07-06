@@ -1,4 +1,4 @@
-package scaffolding
+package filesys
 
 import (
   "bytes"

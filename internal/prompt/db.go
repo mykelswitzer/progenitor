@@ -1,20 +1,21 @@
 package prompt
 
-import "regexp"
 import (
+	"regexp"
+
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/internal/config"
-	str "github.com/caring/progenitor/internal/strings"
+	"github.com/caring/progenitor/v2/pkg/config"
+	str "github.com/caring/progenitor/v2/pkg/strings"
 	"github.com/manifoldco/promptui"
 )
 
-func UseDB(config *config.Config) error {
-	return boolPrompt("Do you need a database?", "dbRequired", config)
+func UseDB(cfg *config.Config) error {
+	return boolPrompt("Do you need a database?", config.CFG_DB_REQ, cfg)
 }
 
-func CoreDBObject(config *config.Config) error {
+func CoreDBObject(cfg *config.Config) error {
 
-	if config.GetBool("dbRequired") == false {
+	if cfg.GetBool(config.CFG_DB_REQ) == false {
 		return nil
 	}
 
@@ -33,7 +34,7 @@ func CoreDBObject(config *config.Config) error {
 		Label:    "What is your core DB object named (singular)?",
 		Validate: validate,
 		// in most cases the core object is named same as service
-		Default: str.ToPascal(config.GetString("projectName")),
+		Default: str.ToPascal(cfg.GetString(config.CFG_PRJ_NAME)),
 	}
 
 	name, err := prompt.Run()
@@ -41,7 +42,7 @@ func CoreDBObject(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing DB object name prompt")
 	}
 
-	config.Set("dbModel", name)
+	cfg.Set(config.CFG_DB_MDL, name)
 
 	return nil
 

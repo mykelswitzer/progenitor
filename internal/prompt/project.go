@@ -7,11 +7,11 @@ import (
 )
 import (
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/internal/config"
+	"github.com/caring/progenitor/v2/pkg/config"
 	"github.com/manifoldco/promptui"
 )
 
-func ProjectTeam(config *config.Config) error {
+func ProjectTeam(cfg *config.Config) error {
 
 	prompt := promptui.Select{
 		Label: "Which team will own this project?",
@@ -23,13 +23,13 @@ func ProjectTeam(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing project team prompt")
 	}
 
-	config.Set("projectTeam", team)
+	cfg.Set(config.CFG_PRJ_TEAM, team)
 
 	return nil
 
 }
 
-func ProjectName(config *config.Config) error {
+func ProjectName(cfg *config.Config) error {
 
 	validate := func(input string) error {
 		if len(input) < 5 {
@@ -52,13 +52,13 @@ func ProjectName(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing project name prompt")
 	}
 
-	config.Set("projectName", strings.ToLower(name))
+	cfg.Set(config.CFG_PRJ_NAME, strings.ToLower(name))
 
 	return nil
 
 }
 
-func ProjectDir(config *config.Config) error {
+func ProjectDir(cfg *config.Config) error {
 
 	validate := func(input string) error {
 		if input == "" {
@@ -83,7 +83,7 @@ func ProjectDir(config *config.Config) error {
 		return errors.Wrap(err, "Error in executing project directory prompt")
 	}
 
-	config.Set("projectDir", dir)
+	cfg.Set(config.CFG_PRJ_DIR, dir)
 
 	return nil
 

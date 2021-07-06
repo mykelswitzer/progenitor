@@ -1,9 +1,9 @@
 package prompt
 
 import (
-	"github.com/caring/progenitor/internal/config"
+	"github.com/caring/progenitor/v2/pkg/config"
 )
 
-func SetupGraphql(config *config.Config) error {
-	return boolPrompt("Do you want a graphql interface", "gqlRequired", config)
+func SetupGraphql(cfg *config.Config) error {
+	return boolPrompt("Do you want a graphql interface", config.CFG_GQL_REQ, cfg)
 }

@@ -4,14 +4,12 @@ import (
   "log"
   "os"
   "path/filepath"
-)
 
-import (
-  "github.com/caring/progenitor/internal/config"
-  "github.com/caring/progenitor/internal/prompt"
-  "github.com/caring/progenitor/internal/scaffolding"
-  "github.com/caring/progenitor/internal/terraform"
-  "github.com/caring/progenitor/pkg/aws"
+  "github.com/caring/progenitor/v2/internal/prompt"
+  "github.com/caring/progenitor/v2/internal/scaffolding"
+  "github.com/caring/progenitor/v2/internal/terraform"
+  "github.com/caring/progenitor/v2/pkg/aws"
+  "github.com/caring/progenitor/v2/pkg/config"
   "github.com/urfave/cli/v2"
 )
 
@@ -80,7 +78,7 @@ func generate(cfg *config.Config) error {
     return handleError(err)
   }
 
-  for _, p := range prompts[cfg.GetString("projectType")] {
+  for _, p := range prompts[cfg.GetString(config.CFG_PRJ_TYPE)] {
     if err := p(cfg); err != nil {
       return handleError(err)
     }
@@ -131,7 +129,7 @@ func generate(cfg *config.Config) error {
       log.Println(err.Error())
       return err
     }
-    tfDir := filepath.Join(base, scaffold.Config.GetString("projectDir"), "terraform")
+    tfDir := filepath.Join(base, scaffold.Config.GetString(config.CFG_PRJ_DIR), "terraform")
 
     if err := terraform.Run(tfDir); err != nil {
       log.Println(err.Error())

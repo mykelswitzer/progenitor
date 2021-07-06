@@ -1,4 +1,4 @@
-package scaffolding
+package template
 
 import (
 	"context"
@@ -10,21 +10,22 @@ import (
 	txttmpl "text/template"
 
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/internal/config"
-	rp "github.com/caring/progenitor/internal/repo"
-	str "github.com/caring/progenitor/internal/strings"
+	"github.com/caring/progenitor/v2/internal/filesys"
+	rp "github.com/caring/progenitor/v2/internal/repo"
+	"github.com/caring/progenitor/v2/pkg/config"
+	str "github.com/caring/progenitor/v2/pkg/strings"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	"github.com/spf13/afero"
 )
 
-type templateData interface {
-	Init(config *config.Config) templateData
+type TemplateData interface {
+	Init(config *config.Config) TemplateData
 }
 
 const TMPLSFX string = ".tmpl"
 
-func trimTmplSuffix(path string) string {
+func TrimSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)
 }
 
@@ -41,7 +42,7 @@ func contains(a []string, x string) bool {
 	return false
 }
 
-func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
+func GetLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
 	var templates = map[string]*txttmpl.Template{}
 
@@ -67,15 +68,15 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 			// get && check path
 			//dirpath := filepath.Dir(walker.Path())
 			file := walker.Path()
-			ex, err := DirExists(filepath.Dir(file), basePath)
+			ex, err := filesys.DirExists(filepath.Dir(file), basePath)
 			if err != nil {
 				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
 			// if the path exists, parse the templates
 			if ex && contains(skipTemplates, file) == false {
-				log.Println("Fetching template: ", trimTmplSuffix(file))
+				log.Println("Fetching template: ", TrimSuffix(file))
 
-				tmpl, err := TmplParse(fs, TemplateFunctions(), nil, file)
+				tmpl, err := filesys.TmplParse(fs, TemplateFunctions(), nil, file)
 				if err != nil {
 					werr := errors.Wrapf(err, "Unable to parse template %s", file)
 					log.Println(werr)

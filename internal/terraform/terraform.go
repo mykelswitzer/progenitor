@@ -4,10 +4,10 @@ import (
 	"context"
 	"log"
 	"os/exec"
-)
 
-import "github.com/caring/go-packages/pkg/errors"
-import "github.com/hashicorp/terraform-exec/tfexec"
+	"github.com/caring/go-packages/pkg/errors"
+	"github.com/hashicorp/terraform-exec/tfexec"
+)
 
 // isInstalled checks if Terraform is installed by searching for it in the directories named
 // by the PATH environment variable. If found the path of the Terraform executable is returned.

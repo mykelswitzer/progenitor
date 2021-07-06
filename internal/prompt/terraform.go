@@ -1,11 +1,11 @@
 package prompt
 
 import (
-    "github.com/caring/progenitor/internal/config"
+    "github.com/caring/progenitor/v2/pkg/config"
 )
 
 // RunTerraform generates a prompt asking the user if they would like Progenitor to go
 // ahead and run the rendered project's Terraform plan
-func RunTerraform (config *config.Config) error {
-    return boolPrompt("Would you like to run the project's Terraform plan?", "runTerraform", config)
+func RunTerraform(cfg *config.Config) error {
+    return boolPrompt("Would you like to run the project's Terraform plan?", config.CFG_TF_RUN, cfg)
 }

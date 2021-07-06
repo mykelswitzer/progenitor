@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/internal/config"
-	"github.com/caring/progenitor/internal/repo"
-	"github.com/caring/progenitor/internal/scaffolding"
+	"github.com/caring/progenitor/v2/internal/repo"
+	"github.com/caring/progenitor/v2/pkg/config"
+	"github.com/caring/progenitor/v2/pkg/scaffold"
 )
 
-func setupRepo(token string, config *config.Config) error {
+const BRANCH_DEV = "development"
+const BRANCH_MAIN = "main"
+
+func setupRepo(token string, cfg *config.Config) error {
 
 	ctx := context.Background()
 
@@ -17,32 +20,32 @@ func setupRepo(token string, config *config.Config) error {
 	r, err := repo.New(
 		ctx,
 		token,
-		config.GetString("projectTeam"),
-		config.GetString("projectName"),
+		cfg.GetString(config.CFG_PRJ_TEAM),
+		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
-		"Caring, LLC service for "+config.GetString("projectName"),
+		"Caring, LLC service for "+cfg.GetString(config.CFG_PRJ_NAME),
 		true,
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed to create the repo")
 	}
 
-	config.Set("projectRepo", r)
+	cfg.Set(config.CFG_PRJ_REPO, r)
 
 	// note `lr` is the locally cloned repo, not the same as `repo` returned from
 	// github create, which is remote only, largely  because the github library is
 	// mostly around github setting, and less about actually working with git...
-	lr, err := repo.Clone(ctx, token, config.GetString("projectDir"), r)
+	lr, err := repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
 	if err != nil {
 		return err
 	}
 
-	err = repo.CreateBranch(token, lr, "development")
+	err = repo.CreateBranch(token, lr, BRANCH_DEV)
 	if err != nil {
 		return err
 	}
 
-	err = repo.RequireBranchPRApproval(ctx, token, config.GetString("projectName"), "main")
+	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
 	if err != nil {
 		return err
 	}
@@ -51,7 +54,7 @@ func setupRepo(token string, config *config.Config) error {
 
 }
 
-func commitCodeToRepo(token string, config *config.Config, s *scaffolding.Scaffold) error {
+func commitCodeToRepo(token string, cfg *config.Config, s *scaffold.Scaffold) error {
 
 	ctx := context.Background()
 
@@ -60,12 +63,12 @@ func commitCodeToRepo(token string, config *config.Config, s *scaffolding.Scaffo
 		return err
 	}
 
-	err = repo.SetDefaultBranch(ctx, token, config.GetString("projectName"), "development")
+	err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
 	if err != nil {
 		return err
 	}
 
-	err = repo.RequireBranchPRApproval(ctx, token, config.GetString("projectName"), "development")
+	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
 	if err != nil {
 		return err
 	}

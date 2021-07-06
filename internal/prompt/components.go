@@ -2,7 +2,7 @@ package prompt
 
 import (
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/internal/config"
+	"github.com/caring/progenitor/v2/pkg/config"
 	"github.com/manifoldco/promptui"
 )
 
