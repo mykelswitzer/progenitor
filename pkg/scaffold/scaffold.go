@@ -9,7 +9,6 @@ import (
 	"github.com/caring/go-packages/pkg/errors"
 	"github.com/caring/progenitor/v2/internal/filesys"
 	"github.com/caring/progenitor/v2/pkg/config"
-	"github.com/caring/progenitor/v2/pkg/template"
 	"github.com/spf13/afero"
 )
 
@@ -18,7 +17,7 @@ import (
 // the scaffold and running the commands against
 type ScaffoldDS interface {
 	Init(*config.Config, string, afero.Fs) (*Scaffold, error)
-	GetData(*config.Config) template.TemplateData
+	GetData(*config.Config) TemplateData
 }
 
 type Dir struct {
@@ -111,7 +110,7 @@ func getScaffoldTemplatePath(projectType string, withVersion bool) string {
 func (s *Scaffold) BuildFiles(token string) error {
 
 	path := getScaffoldTemplatePath(s.Config.GetString(config.CFG_PRJ_TYPE), true)
-	templates, err := template.GetLatestTemplates(token, path, s.SkipTemplates, s.Fs)
+	templates, err := getLatestTemplates(token, path, s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
 	}
@@ -136,7 +135,7 @@ func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
 	data := s.Source.GetData(s.Config)
 
 	for path, tmpl := range templates {
-		f, err := filesys.OpenFileForWriting(s.Fs, template.TrimSuffix(path))
+		f, err := filesys.OpenFileForWriting(s.Fs, trimSuffix(path))
 		if err != nil {
 			return errors.Wrap(err, "Unable to open file for writing")
 		}

@@ -1,6 +1,11 @@
 # Changelog
 
 
+## [2.0.1]
+
+### Updated
+- Merged pkg/scaffold and pkg/template as the only files that used the template were in the scaffold folder
+
 ## [2.0.0]
 
 ### Updated
