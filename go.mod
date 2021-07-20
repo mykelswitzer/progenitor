@@ -11,6 +11,7 @@ require (
 	github.com/google/go-github/v33 v33.0.0
 	github.com/hashicorp/terraform-exec v0.8.0
 	github.com/manifoldco/promptui v0.7.0
+	github.com/posener/gitfs v1.2.1
 	github.com/spf13/afero v1.3.1
 	github.com/spf13/cast v1.3.1
 	github.com/stretchr/testify v1.6.0

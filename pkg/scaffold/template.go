@@ -42,7 +42,7 @@ func contains(a []string, x string) bool {
 	return false
 }
 
-func GetLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
+func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
 	var templates = map[string]*txttmpl.Template{}
 
