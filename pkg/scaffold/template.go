@@ -1,8 +1,4 @@
-<<<<<<< HEAD:pkg/scaffold/template.go
 package scaffold
-=======
-package template
->>>>>>> master:pkg/template/template.go
 
 import (
 	"context"
@@ -29,11 +25,7 @@ type TemplateData interface {
 
 const TMPLSFX string = ".tmpl"
 
-<<<<<<< HEAD:pkg/scaffold/template.go
 func trimSuffix(path string) string {
-=======
-func TrimSuffix(path string) string {
->>>>>>> master:pkg/template/template.go
 	return strings.TrimSuffix(path, TMPLSFX)
 }
 
@@ -82,15 +74,9 @@ func GetLatestTemplates(token string, templatePath string, skipTemplates []strin
 			}
 			// if the path exists, parse the templates
 			if ex && contains(skipTemplates, file) == false {
-<<<<<<< HEAD:pkg/scaffold/template.go
 				log.Println("Fetching template: ", trimSuffix(file))
 
 				tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, file)
-=======
-				log.Println("Fetching template: ", TrimSuffix(file))
-
-				tmpl, err := filesys.TmplParse(fs, TemplateFunctions(), nil, file)
->>>>>>> master:pkg/template/template.go
 				if err != nil {
 					werr := errors.Wrapf(err, "Unable to parse template %s", file)
 					log.Println(werr)
