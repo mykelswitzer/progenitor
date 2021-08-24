@@ -33,8 +33,8 @@ github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d/go.mod h1:6QX/PXZ
 github.com/caring/go-packages v1.6.2 h1:YWs+OrWFpr/gwuSI1UBBOznkg06YJIgglleViBQcVyo=
 github.com/caring/go-packages v1.6.2/go.mod h1:0jpaqLZCEoA0QoHkJ0GVAu2Jll1z6SOs32pjYKXgsIo=
 github.com/caring/progenitor-tmpl-go-grpc v0.1.0-beta/go.mod h1:Jf2tjR41l52/XXKyy3jwpPe1AW2wEfyfIt9qiU9CkoQ=
-github.com/caring/progenitor-tmpl-go-grpc v0.2.0 h1:eaiIh3nSaOJYVGAFeeVnezR2fHEN39mvf/GQqyjaUbs=
-github.com/caring/progenitor-tmpl-go-grpc v0.2.0/go.mod h1:K9EFEXZs7Q8T+0OSoZXCzhLyYIU4RNTOdQe5wj+A2Ro=
+github.com/caring/progenitor-tmpl-go-grpc v0.2.1 h1:+qijHxIup4jjcJR/5+Y/z23ySJTrfov644Krt94DmKA=
+github.com/caring/progenitor-tmpl-go-grpc v0.2.1/go.mod h1:K9EFEXZs7Q8T+0OSoZXCzhLyYIU4RNTOdQe5wj+A2Ro=
 github.com/caring/progenitor/v2 v2.0.0-beta.1/go.mod h1:CdO7EQ8KzEa0P1rxNdkqqSMhuAuYaUUSShN6qXA30R4=
 github.com/caring/progenitor/v2 v2.0.0/go.mod h1:BU/Q4v+WJAtL7AwLeuw+B4Gbsg6hlR2yceJZWB7iBZc=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
