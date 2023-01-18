@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/caring/go-packages/pkg/errors"
+	"github.com/pkg/errors"
 	"github.com/go-git/go-git/v5"
 	_ "github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func New(ctx context.Context, token string, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+func New(ctx context.Context, token string, org string, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
 	oauth := GithubAuth(token, ctx)
 	client := GithubClient(oauth)
@@ -26,19 +26,19 @@ func New(ctx context.Context, token string, team string, name string, private bo
 	mainBranch := "main"
 
 	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit, MasterBranch: &mainBranch}
-	repo, _, err := client.Repositories.Create(ctx, "caring", r)
+	repo, _, err := client.Repositories.Create(ctx, org, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create the repo")
 	}
 
 	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
-	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "caring", "engineers", "caring", *repo.Name, opts)
+	resp, err := client.Teams.AddTeamRepoBySlug(ctx, org, "engineers", org, *repo.Name, opts)
 	if err != nil {
 		log.Println(err, resp)
 	}
 
 	opts = &github.TeamAddTeamRepoOptions{Permission: "admin"}
-	resp, err = client.Teams.AddTeamRepoBySlug(ctx, "caring", team, "caring", *repo.Name, opts)
+	resp, err = client.Teams.AddTeamRepoBySlug(ctx, org, team, org, *repo.Name, opts)
 	if err != nil {
 		log.Println(err, resp)
 	}
@@ -111,11 +111,11 @@ func RequireBranchPRApproval(ctx context.Context, token string, repoName string,
 	return errors.Wrap(err, "failed to setup pr approval requirements for branch "+branchName)
 }
 
-func SetDefaultBranch(ctx context.Context, token string, repoName string, branchName string) error {
+func SetDefaultBranch(ctx context.Context, token string, org string, repoName string, branchName string) error {
 
 	oauth := GithubAuth(token, ctx)
 	client := GithubClient(oauth)
-	_, _, err := client.Repositories.Edit(ctx, "caring", repoName, &github.Repository{DefaultBranch: &branchName})
+	_, _, err := client.Repositories.Edit(ctx, org, repoName, &github.Repository{DefaultBranch: &branchName})
 	return errors.Wrap(err, "failed to set default branch as  "+branchName)
 }
 
@@ -175,7 +175,7 @@ func AddAll(token string, directory string, fs afero.Fs) error {
 	// push
 	err = r.Push(&git.PushOptions{
 		Auth: &http.BasicAuth{
-			Username: "caring-engineering",
+			Username: "x-access-token",
 			Password: token,
 		},
 	})

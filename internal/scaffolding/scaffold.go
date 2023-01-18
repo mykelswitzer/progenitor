@@ -3,11 +3,11 @@ package scaffolding
 import (
 	"log"
 
-	"github.com/caring/go-packages/pkg/errors"
+	"github.com/pkg/errors"
 	gogrpc "github.com/mykelswitzer/progenitor-tmpl-go-grpc"
-	"github.com/mykelswitzer/progenitor/v2/internal/filesys"
-	"github.com/mykelswitzer/progenitor/v2/pkg/config"
-	"github.com/mykelswitzer/progenitor/v2/pkg/scaffold"
+	"github.com/mykelswitzer/progenitor/internal/filesys"
+	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 )
 
 var scaffoldingTypes = map[string]scaffold.ScaffoldDS{

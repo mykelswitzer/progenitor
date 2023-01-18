@@ -6,9 +6,9 @@ import (
 	"strings"
 	txttmpl "text/template"
 
-	"github.com/caring/go-packages/pkg/errors"
-	"github.com/mykelswitzer/progenitor/v2/internal/filesys"
-	"github.com/mykelswitzer/progenitor/v2/pkg/config"
+	"github.com/pkg/errors"
+	"github.com/mykelswitzer/progenitor/internal/filesys"
+	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/spf13/afero"
 )
 
@@ -83,7 +83,7 @@ func getScaffoldTemplatePath(projectType string, withVersion bool) string {
 
 	var (
 		repoName string = "progenitor-tmpl-" + projectType
-		path     string = "github.com/caring/" + repoName + "/template"
+		path     string = "github.com/mykelswitzer/" + repoName + "/template"
 		version  string
 	)
 

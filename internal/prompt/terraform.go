@@ -1,7 +1,7 @@
 package prompt
 
 import (
-    "github.com/mykelswitzer/progenitor/v2/pkg/config"
+    "github.com/mykelswitzer/progenitor/pkg/config"
 )
 
 // RunTerraform generates a prompt asking the user if they would like Progenitor to go

@@ -1,7 +1,7 @@
 package prompt
 
 import (
-    "github.com/mykelswitzer/progenitor/v2/pkg/config"
+    "github.com/mykelswitzer/progenitor/pkg/config"
 )
 
 // UseReporting generates a prompt asking the user if the service needs application metrics reporting functionality.

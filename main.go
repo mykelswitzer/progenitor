@@ -1,6 +1,6 @@
 package main
 
-import "github.com/mykelswitzer/progenitor/v2/cmd"
+import "github.com/mykelswitzer/progenitor/cmd"
 
 func main() {
 	cmd.Execute()

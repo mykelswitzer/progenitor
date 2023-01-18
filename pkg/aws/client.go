@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/caring/go-packages/pkg/errors"
+	"github.com/pkg/errors"
 )
 
 type Client struct {

@@ -3,9 +3,9 @@ package prompt
 import (
 	"regexp"
 
-	"github.com/caring/go-packages/pkg/errors"
-	"github.com/mykelswitzer/progenitor/v2/pkg/config"
-	str "github.com/mykelswitzer/progenitor/v2/pkg/strings"
+	"github.com/pkg/errors"
+	"github.com/mykelswitzer/progenitor/pkg/config"
+	str "github.com/mykelswitzer/progenitor/pkg/strings"
 	"github.com/manifoldco/promptui"
 )
 

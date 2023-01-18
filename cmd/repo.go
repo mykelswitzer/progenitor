@@ -22,6 +22,7 @@ func setupRepo(token string, cfg *config.Config) error {
 	r, err := repo.New(
 		ctx,
 		token,
+		cfg.GetString(config.CFG_ORG_NAME),
 		cfg.GetString(config.CFG_PRJ_TEAM),
 		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
@@ -37,20 +38,20 @@ func setupRepo(token string, cfg *config.Config) error {
 	// note `lr` is the locally cloned repo, not the same as `repo` returned from
 	// github create, which is remote only, largely  because the github library is
 	// mostly around github setting, and less about actually working with git...
-	lr, err := repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
+	_, err := repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
 	if err != nil {
 		return err
 	}
 
-	err = repo.CreateBranch(token, lr, BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.CreateBranch(token, lr, BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
-	if err != nil {
-		return err
-	}
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 
@@ -65,15 +66,15 @@ func commitCodeToRepo(token string, cfg *config.Config, s *scaffold.Scaffold) er
 		return err
 	}
 
-	err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_ORG_NAME), cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

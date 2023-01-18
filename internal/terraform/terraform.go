@@ -5,7 +5,7 @@ import (
 	"log"
 	"os/exec"
 
-	"github.com/caring/go-packages/pkg/errors"
+	"github.com/pkg/errors"
 	"github.com/hashicorp/terraform-exec/tfexec"
 )
 

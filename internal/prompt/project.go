@@ -6,10 +6,39 @@ import (
 	"strings"
 )
 import (
-	"github.com/caring/go-packages/pkg/errors"
-	"github.com/mykelswitzer/progenitor/v2/pkg/config"
+	"github.com/pkg/errors"
+	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/manifoldco/promptui"
 )
+
+func GithubOrganization(cfg *config.Config) error {
+
+	validate := func(input string) error {
+		if len(input) < 3 {
+			return errors.New("Organization name must have more than 3 characters")
+		}
+		re := regexp.MustCompile(`^[a-z\-]+$`)
+		if match := re.MatchString(input); !match {
+			return errors.New("Project must contain lowercase alphabetical characters with only hyphens as separators.")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    "What is your github organization named?",
+		Validate: validate,
+	}
+
+	name, err := prompt.Run()
+	if err != nil {
+		return errors.Wrap(err, "Error in executing organization name prompt")
+	}
+
+	cfg.Set(config.CFG_ORG_NAME, strings.ToLower(name))
+
+	return nil
+
+}
 
 func ProjectTeam(cfg *config.Config) error {
 

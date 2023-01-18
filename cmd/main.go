@@ -5,11 +5,11 @@ import (
   "os"
   "path/filepath"
 
-  "github.com/mykelswitzer/progenitor/v2/internal/prompt"
-  "github.com/mykelswitzer/progenitor/v2/internal/scaffolding"
-  "github.com/mykelswitzer/progenitor/v2/internal/terraform"
-  "github.com/mykelswitzer/progenitor/v2/pkg/aws"
-  "github.com/mykelswitzer/progenitor/v2/pkg/config"
+  "github.com/mykelswitzer/progenitor/internal/prompt"
+  "github.com/mykelswitzer/progenitor/internal/scaffolding"
+  "github.com/mykelswitzer/progenitor/internal/terraform"
+  "github.com/mykelswitzer/progenitor/pkg/aws"
+  "github.com/mykelswitzer/progenitor/pkg/config"
   "github.com/urfave/cli/v2"
 )
 
@@ -20,13 +20,12 @@ var (
 
 var prompts = map[string][]func(*config.Config) error{
   "go-grpc": {
+    prompt.GithubOrganization,
     prompt.ProjectTeam,
     prompt.ProjectName,
     prompt.ProjectDir,
-    prompt.SetupGraphql,
     prompt.UseDB,
     prompt.CoreDBObject,
-    prompt.UseReporting,
     prompt.RunTerraform,
   },
 }
