@@ -6,9 +6,9 @@ import (
 	"github.com/tkanos/gonfig"
 
 	"github.com/pkg/errors"
-	"github.com/mykelswitzer/progenitor/v2/internal/repo"
-	"github.com/mykelswitzer/progenitor/v2/pkg/config"
-	"github.com/mykelswitzer/progenitor/v2/pkg/scaffold"
+	"github.com/mykelswitzer/progenitor/internal/repo"
+	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 )
 
 const BRANCH_DEV = "development"

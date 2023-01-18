@@ -1,4 +1,4 @@
-module github.com/caring/progenitor
+module github.com/mykelswitzer/progenitor
 
 go 1.16
 
