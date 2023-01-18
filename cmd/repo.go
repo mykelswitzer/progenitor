@@ -3,10 +3,12 @@ package cmd
 import (
 	"context"
 
-	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/v2/internal/repo"
-	"github.com/caring/progenitor/v2/pkg/config"
-	"github.com/caring/progenitor/v2/pkg/scaffold"
+	"github.com/tkanos/gonfig"
+
+	"github.com/pkg/errors"
+	"github.com/mykelswitzer/progenitor/v2/internal/repo"
+	"github.com/mykelswitzer/progenitor/v2/pkg/config"
+	"github.com/mykelswitzer/progenitor/v2/pkg/scaffold"
 )
 
 const BRANCH_DEV = "development"
@@ -23,7 +25,7 @@ func setupRepo(token string, cfg *config.Config) error {
 		cfg.GetString(config.CFG_PRJ_TEAM),
 		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
-		"Caring, LLC service for "+cfg.GetString(config.CFG_PRJ_NAME),
+		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
 	)
 	if err != nil {

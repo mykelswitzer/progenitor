@@ -7,8 +7,8 @@ import (
 	txttmpl "text/template"
 
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/v2/internal/filesys"
-	"github.com/caring/progenitor/v2/pkg/config"
+	"github.com/mykelswitzer/progenitor/v2/internal/filesys"
+	"github.com/mykelswitzer/progenitor/v2/pkg/config"
 	"github.com/spf13/afero"
 )
 

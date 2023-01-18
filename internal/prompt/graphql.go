@@ -1,7 +1,7 @@
 package prompt
 
 import (
-	"github.com/caring/progenitor/v2/pkg/config"
+	"github.com/mykelswitzer/progenitor/v2/pkg/config"
 )
 
 func SetupGraphql(cfg *config.Config) error {

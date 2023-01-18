@@ -4,8 +4,8 @@ import (
 	"regexp"
 
 	"github.com/caring/go-packages/pkg/errors"
-	"github.com/caring/progenitor/v2/pkg/config"
-	str "github.com/caring/progenitor/v2/pkg/strings"
+	"github.com/mykelswitzer/progenitor/v2/pkg/config"
+	str "github.com/mykelswitzer/progenitor/v2/pkg/strings"
 	"github.com/manifoldco/promptui"
 )
 

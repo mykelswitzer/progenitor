@@ -5,11 +5,11 @@ import (
   "os"
   "path/filepath"
 
-  "github.com/caring/progenitor/v2/internal/prompt"
-  "github.com/caring/progenitor/v2/internal/scaffolding"
-  "github.com/caring/progenitor/v2/internal/terraform"
-  "github.com/caring/progenitor/v2/pkg/aws"
-  "github.com/caring/progenitor/v2/pkg/config"
+  "github.com/mykelswitzer/progenitor/v2/internal/prompt"
+  "github.com/mykelswitzer/progenitor/v2/internal/scaffolding"
+  "github.com/mykelswitzer/progenitor/v2/internal/terraform"
+  "github.com/mykelswitzer/progenitor/v2/pkg/aws"
+  "github.com/mykelswitzer/progenitor/v2/pkg/config"
   "github.com/urfave/cli/v2"
 )
 
@@ -37,21 +37,14 @@ func Execute() {
 
   app := &cli.App{
     Name: "progenitor",
-    Usage: `
-             @@@@,
-           (@@@@@@@
- ,##%.     (@@@@@@@,     *###    Hello, I am the Progenitor!!!
-  #####*     @@@@@    *#####*
-    ######          *####*       Please answer my questions, and
-       ####*       ####*         I will set up a nice set of
-        .####    .####           boilerplate code, so that you
-          ####  .###*            do not need to do that awful
-          .###  ####             copy pasta you used to do.
-           '###*###
-           .### ###
-           ###* ###.
-          .###  ####
-          ###,   ###,          `,
+    Usage: `Hello, I am the Progenitor!!!
+
+Please answer my questions, and
+I will set up a nice set of
+boilerplate code, so that you
+do not need to do that awful
+copy pasta you used to do.`,
+
     Commands: []*cli.Command{
       {
         Name:  "go-grpc",
