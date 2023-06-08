@@ -1,4 +1,4 @@
-module github.com/mykelswitzer/progenitor
+module github.com/mykelswitzer/progenitor/v1
 
 go 1.16
 

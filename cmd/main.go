@@ -16,11 +16,11 @@ import (
 var (
   awsClient *aws.Client
   cfg       *config.Config
+  locals    LocalConf
 )
 
 var prompts = map[string][]func(*config.Config) error{
   "go-grpc": {
-    prompt.GithubOrganization,
     prompt.ProjectTeam,
     prompt.ProjectName,
     prompt.ProjectDir,
@@ -31,6 +31,9 @@ var prompts = map[string][]func(*config.Config) error{
 }
 
 func Execute() {
+
+
+  locals.readConfig()
 
   cfg = config.New()
 
