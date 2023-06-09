@@ -1,10 +1,10 @@
-module github.com/mykelswitzer/progenitor/v2
+module github.com/mykelswitzer/progenitor
 
 go 1.18
 
 require (
 	github.com/aws/aws-sdk-go-v2 v0.23.0
-	github.com/mykelswitzer/progenitor-tmpl-go-grpc v2.0.0
+	github.com/mykelswitzer/progenitor-tmpl-go-grpc v0.0.0
 	github.com/gertd/go-pluralize v0.1.7
 	github.com/go-git/go-git/v5 v5.1.0
 	github.com/google/go-github/v33 v33.0.0
