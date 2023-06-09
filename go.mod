@@ -1,6 +1,6 @@
 module github.com/mykelswitzer/progenitor/v2
 
-go 1.16
+go 1.18
 
 require (
 	github.com/aws/aws-sdk-go-v2 v0.23.0
