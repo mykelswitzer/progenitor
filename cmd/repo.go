@@ -23,7 +23,7 @@ func setupRepo(token string, cfg *config.Config) error {
 		cfg.GetString(config.CFG_PRJ_TEAM),
 		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
-		"Caring, LLC service for "+cfg.GetString(config.CFG_PRJ_NAME),
+		" service for "+cfg.GetString(config.CFG_PRJ_NAME),
 		true,
 	)
 	if err != nil {
