@@ -7,19 +7,16 @@ import "github.com/spf13/cast"
 // held in the config...
 // these should be added to when new prompts
 // are setup to hold more info in the config
-const CFG_DB_REQ   = "dbRequired"
-const CFG_DB_MDL   = "dbModel"
-const CFG_GQL_REQ  = "gqlRequired"
-
-const CFG_ORG_NAME = "ghOrgName"
-const CFG_PRJ_DIR  = "projectDir"
+const CFG_DB_REQ = "dbRequired"
+const CFG_DB_MDL = "dbModel"
+const CFG_GQL_REQ = "gqlRequired"
+const CFG_PRJ_DIR = "projectDir"
 const CFG_PRJ_NAME = "projectName"
 const CFG_PRJ_REPO = "projectRepo"
 const CFG_PRJ_TEAM = "projectTeam"
 const CFG_PRJ_TYPE = "projectType"
-
-const CFG_RPT_REQ  = "reportingRequired"
-const CFG_TF_RUN   = "runTerraform"
+const CFG_RPT_REQ = "reportingRequired"
+const CFG_TF_RUN = "runTerraform"
 
 type config interface {
 	GetString(key string) string

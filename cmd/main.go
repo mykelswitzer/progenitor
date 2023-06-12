@@ -16,7 +16,6 @@ import (
 var (
   awsClient *aws.Client
   cfg       *config.Config
-  locals    LocalConf
 )
 
 var prompts = map[string][]func(*config.Config) error{
@@ -24,29 +23,28 @@ var prompts = map[string][]func(*config.Config) error{
     prompt.ProjectTeam,
     prompt.ProjectName,
     prompt.ProjectDir,
+    prompt.SetupGraphql,
     prompt.UseDB,
     prompt.CoreDBObject,
+    prompt.UseReporting,
     prompt.RunTerraform,
   },
 }
 
 func Execute() {
 
-
-  locals.readConfig()
-
   cfg = config.New()
 
   app := &cli.App{
     Name: "progenitor",
-    Usage: `Hello, I am the Progenitor!!!
-
-Please answer my questions, and
-I will set up a nice set of
-boilerplate code, so that you
-do not need to do that awful
-copy pasta you used to do.`,
-
+    Usage: `
+      Hello, I am the Progenitor!!!
+      Please answer my questions, and
+      I will set up a nice set of
+      boilerplate code, so that you
+      do not need to do that awful
+      copy pasta you used to do.
+    `,
     Commands: []*cli.Command{
       {
         Name:  "go-grpc",

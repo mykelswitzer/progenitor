@@ -22,7 +22,7 @@ func isInstalled() (string, error) {
 
 // Run chains together all the steps to run the newly generated project's Terraform
 func Run(tfDir string) error {
-	awsEnvs := []string{"caring-prod", "caring-stg", "caring-dev"}
+	awsEnvs := []string{"mykelswitzer-prod", "mykelswitzer-stg", "mykelswitzer-dev"}
 	installedPath, err := isInstalled()
 	if err != nil {
 		return errors.New("Could not find Terraform installed on PATH")
@@ -46,7 +46,7 @@ func Run(tfDir string) error {
 		}
 	}
 
-	log.Println("Applying Terraform plan to 'caring-dev' environment")
+	log.Println("Applying Terraform plan to 'mykelswitzer-dev' environment")
 	err = tf.WorkspaceSelect(context.Background(), awsEnvs[2])
 	if err != nil {
 		return err
