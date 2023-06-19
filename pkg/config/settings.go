@@ -20,7 +20,7 @@ type GitHubSettings struct {
   Token 		string `yaml:"token,omitempty"`
 }
 func (s *GitHubSettings) IsDefined() bool {
-	return s.Organization != "" || s.Token != ""
+	return s.Organization != "" && s.Token != ""
 }
 
 type BranchSettings struct {
@@ -43,11 +43,11 @@ func ReadSettings(settingsFile io.Reader) (*Settings, error) {
 		return nil, fmt.Errorf("unable to parse settings: %w", err)
 	}
 
-	if err := CompleteSettings(s); err != nil {
+	if err := s.check(); err != nil {
 		return nil, err
 	}
 
-	if err := s.check(); err != nil {
+	if err := CompleteSettings(s); err != nil {
 		return nil, err
 	}
 
@@ -80,8 +80,7 @@ func (a *StringList) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 func (s *Settings) check() error {
-
-	if s.GitHub.IsDefined() == false {
+	if !s.GitHub.IsDefined() {
 		return errors.New("github settings are required")
 	}
 

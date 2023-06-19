@@ -19,14 +19,11 @@ func main() {
         os.Exit(exitCode)
     }()
 
-	_, err := config.LoadSettings(settingsFile)
-	if err != nil {
+	if _, err := config.LoadSettings(settingsFile); err != nil {
         log.Print(err)
         exitCode = 1
         return
-	}
+	} 
 
-  	var cfg *config.Config = config.New()
-
-	cmd.Execute(cfg)
+	cmd.Execute(config.New())
 }
