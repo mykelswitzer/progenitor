@@ -15,7 +15,6 @@ import (
 
 var (
   awsClient *aws.Client
-  cfg       *config.Config
 )
 
 var prompts = map[string][]func(*config.Config) error{
@@ -31,9 +30,7 @@ var prompts = map[string][]func(*config.Config) error{
   },
 }
 
-func Execute() {
-
-  cfg = config.New()
+func Execute(cfg *config.Config) {
 
   app := &cli.App{
     Name: "progenitor",

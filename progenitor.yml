@@ -1,0 +1,13 @@
+# What are your organization's github settings
+github:
+  organization: boatsetter
+  token: 
+
+# Optional: If you don't use main as the default branch, create another one
+# branches:
+#   default: 
+
+# Optional: setup teams to assign codeowners in repos
+# teams:
+#   - 
+
