@@ -12,9 +12,10 @@ import (
 const BRANCH_DEV = "development"
 const BRANCH_MAIN = "main"
 
-func setupRepo(token string, cfg *config.Config) error {
+func setupRepo(cfg *config.Config) error {
 
 	ctx := context.Background()
+	token := cfg.GetSettings().GitHub.Token
 
 	// r here is the remote github repo
 	r, err := repo.New(
@@ -54,9 +55,10 @@ func setupRepo(token string, cfg *config.Config) error {
 
 }
 
-func commitCodeToRepo(token string, cfg *config.Config, s *scaffold.Scaffold) error {
+func commitCodeToRepo(cfg *config.Config, s *scaffold.Scaffold) error {
 
 	ctx := context.Background()
+	token := cfg.GetSettings().GitHub.Token
 
 	err := repo.AddAll(token, s.BaseDir.Name, s.Fs)
 	if err != nil {

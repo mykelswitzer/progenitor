@@ -28,11 +28,23 @@ type config interface {
 }
 
 type Config struct {
-	settings map[string]interface{}
+	settings *Settings
+	inputs map[string]interface{}
 }
 
-func New() *Config {
-	return &Config{settings: make(map[string]interface{})}
+func New(settingsFile string) (*Config, error) {
+
+	s, err := LoadSettings(settingsFile)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg := &Config{
+		settings: s,
+		inputs: make(map[string]interface{}),
+	}
+
+	return cfg, nil
 }
 
 // GetString returns the value associated with the key as a string.
@@ -52,7 +64,7 @@ func (c *Config) Get(key string) interface{} {
 		panic("config not set")
 	}
 	key = strings.ToLower(key)
-	if v, ok := c.settings[key]; ok {
+	if v, ok := c.inputs[key]; ok {
 		return v
 	}
 
@@ -65,18 +77,22 @@ func (c *Config) Set(key string, value interface{}) {
 		panic("config not set")
 	}
 	key = strings.ToLower(key)
-	c.settings[key] = value
+	c.inputs[key] = value
 }
 
 // IsSet checks whether the key is set in the language or the related config store.
 func (c *Config) IsSet(key string) bool {
 	key = strings.ToLower(key)
-	if _, ok := c.settings[key]; ok {
+	if _, ok := c.inputs[key]; ok {
 		return true
 	}
 	return false
 }
 
-func (c *Config) GetSettings() map[string]interface{} {
-	return c.settings
+// func (c *Config) GetInputs() map[string]interface{} {
+// 	return c.inputs
+// }
+
+func (c *Config) GetSettings() *Settings {
+ return c.settings
 }

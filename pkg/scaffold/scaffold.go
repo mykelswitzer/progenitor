@@ -107,10 +107,10 @@ func getScaffoldTemplatePath(projectType string, withVersion bool) string {
 
 // BuildFiles sources the templates from the repo, then executes them to
 // build the project files in the local directory
-func (s *Scaffold) BuildFiles(token string) error {
+func (s *Scaffold) BuildFiles() error {
 
 	path := getScaffoldTemplatePath(s.Config.GetString(config.CFG_PRJ_TYPE), true)
-	templates, err := getLatestTemplates(token, path, s.SkipTemplates, s.Fs)
+	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, path, s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
 	}

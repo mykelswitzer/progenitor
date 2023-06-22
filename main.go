@@ -14,16 +14,11 @@ var settingsFile string
 
 func main() {
 
-    var exitCode int
-    defer func() {
-        os.Exit(exitCode)
-    }()
+	cfg, err := config.New(settingsFile)
+	if err != nil {
+		log.Println(err.Error())
+	     os.Exit(0)
+	}
 
-	if _, err := config.LoadSettings(settingsFile); err != nil {
-        log.Print(err)
-        exitCode = 1
-        return
-	} 
-
-	cmd.Execute(config.New())
+	cmd.Execute(cfg)
 }

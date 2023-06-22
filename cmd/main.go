@@ -63,23 +63,13 @@ func Execute(cfg *config.Config) {
 
 func generate(cfg *config.Config) error {
 
-  awsClient, err := setupAwsClient()
-  if err != nil {
-    return handleError(err)
-  }
-
   for _, p := range prompts[cfg.GetString(config.CFG_PRJ_TYPE)] {
     if err := p(cfg); err != nil {
       return handleError(err)
     }
   }
 
-  token, err := awsClient.GetSecret("github_token")
-  if err != nil {
-    return handleError(err)
-  }
-
-  err = setupRepo(*token.SecretString, cfg)
+  err := setupRepo(cfg)
   if err != nil {
     log.Println(err.Error())
     return err
@@ -96,12 +86,12 @@ func generate(cfg *config.Config) error {
     return err
   }
 
-  if err = scaffold.BuildFiles(*token.SecretString); err != nil {
+  if err = scaffold.BuildFiles(); err != nil {
     log.Println(err.Error())
     return err
   }
 
-  if err = commitCodeToRepo(*token.SecretString, cfg, scaffold); err != nil {
+  if err = commitCodeToRepo(cfg, scaffold); err != nil {
     log.Println(err.Error())
     return err
   }
@@ -128,20 +118,6 @@ func generate(cfg *config.Config) error {
   }
 
   return nil
-}
-
-func setupAwsClient() (*aws.Client, error) {
-  var region string = "us-east-1"
-  var account_id string = "182565773517"
-  var role string = "ops-mgmt-admin"
-
-  awsClient := aws.New()
-  _, err := awsClient.SetConfig(&region, &account_id, &role)
-  if err != nil {
-    return nil, err
-  }
-
-  return awsClient, nil
 }
 
 func handleError(err error) error {
