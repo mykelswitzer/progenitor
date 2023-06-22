@@ -1,6 +1,6 @@
 # What are your organization's github settings
 github:
-  organization: boatsetter
+  organization: 
   token: 
 
 # Optional: If you don't use main as the default branch, create another one
