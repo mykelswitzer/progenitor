@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/mykelswitzer/progenitor/pkg/config"
+
 	"github.com/pkg/errors"
 	"github.com/go-git/go-git/v5"
 	_ "github.com/go-git/go-git/v5/config"
@@ -18,30 +20,30 @@ import (
 	"github.com/spf13/afero"
 )
 
-func New(ctx context.Context, token string, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+func New(ctx context.Context, githubSettings config.GitHubSettings, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
-	oauth := GithubAuth(token, ctx)
+	oauth := GithubAuth(githubSettings.Token, ctx)
 	client := GithubClient(oauth)
 
 	mainBranch := "main"
 
 	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit, MasterBranch: &mainBranch}
-	repo, _, err := client.Repositories.Create(ctx, "mykelswitzer", r)
+	repo, _, err := client.Repositories.Create(ctx, githubSettings.Organization, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create the repo")
 	}
 
-	opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
-	resp, err := client.Teams.AddTeamRepoBySlug(ctx, "mykelswitzer", "engineers", "mykelswitzer", *repo.Name, opts)
-	if err != nil {
-		log.Println(err, resp)
-	}
+	// opts := &github.TeamAddTeamRepoOptions{Permission: "maintain"}
+	// resp, err := client.Teams.AddTeamRepoBySlug(ctx, "mykelswitzer", "engineers", "mykelswitzer", *repo.Name, opts)
+	// if err != nil {
+	// 	log.Println(err, resp)
+	// }
 
-	opts = &github.TeamAddTeamRepoOptions{Permission: "admin"}
-	resp, err = client.Teams.AddTeamRepoBySlug(ctx, "mykelswitzer", team, "mykelswitzer", *repo.Name, opts)
-	if err != nil {
-		log.Println(err, resp)
-	}
+	// opts = &github.TeamAddTeamRepoOptions{Permission: "admin"}
+	// resp, err = client.Teams.AddTeamRepoBySlug(ctx, "mykelswitzer", team, "mykelswitzer", *repo.Name, opts)
+	// if err != nil {
+	// 	log.Println(err, resp)
+	// }
 
 	return repo, err
 

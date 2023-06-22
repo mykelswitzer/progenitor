@@ -20,7 +20,7 @@ func setupRepo(cfg *config.Config) error {
 	// r here is the remote github repo
 	r, err := repo.New(
 		ctx,
-		token,
+		cfg.GetSettings().GitHub,
 		cfg.GetString(config.CFG_PRJ_TEAM),
 		cfg.GetString(config.CFG_PRJ_NAME),
 		true,
