@@ -10,6 +10,7 @@ import (
   "github.com/mykelswitzer/progenitor/internal/terraform"
   "github.com/mykelswitzer/progenitor/pkg/aws"
   "github.com/mykelswitzer/progenitor/pkg/config"
+  "github.com/mykelswitzer/progenitor/pkg/scaffold"
   "github.com/urfave/cli/v2"
 )
 
@@ -30,7 +31,7 @@ var prompts = map[string][]func(*config.Config) error{
   },
 }
 
-func Execute(cfg *config.Config) {
+func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
 
   app := &cli.App{
     Name: "progenitor",
@@ -48,7 +49,7 @@ func Execute(cfg *config.Config) {
         Usage: "scaffolds a gRPC service in Go",
         Action: func(c *cli.Context) error {
           cfg.Set("projectType", "go-grpc")
-          return generate(cfg)
+          return generate(cfg, scaffolds)
         },
       },
     },
@@ -61,7 +62,7 @@ func Execute(cfg *config.Config) {
 
 }
 
-func generate(cfg *config.Config) error {
+func generate(cfg *config.Config, scaffolds scaffold.Scaffolds) error {
 
   for _, p := range prompts[cfg.GetString(config.CFG_PRJ_TYPE)] {
     if err := p(cfg); err != nil {
@@ -75,7 +76,7 @@ func generate(cfg *config.Config) error {
     return err
   }
 
-  scaffold, err := scaffolding.New(cfg)
+  scaffold, err := scaffolding.New(cfg, scaffolds)
   if err != nil {
     log.Println(err.Error())
     return err

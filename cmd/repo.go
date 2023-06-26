@@ -9,7 +9,6 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 )
 
-const BRANCH_DEV = "development"
 const BRANCH_MAIN = "main"
 
 func setupRepo(cfg *config.Config) error {
@@ -36,20 +35,21 @@ func setupRepo(cfg *config.Config) error {
 	// note `lr` is the locally cloned repo, not the same as `repo` returned from
 	// github create, which is remote only, largely  because the github library is
 	// mostly around github setting, and less about actually working with git...
-	lr, err := repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
+	//lr
+	_, err = repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
 	if err != nil {
 		return err
 	}
 
-	err = repo.CreateBranch(token, lr, BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.CreateBranch(token, lr, BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
-	if err != nil {
-		return err
-	}
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 
@@ -57,7 +57,7 @@ func setupRepo(cfg *config.Config) error {
 
 func commitCodeToRepo(cfg *config.Config, s *scaffold.Scaffold) error {
 
-	ctx := context.Background()
+	//ctx := context.Background()
 	token := cfg.GetSettings().GitHub.Token
 
 	err := repo.AddAll(token, s.BaseDir.Name, s.Fs)
@@ -65,15 +65,15 @@ func commitCodeToRepo(cfg *config.Config, s *scaffold.Scaffold) error {
 		return err
 	}
 
-	err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
-	if err != nil {
-		return err
-	}
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

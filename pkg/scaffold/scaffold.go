@@ -12,6 +12,15 @@ import (
 	"github.com/spf13/afero"
 )
 
+type Scaffolds map[string]ScaffoldDS
+func (s Scaffolds) Get(k string) (ScaffoldDS, error) {
+	scaffold, ok := s[k]
+	if !ok {
+		return nil, errors.New("map does not contain scaffold: " + k)
+	}
+	return scaffold, nil
+}
+
 // ScaffoldDS is an interface that each template system
 // implements to serve as the datasource for populating
 // the scaffold and running the commands against
