@@ -5,11 +5,11 @@ import (
   "os"
   "path/filepath"
 
-  "github.com/mykelswitzer/progenitor/internal/prompt"
   "github.com/mykelswitzer/progenitor/internal/scaffolding"
   "github.com/mykelswitzer/progenitor/internal/terraform"
   "github.com/mykelswitzer/progenitor/pkg/aws"
   "github.com/mykelswitzer/progenitor/pkg/config"
+  "github.com/mykelswitzer/progenitor/pkg/prompt"
   "github.com/mykelswitzer/progenitor/pkg/scaffold"
   "github.com/urfave/cli/v2"
 )
@@ -18,18 +18,18 @@ var (
   awsClient *aws.Client
 )
 
-var prompts = map[string][]func(*config.Config) error{
-  "go-grpc": {
-    prompt.ProjectTeam,
-    prompt.ProjectName,
-    prompt.ProjectDir,
-    prompt.SetupGraphql,
-    prompt.UseDB,
-    prompt.CoreDBObject,
-    prompt.UseReporting,
-    prompt.RunTerraform,
-  },
-}
+// var prompts = map[string][]func(*config.Config) error{
+//   "go-grpc": {
+//     // prompt.ProjectTeam,
+//     prompt.ProjectName,
+//     prompt.ProjectDir,
+//     prompt.SetupGraphql,
+//     prompt.UseDB,
+//     prompt.CoreDBObject,
+//     prompt.UseReporting,
+//     prompt.RunTerraform,
+//   },
+// }
 
 func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
 

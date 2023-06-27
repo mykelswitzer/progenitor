@@ -10,14 +10,14 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 
 	// these are where the templates live
-	gogrpc "github.com/mykelswitzer/progenitor-tmpl-go-grpc"
+	gogrpc "github.com/boatsetter/progenitor-tmpl-go-grpc"
 )
 
 //go:embed progenitor.yml
 var settingsFile string
 
 var scaffolds scaffold.Scaffolds = map[string]scaffold.ScaffoldDS{
-	"go-grpc": gogrpc.GoGrpc{},
+	"go-grpc": gogrpc.ScaffoldDS{},
 }
 
 

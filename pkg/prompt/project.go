@@ -4,30 +4,29 @@ import (
 	"os"
 	"regexp"
 	"strings"
-)
-import (
+
 	"github.com/pkg/errors"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/manifoldco/promptui"
 )
 
-func ProjectTeam(cfg *config.Config) error {
+// func ProjectTeam(cfg *config.Config) error {
 
-	prompt := promptui.Select{
-		Label: "Which team will own this project?",
-		Items: []string{"advisors", "care-recipients", "core-services", "providers"},
-	}
+// 	prompt := promptui.Select{
+// 		Label: "Which team will own this project?",
+// 		Items: []string{"advisors", "care-recipients", "core-services", "providers"},
+// 	}
 
-	_, team, err := prompt.Run()
-	if err != nil {
-		return errors.Wrap(err, "Error in executing project team prompt")
-	}
+// 	_, team, err := prompt.Run()
+// 	if err != nil {
+// 		return errors.Wrap(err, "Error in executing project team prompt")
+// 	}
 
-	cfg.Set(config.CFG_PRJ_TEAM, team)
+// 	cfg.Set(config.CFG_PRJ_TEAM, team)
 
-	return nil
+// 	return nil
 
-}
+// }
 
 func ProjectName(cfg *config.Config) error {
 

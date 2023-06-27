@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/mykelswitzer/progenitor/internal/filesys"
 	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/mykelswitzer/progenitor/pkg/prompt"
 	"github.com/spf13/afero"
 )
 
@@ -25,8 +26,9 @@ func (s Scaffolds) Get(k string) (ScaffoldDS, error) {
 // implements to serve as the datasource for populating
 // the scaffold and running the commands against
 type ScaffoldDS interface {
-	Init(*config.Config, string, afero.Fs) (*Scaffold, error)
+	Generate(*config.Config, string, afero.Fs) (*Scaffold, error)
 	GetData(*config.Config) TemplateData
+	GetPrompts() []prompt.PromptFunc
 }
 
 type Dir struct {

@@ -1,9 +1,0 @@
-package prompt
-
-import (
-	"github.com/mykelswitzer/progenitor/pkg/config"
-)
-
-func SetupGraphql(cfg *config.Config) error {
-	return boolPrompt("Do you want a graphql interface", config.CFG_GQL_REQ, cfg)
-}

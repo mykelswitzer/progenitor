@@ -6,7 +6,10 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func boolPrompt(label string, configFld string, config *config.Config) error {
+type PromptFunc func(cfg *config.Config) error
+
+
+func BoolPrompt(label string, configFld string, config *config.Config) error {
 
 	output := map[string]bool{"Yes": true, "No": false}
 	var keys []string
