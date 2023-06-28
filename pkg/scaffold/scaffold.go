@@ -120,7 +120,7 @@ func getScaffoldTemplatePath(projectType string, withVersion bool) string {
 // build the project files in the local directory
 func (s *Scaffold) BuildFiles() error {
 
-	path := getScaffoldTemplatePath(s.Config.GetString(config.CFG_PRJ_TYPE), true)
+	path := getScaffoldTemplatePath(s.Config.GetString("projectType"), true)
 	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, path, s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err

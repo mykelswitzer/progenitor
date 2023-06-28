@@ -22,7 +22,7 @@ require (
 
 require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
-	github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628142149-4654f5292a64 // indirect
+	github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628192119-54f16aaa3e6b // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect

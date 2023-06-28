@@ -10,8 +10,6 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-
-
 // func ProjectTeam(cfg *config.Config) error {
 
 // 	prompt := promptui.Select{
@@ -29,6 +27,9 @@ import (
 // 	return nil
 
 // }
+
+
+const PRJ_NAME = "projectName"
 
 func ProjectName(cfg *config.Config) error {
 
@@ -53,11 +54,14 @@ func ProjectName(cfg *config.Config) error {
 		return errors.Wrap(err, "Error in executing project name prompt")
 	}
 
-	cfg.Set(config.CFG_PRJ_NAME, strings.ToLower(name))
+	cfg.Set(PRJ_NAME, strings.ToLower(name))
 
 	return nil
 
 }
+
+
+const PRJ_DIR = "projectDir"
 
 func ProjectDir(cfg *config.Config) error {
 
@@ -84,7 +88,7 @@ func ProjectDir(cfg *config.Config) error {
 		return errors.Wrap(err, "Error in executing project directory prompt")
 	}
 
-	cfg.Set(config.CFG_PRJ_DIR, dir)
+	cfg.Set(PRJ_DIR, dir)
 
 	return nil
 

@@ -3,10 +3,11 @@ package cmd
 import (
 	"context"
 
-	"github.com/pkg/errors"
 	"github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/mykelswitzer/progenitor/pkg/prompt"
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
+	"github.com/pkg/errors"
 )
 
 const BRANCH_MAIN = "main"
@@ -20,23 +21,23 @@ func setupRepo(cfg *config.Config) error {
 	r, err := repo.New(
 		ctx,
 		cfg.GetSettings().GitHub,
-		cfg.GetString(config.CFG_PRJ_TEAM),
-		cfg.GetString(config.CFG_PRJ_NAME),
+		// cfg.GetString(config.CFG_PRJ_TEAM),
+		cfg.GetString(prompt.PRJ_NAME),
 		true,
-		" service for "+cfg.GetString(config.CFG_PRJ_NAME),
+		" service for "+cfg.GetString(prompt.PRJ_NAME),
 		true,
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed to create the repo")
 	}
 
-	cfg.Set(config.CFG_PRJ_REPO, r)
+	// cfg.Set(config.CFG_PRJ_REPO, r)
 
 	// note `lr` is the locally cloned repo, not the same as `repo` returned from
 	// github create, which is remote only, largely  because the github library is
 	// mostly around github setting, and less about actually working with git...
 	//lr
-	_, err = repo.Clone(ctx, token, cfg.GetString(config.CFG_PRJ_DIR), r)
+	_, err = repo.Clone(ctx, token, cfg.GetString(prompt.PRJ_DIR), r)
 	if err != nil {
 		return err
 	}

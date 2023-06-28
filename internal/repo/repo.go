@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func New(ctx context.Context, githubSettings config.GitHubSettings, team string, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+func New(ctx context.Context, githubSettings config.GitHubSettings, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
 	oauth := GithubAuth(githubSettings.Token, ctx)
 	client := GithubClient(oauth)
