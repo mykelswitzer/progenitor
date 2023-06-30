@@ -10,13 +10,13 @@ import (
 
 	"github.com/mykelswitzer/progenitor/pkg/config"
 
-	"github.com/pkg/errors"
 	"github.com/go-git/go-git/v5"
 	_ "github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v53/github"
+	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
 

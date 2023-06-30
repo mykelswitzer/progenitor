@@ -1,13 +1,12 @@
 package prompt
 
 import (
-	"github.com/pkg/errors"
-	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/manifoldco/promptui"
+	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/pkg/errors"
 )
 
 type PromptFunc func(cfg *config.Config) error
-
 
 func BoolPrompt(label string, configFld string, config *config.Config) error {
 

@@ -5,8 +5,8 @@ import (
 	"log"
 	"os/exec"
 
-	"github.com/pkg/errors"
 	"github.com/hashicorp/terraform-exec/tfexec"
+	"github.com/pkg/errors"
 )
 
 // isInstalled checks if Terraform is installed by searching for it in the directories named

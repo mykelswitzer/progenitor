@@ -15,10 +15,19 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// default prompts we should ask for all generated projects
-var defaultPrompts []prompt.PromptFunc = []prompt.PromptFunc{
-	prompt.ProjectName,
-	prompt.ProjectDir,
+func cliCommands(cfg *config.Config, scaffolds scaffold.Scaffolds) []*cli.Command {
+  var commands []*cli.Command
+  for _, s := range scaffolds {
+    cmd := &cli.Command{
+      Name:   s.GetName(),
+      Usage:  s.GetDescription(),
+      Action: func(c *cli.Context) error {
+        return generate(cfg, s)
+      },
+    }
+    commands = append(commands, cmd)
+  }
+  return commands
 }
 
 func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
@@ -33,16 +42,7 @@ func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
       do not need to do that awful
       copy pasta you used to do.
     `,
-		Commands: []*cli.Command{
-			{
-				Name:  "go-grpc",
-				Usage: "scaffolds a gRPC service in Go",
-				Action: func(c *cli.Context) error {
-					cfg.Set("projectType", "go-grpc")
-					return generate(cfg, scaffolds)
-				},
-			},
-		},
+		Commands: cliCommands(cfg, scaffolds),
 	}
 
 	err := app.Run(os.Args)
@@ -52,20 +52,25 @@ func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
 
 }
 
+// default prompts we should ask for all generated projects
+var defaultPrompts []prompt.PromptFunc = []prompt.PromptFunc{
+  prompt.ProjectName,
+  prompt.ProjectDir,
+}
+
 func buildPrompts(scaffoldPrompts []prompt.PromptFunc) []prompt.PromptFunc {
 	prompts := defaultPrompts
 	prompts = append(prompts, scaffoldPrompts...)
 	return prompts
 }
 
-func generate(cfg *config.Config, scaffolds scaffold.Scaffolds) error {
+func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 
-	scfld, err := scaffolds.Get(cfg.GetString("projectType"))
-	if err != nil {
-		return err
-	}
-
-	prompts := buildPrompts(scfld.GetPrompts())
+	var err error
+  
+  cfg.Set("projectType", s.GetName())
+	
+  prompts := buildPrompts(s.GetPrompts())
 	for _, p := range prompts {
 		if err := p(cfg); err != nil {
 			return handleError(err)
@@ -79,27 +84,28 @@ func generate(cfg *config.Config, scaffolds scaffold.Scaffolds) error {
 	}
 
 	dir := cfg.GetString(prompt.PRJ_DIR)
-	scaffold, err := scfld.Generate(cfg, dir, filesys.SetBasePath(dir))
+	tmplScfld, err := s.Generate(cfg, dir, filesys.SetBasePath(dir))
 	if err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if err = scaffold.BuildStructure(); err != nil {
+	if err = tmplScfld.BuildStructure(); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if err = scaffold.BuildFiles(); err != nil {
+	if err = tmplScfld.BuildFiles(); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if err = commitCodeToRepo(cfg, scaffold); err != nil {
+	if err = commitCodeToRepo(cfg, tmplScfld); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
+  // NOTE: need to move this into like a plugin
 	// moved to here, note that this assumes that all projects will store
 	// the terraform code in a /terraform folder in the root directory
 	// of the project... while this appears true at this time, it may not
@@ -107,13 +113,13 @@ func generate(cfg *config.Config, scaffolds scaffold.Scaffolds) error {
 	// independent of the success of terraform running... which was previously
 	// breaking the code. There is probably a better long term fix, which we can
 	// invest in if it continues to create issues
-	if scaffold.Config.GetBool("runTerraform") {
+	if tmplScfld.Config.GetBool("runTerraform") {
 		base, err := os.Getwd()
 		if err != nil {
 			log.Println(err.Error())
 			return err
 		}
-		tfDir := filepath.Join(base, scaffold.Config.GetString(prompt.PRJ_DIR), "terraform")
+		tfDir := filepath.Join(base, tmplScfld.Config.GetString(prompt.PRJ_DIR), "terraform")
 
 		if err := terraform.Run(tfDir); err != nil {
 			log.Println(err.Error())

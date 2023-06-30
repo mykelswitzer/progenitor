@@ -6,14 +6,15 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	txttmpl "text/template"
 
-	"github.com/pkg/errors"
 	"github.com/mykelswitzer/progenitor/internal/filesys"
 	rp "github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	str "github.com/mykelswitzer/progenitor/pkg/strings"
+	"github.com/pkg/errors"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	"github.com/spf13/afero"
@@ -40,6 +41,44 @@ func contains(a []string, x string) bool {
 		}
 	}
 	return false
+}
+
+func templateFunctions() txttmpl.FuncMap {
+	return txttmpl.FuncMap{
+		"tolower":     strings.ToLower,
+		"tocamel":     str.ToCamel,
+		"topascal":    str.ToPascal,
+		"toplural":    str.ToPlural,
+		"topackage":   str.ToPackage,
+		"tosnakecase": str.ToSnakeCase,
+		"toupper":     strings.ToUpper,
+	}
+}
+
+func getScaffoldTemplatePath(projectType string, withVersion bool) string {
+
+	var (
+		repoName string = "progenitor-tmpl-" + projectType
+		path     string = "github.com/mykelswitzer/" + repoName + "/template"
+		version  string
+	)
+
+	if withVersion {
+		if mf, ok := debug.ReadBuildInfo(); ok {
+			for _, m := range mf.Deps {
+				if strings.HasSuffix(m.Path, repoName) {
+					version = m.Version
+					break
+				}
+			}
+		}
+		path += "@tags/" + version
+	}
+
+	log.Println("reading scaffolding template files from:" + path)
+
+	return path
+
 }
 
 func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
@@ -87,16 +126,4 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 	}
 
 	return templates, nil
-}
-
-func templateFunctions() txttmpl.FuncMap {
-	return txttmpl.FuncMap{
-		"tolower":     strings.ToLower,
-		"tocamel":     str.ToCamel,
-		"topascal":    str.ToPascal,
-		"toplural":    str.ToPlural,
-		"topackage":   str.ToPackage,
-		"tosnakecase": str.ToSnakeCase,
-		"toupper":     strings.ToUpper,
-	}
 }

@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
-	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/manifoldco/promptui"
+	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/pkg/errors"
 )
 
 // func ProjectTeam(cfg *config.Config) error {
@@ -27,7 +27,6 @@ import (
 // 	return nil
 
 // }
-
 
 const PRJ_NAME = "projectName"
 
@@ -59,7 +58,6 @@ func ProjectName(cfg *config.Config) error {
 	return nil
 
 }
-
 
 const PRJ_DIR = "projectDir"
 

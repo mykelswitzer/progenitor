@@ -14,7 +14,7 @@ type config interface {
 
 type Config struct {
 	settings *Settings
-	inputs map[string]interface{}
+	inputs   map[string]interface{}
 }
 
 func New(settingsFile string) (*Config, error) {
@@ -26,7 +26,7 @@ func New(settingsFile string) (*Config, error) {
 
 	cfg := &Config{
 		settings: s,
-		inputs: make(map[string]interface{}),
+		inputs:   make(map[string]interface{}),
 	}
 
 	return cfg, nil
@@ -79,5 +79,5 @@ func (c *Config) IsSet(key string) bool {
 // }
 
 func (c *Config) GetSettings() *Settings {
- return c.settings
+	return c.settings
 }

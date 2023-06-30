@@ -81,6 +81,12 @@ github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628192054-b870815fad08
 github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628192054-b870815fad08/go.mod h1:K1PIAVDeueHNzM5EYIka1rivHGF5xp11VnRy2OKTrY8=
 github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628192119-54f16aaa3e6b h1:sPq4979CGaxGbkdt1gaobulbHTULy2ZALJXU5GXlBxk=
 github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230628192119-54f16aaa3e6b/go.mod h1:K1PIAVDeueHNzM5EYIka1rivHGF5xp11VnRy2OKTrY8=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629182848-00c9158e3067 h1:rcckPiCIW7TEqvV2nPe7J7/7uTMy8VJd3+jbgTZnW58=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629182848-00c9158e3067/go.mod h1:K1PIAVDeueHNzM5EYIka1rivHGF5xp11VnRy2OKTrY8=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629183003-25a3e85fab56 h1:rKlKM5qwgS1q/i26vihoZfE5hIGGaLbSt/CNKBUo2wQ=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629183003-25a3e85fab56/go.mod h1:K1PIAVDeueHNzM5EYIka1rivHGF5xp11VnRy2OKTrY8=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629183303-7b64b87f5831 h1:uVpm5uy6nCH+khphuiRVvlWx78dqH+NWNFSRg2p5oy0=
+github.com/boatsetter/progenitor-tmpl-go-grpc v0.0.0-20230629183303-7b64b87f5831/go.mod h1:K1PIAVDeueHNzM5EYIka1rivHGF5xp11VnRy2OKTrY8=
 github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cheggaaa/pb v1.0.27/go.mod h1:pQciLPpbU0oxA0h+VJYYLxO+XeDQb5pZijXscXHm81s=

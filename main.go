@@ -16,8 +16,8 @@ import (
 //go:embed progenitor.yml
 var settingsFile string
 
-var scaffolds scaffold.Scaffolds = map[string]scaffold.ScaffoldDS{
-	"go-grpc": gogrpc.ScaffoldDS{},
+var scaffolds scaffold.Scaffolds = []scaffold.ScaffoldDS{
+	gogrpc.ScaffoldDS{},
 }
 
 func main() {

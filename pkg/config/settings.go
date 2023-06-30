@@ -10,21 +10,22 @@ import (
 )
 
 type Settings struct {
-	GitHub 		GitHubSettings	`yaml:"github,omitempty"`	
-	Branches	BranchSettings	`yaml:"branches,omitempty"`
-	Teams 		StringList		`yaml:"teams,omitempty"`
+	GitHub   GitHubSettings `yaml:"github,omitempty"`
+	Branches BranchSettings `yaml:"branches,omitempty"`
+	Teams    StringList     `yaml:"teams,omitempty"`
 }
 
 type GitHubSettings struct {
-  Organization 	string `yaml:"organization,omitempty"`
-  Token 		string `yaml:"token,omitempty"`
+	Organization string `yaml:"organization,omitempty"`
+	Token        string `yaml:"token,omitempty"`
 }
+
 func (s *GitHubSettings) IsDefined() bool {
 	return s.Organization != "" && s.Token != ""
 }
 
 type BranchSettings struct {
-  Default 	string `yaml:"default,omitempty"`
+	Default string `yaml:"default,omitempty"`
 }
 
 // LoadSettings reads the progenitor.yml settings file
