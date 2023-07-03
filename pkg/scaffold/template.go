@@ -55,11 +55,11 @@ func templateFunctions() txttmpl.FuncMap {
 	}
 }
 
-func getScaffoldTemplatePath(projectType string, withVersion bool) string {
+func getScaffoldTemplatePath(orgName string, tmplName string, withVersion bool) string {
 
 	var (
-		repoName string = "progenitor-tmpl-" + projectType
-		path     string = "github.com/mykelswitzer/" + repoName + "/template"
+		repoName string = "progenitor-tmpl-" + tmplName
+		path     string = fmt.Sprintf("github.com/%s/%s/template", orgName, repoName)
 		version  string
 	)
 
@@ -75,10 +75,7 @@ func getScaffoldTemplatePath(projectType string, withVersion bool) string {
 		path += "@tags/" + version
 	}
 
-	log.Println("reading scaffolding template files from:" + path)
-
 	return path
-
 }
 
 func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {

@@ -58,7 +58,9 @@ func (s *Scaffold) BuildStructure() error {
 // build the project files in the local directory
 func (s *Scaffold) BuildFiles() error {
 
-	path := getScaffoldTemplatePath(s.Config.GetString("projectType"), true)
+	orgName := s.Config.GetSettings().GitHub.Organization
+	projName := s.Config.GetString("projectType")
+	path := getScaffoldTemplatePath(orgName, projName, true)
 	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, path, s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
