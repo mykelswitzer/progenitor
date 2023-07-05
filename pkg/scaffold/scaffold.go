@@ -91,6 +91,7 @@ func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
 			return errors.Wrap(err, "Unable to open file for writing")
 		}
 		log.Println("Executing template", tmpl)
+		// see https://pkg.go.dev/text/template#Template.Execute
 		err = tmpl.Execute(f, data)
 		if err != nil {
 			return errors.Wrap(err, "Unable to execute template")

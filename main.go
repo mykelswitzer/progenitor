@@ -15,6 +15,20 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var initCmd = &cli.Command{
+	Name:  "init",
+	Usage: "create a new base progenitor project",
+	Action: func(ctx *cli.Context) error {
+
+		// we need to build out base template when this is called
+		// two files:
+		// main.go
+		// progenitor.yml
+
+
+	},
+}
+
 func cliCommands(cfg *config.Config, scaffolds scaffold.Scaffolds) []*cli.Command {
   var commands []*cli.Command
   for _, s := range scaffolds {
@@ -35,12 +49,12 @@ func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
 	app := &cli.App{
 		Name: "progenitor",
 		Usage: `
-      Hello, I am the Progenitor!!!
-      Please answer my questions, and
-      I will set up a nice set of
-      boilerplate code, so that you
-      do not need to do that awful
-      copy pasta you used to do.
+Hello, I am the Progenitor!!!
+Please answer my questions, and
+I will set up a nice set of
+boilerplate code, so that you
+do not need to do that awful
+copy pasta you used to do.
     `,
 		Commands: cliCommands(cfg, scaffolds),
 	}
