@@ -12,8 +12,8 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/prompt"
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 
-	"github.com/mykelswitzer/progenitor/templates/initialize"
-	"github.com/mykelswitzer/progenitor/templates/gentemplate"
+	_ "github.com/mykelswitzer/progenitor/templates/initialize"
+	_ "github.com/mykelswitzer/progenitor/templates/gentemplate"
 
 	"github.com/urfave/cli/v2"
 )
