@@ -11,11 +11,11 @@ import (
 	"strings"
 	txttmpl "text/template"
 
-	"github.com/mykelswitzer/progenitor/internal/filesys"
+	_ "github.com/mykelswitzer/progenitor/internal/filesys"
 	rp "github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	str "github.com/mykelswitzer/progenitor/pkg/strings"
-	"github.com/pkg/errors"
+	_ "github.com/pkg/errors"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	"github.com/spf13/afero"
@@ -31,7 +31,7 @@ func trimSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)
 }
 
-func contains(a []string, x string) bool {
+func stringInSlice(x string, a []string) bool {
 	if len(a) == 0 {
 		return false
 	}
@@ -79,27 +79,17 @@ func getScaffoldTemplatePath(orgName string, tmplName string, withVersion bool) 
 	return path
 }
 
-func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
-
-	fs, err := getTemplateFileSystem(token, templatePath)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed initializing git filesystem")
-	}
-
-	return readTemplateFileSystem(fs, skipTemplates, basePath)
-}
-
-func getTemplateFileSystem(token string, templatePath string) (http.FileSystem, error) {
+func getFileSystemHandle(token string, templatePath string) (http.FileSystem, error) {
 	ctx := context.Background()
 	oauth := rp.GithubAuth(token, ctx)
 	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
 }
 
-func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
+func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string]*Dir, []string) {
 
 	var (
-		dirs      = map[string]Dir{}
-		templates = map[string]*txttmpl.Template{}
+		dirs      = map[string][]string{}
+		tmplPaths = []string{}
 	)
 
 	walker := fsutil.Walk(fs, "")
@@ -113,40 +103,46 @@ func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath
 
 		switch walker.Stat().IsDir() {
 		case true: // if it's a directory we need to add it to the dir path
-			parseDir(dirs, filePath)
+			dirs = collectDirs(dirs, filePath)
 
 		default: // if it's a file we need to add it to the templates
-			ex, err := filesys.DirExists(filepath.Dir(filePath), basePath)
-			if err != nil {
-				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
-			}
-			// if the path exists, parse the templates
-			if ex && contains(skipTemplates, filePath) == false {
-				log.Println("Fetching template: ", trimSuffix(filePath))
-				tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, filePath)
-				if err != nil {
-					werr := errors.Wrapf(err, "Unable to parse template %s", filePath)
-					log.Println(werr)
-				}
-				templates[filePath] = tmpl
-			}
+			tmplPaths = collectFiles(tmplPaths, skipTemplates, filePath)
+
 		}
 	}
 
-	// we can delete the skip template
-	// after the fact delete(map,key)
 	return nil, nil
 }
 
-func parseDir(dirs map[string]Dir, fPath string) {
+func collectDirs(dirs map[string][]string, filePath string) map[string][]string {
+	dirName, parent := getDirAndParentFromPath(filePath)
 
-	//if _, ok := myMap[]
-
-	//parent := getParentDirFromPath(fPath)
-
-	//hndlDir.AddSubDirs(Dir{Name: fInfo.Name()})
+	_, ok := dirs[parent]
+	if !ok {
+		dirs[parent] = []string{dirName}
+	} else {
+		dirs[parent] = append(dirs[parent], dirName)
+	}
+	return dirs
 }
 
-func parseTmpl(templates map[string]*txttmpl.Template, fPath string) {
+func collectFiles(tmplPaths []string, skipTemplates []string, filePath string) []string {
+	if stringInSlice(filePath, skipTemplates) == false {
+		log.Println("Fetching template: ", trimSuffix(filePath))
+		tmplPaths = append(tmplPaths, filePath)
+	}
 
+	return tmplPaths
+}
+
+// getParentDirFromPath retrieves the parent directory of the final element in a file path.
+func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
+
+	dirName = filepath.Base(filePath)
+	parent  = ""
+	if strings.Contains(filePath, "/") {
+		parent = filepath.Base(strings.Replace(filePath, "/"+dirName, "", 1))
+	}
+
+	return dirName, parent
 }

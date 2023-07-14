@@ -16,7 +16,7 @@ import (
 // given filesystem.
 func TmplParse(fs http.FileSystem, funcs txttmpl.FuncMap, tmpl *txttmpl.Template, paths ...string) (*txttmpl.Template, error) {
 	t := tmplParser{Template: tmpl, FuncMap: funcs}
-	err := parseFiles(fs, t.parse, paths...)
+	_, err := parseFiles(fs, t.parse, paths...)
 	return t.Template, err
 }
 
@@ -39,23 +39,23 @@ func (t *tmplParser) parse(name, content string) error {
 	return err
 }
 
-func parseFiles(fs http.FileSystem, parse func(name string, content string) error, paths ...string) error {
+func parseFiles(fs http.FileSystem, parse func(name string, content string) error, paths ...string) (map[string]*txttmpl.Template, error) {
 	if len(paths) == 0 {
-		return errors.New("no paths provided")
+		return nil, errors.New("no paths provided")
 	}
 	buf := bytes.NewBuffer(nil)
 	for _, path := range paths {
 		f, err := fs.Open(strings.Trim(path, "/"))
 		if err != nil {
-			return errors.Wrapf(err, "opening template %s", path)
+			return nil, errors.Wrapf(err, "opening template %s", path)
 		}
 		name := filepath.Base(path)
 		buf.Reset()
 		buf.ReadFrom(f)
 		err = parse(name, buf.String())
 		if err != nil {
-			return errors.Wrapf(err, "parsing template %s", path)
+			return nil, errors.Wrapf(err, "parsing template %s", path)
 		}
 	}
-	return nil
+	return nil, nil
 }

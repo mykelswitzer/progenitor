@@ -1,8 +1,6 @@
 package scaffold
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -18,7 +16,7 @@ func (d *Dir) AddSubDirs(subdirs ...Dir) *Dir {
 }
 
 // createDirs recursively reads the project map from the
-// scaffold and creates the directories as needed
+// scaffold and creates the directories as needed locally
 func createDirs(dirs []Dir, parent afero.Fs) error {
 
 	for _, dir := range dirs {
@@ -35,19 +33,4 @@ func createDirs(dirs []Dir, parent afero.Fs) error {
 	}
 
 	return nil
-}
-
-func getFinalElementFromPath(filePath string) string {
-	if strings.Contains(filePath, "/") {
-		return filePath[strings.LastIndex(filePath, "/")+1:]
-	}
-	return filePath
-}
-
-func getParentDirFromPath(filePath string) string {
-	if strings.Contains(filePath, "/") {
-		fe := getFinalElementFromPath(filePath)
-		return getFinalElementFromPath(strings.Replace(filePath, "/"+fe, "", 1))
-	}
-	return ""
 }

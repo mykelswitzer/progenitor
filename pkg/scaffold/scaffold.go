@@ -36,8 +36,9 @@ type Scaffold struct {
 	ProcessHooks  map[string]func(*Scaffold) error
 }
 
-func (s *Scaffold) Populate(templateRepoPath *string) (err error) {
+func (s *Scaffold) Populate(templateRepoPath *string) error {
 
+	//
 	if templateRepoPath == nil {
 		orgName := s.Config.GetSettings().GitHub.Organization
 		projName := s.Config.GetString("projectType")
@@ -45,13 +46,28 @@ func (s *Scaffold) Populate(templateRepoPath *string) (err error) {
 		templateRepoPath = &tmplFP
 	}
 
-	// read templates - we should build out the directory map and template list
+	fs, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
+	if err != nil {
+		return errors.Wrap(err, "Failed initializing git filesystem")
+	}
+
+	_, tmplPaths := readFileSystem(fs, s.SkipTemplates, s.Fs) //dirs
 
 	if err = s.buildStructure(); err != nil {
 		return err
 	}
 
-	if err = s.buildFiles(*templateRepoPath); err != nil {
+	templates := map[string]*txttmpl.Template{}
+	for _, tmplPath := range tmplPaths {
+		tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, tmplPath)
+		if err != nil {
+			werr := errors.Wrapf(err, "Unable to parse template %s", tmplPath)
+			log.Println(werr)
+		}
+		templates[tmplPath] = tmpl
+	}
+
+	if err = s.buildFiles(templates); err != nil {
 		return err
 	}
 
@@ -79,14 +95,9 @@ func (s *Scaffold) buildStructure() error {
 
 // buildFiles sources the templates from the repo, then executes them to
 // build the project files in the local directory
-func (s *Scaffold) buildFiles(templateRepoPath string) error {
+func (s *Scaffold) buildFiles(templates map[string]*txttmpl.Template) error {
 
-	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, templateRepoPath, s.SkipTemplates, s.Fs)
-	if err != nil {
-		return err
-	}
-
-	if err = s.populateFiles(templates); err != nil {
+	if err := s.populateFiles(templates); err != nil {
 		return err
 	}
 
