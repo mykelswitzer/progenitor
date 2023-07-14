@@ -98,7 +98,7 @@ func getTemplateFileSystem(token string, templatePath string) (http.FileSystem, 
 func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
 	var (
-		// dirs = []Dir{}
+		dirs      = map[string]Dir{}
 		templates = map[string]*txttmpl.Template{}
 	)
 
@@ -109,30 +109,26 @@ func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath
 			fmt.Fprintln(os.Stderr, err)
 			continue
 		}
+		filePath := walker.Path()
 
-		log.Println(walker.Path())
+		switch walker.Stat().IsDir() {
+		case true: // if it's a directory we need to add it to the dir path
+			parseDir(dirs, filePath)
 
-		// if it's a directory we need to add it to the dir path
-		// if it's a file we need to add it to the templates
-
-		if !walker.Stat().IsDir() {
-			// get && check path
-			//dirpath := filepath.Dir(walker.Path())
-			file := walker.Path()
-			ex, err := filesys.DirExists(filepath.Dir(file), basePath)
+		default: // if it's a file we need to add it to the templates
+			ex, err := filesys.DirExists(filepath.Dir(filePath), basePath)
 			if err != nil {
 				return nil, errors.Wrap(err, "Failed reading base path while parsing templates")
 			}
 			// if the path exists, parse the templates
-			if ex && contains(skipTemplates, file) == false {
-				log.Println("Fetching template: ", trimSuffix(file))
-
-				tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, file)
+			if ex && contains(skipTemplates, filePath) == false {
+				log.Println("Fetching template: ", trimSuffix(filePath))
+				tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, filePath)
 				if err != nil {
-					werr := errors.Wrapf(err, "Unable to parse template %s", file)
+					werr := errors.Wrapf(err, "Unable to parse template %s", filePath)
 					log.Println(werr)
 				}
-				templates[file] = tmpl
+				templates[filePath] = tmpl
 			}
 		}
 	}
@@ -142,23 +138,15 @@ func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath
 	return nil, nil
 }
 
-func parseDir(dirs []Dir, fPath string, fInfo os.FileInfo) {
-	//parent := getParentDir(fPath)
+func parseDir(dirs map[string]Dir, fPath string) {
+
+	//if _, ok := myMap[]
+
+	//parent := getParentDirFromPath(fPath)
+
 	//hndlDir.AddSubDirs(Dir{Name: fInfo.Name()})
 }
 
 func parseTmpl(templates map[string]*txttmpl.Template, fPath string) {
-
-}
-
-func getParentDirFromPath(fPath string) string {
-
-	if strings.Contains(fPath, "/") {
-		stripped := strings.Replace(fPath, fPath[strings.LastIndex(fPath, "/"):], "", 1)
-		parent := stripped[strings.LastIndex(stripped, "/")+1:]
-		return parent
-	} else {
-		return fPath
-	}
 
 }

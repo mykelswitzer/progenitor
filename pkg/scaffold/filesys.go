@@ -1,6 +1,8 @@
 package scaffold
 
 import (
+	"strings"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
@@ -33,4 +35,19 @@ func createDirs(dirs []Dir, parent afero.Fs) error {
 	}
 
 	return nil
+}
+
+func getFinalElementFromPath(filePath string) string {
+	if strings.Contains(filePath, "/") {
+		return filePath[strings.LastIndex(filePath, "/")+1:]
+	}
+	return filePath
+}
+
+func getParentDirFromPath(filePath string) string {
+	if strings.Contains(filePath, "/") {
+		fe := getFinalElementFromPath(filePath)
+		return getFinalElementFromPath(strings.Replace(filePath, "/"+fe, "", 1))
+	}
+	return ""
 }
