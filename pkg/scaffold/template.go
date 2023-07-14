@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime/debug"
@@ -80,17 +81,26 @@ func getScaffoldTemplatePath(orgName string, tmplName string, withVersion bool) 
 
 func getLatestTemplates(token string, templatePath string, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
 
-	var templates = map[string]*txttmpl.Template{}
-
-	ctx := context.Background()
-	oauth := rp.GithubAuth(token, ctx)
-	fs, err := gitfs.New(ctx,
-		templatePath,
-		gitfs.OptClient(oauth),
-	)
+	fs, err := getTemplateFileSystem(token, templatePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed initializing git filesystem")
 	}
+
+	return readTemplateFileSystem(fs, skipTemplates, basePath)
+}
+
+func getTemplateFileSystem(token string, templatePath string) (http.FileSystem, error) {
+	ctx := context.Background()
+	oauth := rp.GithubAuth(token, ctx)
+	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
+}
+
+func readTemplateFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string]*txttmpl.Template, error) {
+
+	var (
+		// dirs = []Dir{}
+		templates = map[string]*txttmpl.Template{}
+	)
 
 	walker := fsutil.Walk(fs, "")
 	for walker.Step() {
@@ -99,6 +109,11 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 			fmt.Fprintln(os.Stderr, err)
 			continue
 		}
+
+		log.Println(walker.Path())
+
+		// if it's a directory we need to add it to the dir path
+		// if it's a file we need to add it to the templates
 
 		if !walker.Stat().IsDir() {
 			// get && check path
@@ -122,5 +137,28 @@ func getLatestTemplates(token string, templatePath string, skipTemplates []strin
 		}
 	}
 
-	return templates, nil
+	// we can delete the skip template
+	// after the fact delete(map,key)
+	return nil, nil
+}
+
+func parseDir(dirs []Dir, fPath string, fInfo os.FileInfo) {
+	//parent := getParentDir(fPath)
+	//hndlDir.AddSubDirs(Dir{Name: fInfo.Name()})
+}
+
+func parseTmpl(templates map[string]*txttmpl.Template, fPath string) {
+
+}
+
+func getParentDirFromPath(fPath string) string {
+
+	if strings.Contains(fPath, "/") {
+		stripped := strings.Replace(fPath, fPath[strings.LastIndex(fPath, "/"):], "", 1)
+		parent := stripped[strings.LastIndex(stripped, "/")+1:]
+		return parent
+	} else {
+		return fPath
+	}
+
 }

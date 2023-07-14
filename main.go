@@ -12,6 +12,9 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/prompt"
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 
+	"github.com/mykelswitzer/progenitor/templates/initialize"
+	"github.com/mykelswitzer/progenitor/templates/gentemplate"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,9 +28,24 @@ var initCmd = &cli.Command{
 		// main.go
 		// progenitor.yml
 
-
+		return nil
 	},
 }
+
+var genTemplate = &cli.Command{
+	Name:  "gen-template",
+	Usage: "create a new template to use in progenitor",
+	Action: func(ctx *cli.Context) error {
+
+		// we need to build out base template when this is called
+		// template folder for the templates
+		// scaffold.go for the scaffold
+		// prompts.go for the prompts
+
+		return nil
+	},
+}
+
 
 func cliCommands(cfg *config.Config, scaffolds scaffold.Scaffolds) []*cli.Command {
   var commands []*cli.Command
@@ -104,15 +122,12 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	if err = tmplScfld.BuildStructure(); err != nil {
+
+	if err = tmplScfld.Populate(nil); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if err = tmplScfld.BuildFiles(); err != nil {
-		log.Println(err.Error())
-		return err
-	}
 
 	if err = commitCodeToRepo(cfg, tmplScfld); err != nil {
 		log.Println(err.Error())

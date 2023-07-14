@@ -36,9 +36,32 @@ type Scaffold struct {
 	ProcessHooks  map[string]func(*Scaffold) error
 }
 
-// BuildStructure is responsible for creating the project
+func (s *Scaffold) Populate(templateRepoPath *string) (err error) {
+
+	if templateRepoPath == nil {
+		orgName := s.Config.GetSettings().GitHub.Organization
+		projName := s.Config.GetString("projectType")
+		tmplFP := getScaffoldTemplatePath(orgName, projName, true)
+		templateRepoPath = &tmplFP
+	}
+
+	// read templates - we should build out the directory map and template list
+
+	if err = s.buildStructure(); err != nil {
+		return err
+	}
+
+	if err = s.buildFiles(*templateRepoPath); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// buildStructure is responsible for creating the project
 // folder structure in the local directory
-func (s *Scaffold) BuildStructure() error {
+func (s *Scaffold) buildStructure() error {
+
 	err := createDirs(s.BaseDir.SubDirs, s.Fs)
 	if err != nil {
 		return err
@@ -54,17 +77,15 @@ func (s *Scaffold) BuildStructure() error {
 	return nil
 }
 
-// BuildFiles sources the templates from the repo, then executes them to
+// buildFiles sources the templates from the repo, then executes them to
 // build the project files in the local directory
-func (s *Scaffold) BuildFiles() error {
+func (s *Scaffold) buildFiles(templateRepoPath string) error {
 
-	orgName := s.Config.GetSettings().GitHub.Organization
-	projName := s.Config.GetString("projectType")
-	path := getScaffoldTemplatePath(orgName, projName, true)
-	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, path, s.SkipTemplates, s.Fs)
+	templates, err := getLatestTemplates(s.Config.GetSettings().GitHub.Token, templateRepoPath, s.SkipTemplates, s.Fs)
 	if err != nil {
 		return err
 	}
+
 	if err = s.populateFiles(templates); err != nil {
 		return err
 	}

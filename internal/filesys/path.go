@@ -64,6 +64,28 @@ func SetBasePath(path string) afero.Fs {
 	return afero.NewBasePathFs(afero.NewOsFs(), path)
 }
 
+// see Go source code:
+// https://github.com/golang/go/blob/f57ebed35132d02e5cf016f324853217fb545e91/src/cmd/go/internal/modload/init.go#L1283
+func findModuleRoot(dir string) (roots string) {
+	if dir == "" {
+		panic("dir not set")
+	}
+	dir = filepath.Clean(dir)
+
+	// Look for enclosing go.mod.
+	for {
+		if fi, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil && !fi.IsDir() {
+			return dir
+		}
+		d := filepath.Dir(dir)
+		if d == dir { // the parent of the root is itself, so we can go no further
+			break
+		}
+		dir = d
+	}
+	return ""
+}
+
 // GetTempDir returns a temporary directory with the given sub path.
 func GetTempDir(subPath string, fs afero.Fs) string {
 	return afero.GetTempDir(fs, subPath)
