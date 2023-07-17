@@ -127,6 +127,8 @@ func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
 
 func mapDirs(dirs map[string][]string, filePath string) map[string][]string {
 	dirName, parent := getDirAndParentFromPath(filePath)
+	dirs[dirName] = []string{}
+
 	_, ok := dirs[parent]
 	if !ok {
 		dirs[parent] = []string{dirName}
