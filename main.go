@@ -115,19 +115,12 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	dir := cfg.GetString(prompt.PRJ_DIR)
-	tmplScfld, err := s.Generate(cfg, dir, filesys.SetBasePath(dir))
-	if err != nil {
-		log.Println(err.Error())
-		return err
-	}
-
+	tmplScfld, err := s.Init(cfg)
 
 	if err = tmplScfld.Populate(nil); err != nil {
 		log.Println(err.Error())
 		return err
 	}
-
 
 	if err = commitCodeToRepo(cfg, tmplScfld); err != nil {
 		log.Println(err.Error())

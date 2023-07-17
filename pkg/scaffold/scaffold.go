@@ -15,11 +15,12 @@ import (
 // implements to serve as the datasource for populating
 // the scaffold and running the commands against
 type ScaffoldDS interface {
+	Init(*config.Config)
 	GetName() string
 	GetDescription() string
 	GetPrompts() []prompt.PromptFunc
-	GetData(*config.Config) TemplateData
-	Generate(*config.Config, string, afero.Fs) (*Scaffold, error)
+	GetSkipTemplates() []string
+	GetProcessHooks() map[string]func(*Scaffold) error
 }
 
 // Scaffolds is a keyed map of ScaffoldDS interfaces
@@ -28,12 +29,13 @@ type Scaffolds []ScaffoldDS
 // Scaffold is a common struct that all template systems
 // rely on to run the various scaffolding commands
 type Scaffold struct {
-	Source        ScaffoldDS // eventually remove
 	Config        *config.Config
-	BaseDir       Dir      // eventually remove
-	Fs            afero.Fs // eventually remove
 	SkipTemplates []string
 	ProcessHooks  map[string]func(*Scaffold) error
+}
+
+func (s *Scaffold) Init(*config.Config) {
+	s.Config = config
 }
 
 func (s *Scaffold) Populate(templateRepoPath *string) error {
