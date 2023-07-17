@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"runtime/debug"
+	"strings"
 	txttmpl "text/template"
 
 	"github.com/mykelswitzer/progenitor/internal/filesys"
