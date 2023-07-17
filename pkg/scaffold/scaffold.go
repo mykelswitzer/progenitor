@@ -35,7 +35,7 @@ type Scaffold struct {
 	ProcessHooks  map[string]func(*Scaffold) error
 }
 
-func (s *Scaffold) Init(*config.Config) {
+func (s *Scaffold) Init(config *config.Config) {
 	s.Config = config
 
 	version := "(undetermined)"
@@ -141,7 +141,7 @@ func (s *Scaffold) createFiles(templates map[string]*txttmpl.Template, localFS a
 	data := s.Config.GetInputs()
 
 	for path, tmpl := range templates {
-		f, err := filesys.OpenFileForWriting(s.Fs, trimSuffix(path))
+		f, err := filesys.OpenFileForWriting(localFS, trimSuffix(path))
 		if err != nil {
 			return fmt.Errorf("Unable to open file for writing %w", err)
 		}
