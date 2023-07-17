@@ -114,14 +114,17 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	tmplScfld, err := s.Init(cfg)
+	s.Init(cfg)
 
-	if err = tmplScfld.Populate(nil); err != nil {
+	// setup local file system root
+	localFS := filesys.SetBasePath(cfg.GetString(prompt.PRJ_DIR))
+
+	if err = s.Populate(nil, localFS); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if err = commitCodeToRepo(cfg, tmplScfld); err != nil {
+	if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
 		log.Println(err.Error())
 		return err
 	}
@@ -134,13 +137,13 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 	// independent of the success of terraform running... which was previously
 	// breaking the code. There is probably a better long term fix, which we can
 	// invest in if it continues to create issues
-	if tmplScfld.Config.GetBool("runTerraform") {
+	if cfg.GetBool("runTerraform") {
 		base, err := os.Getwd()
 		if err != nil {
 			log.Println(err.Error())
 			return err
 		}
-		tfDir := filepath.Join(base, tmplScfld.Config.GetString(prompt.PRJ_DIR), "terraform")
+		tfDir := filepath.Join(base, cfg.GetString(prompt.PRJ_DIR), "terraform")
 
 		if err := terraform.Run(tfDir); err != nil {
 			log.Println(err.Error())

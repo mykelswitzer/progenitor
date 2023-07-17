@@ -23,6 +23,7 @@ type ScaffoldDS interface {
 	GetPrompts() []prompt.PromptFunc
 	GetSkipTemplates() []string
 	GetProcessHooks() map[string]func(*Scaffold) error
+	Populate(*string, afero.Fs) error
 }
 
 // Scaffolds is a keyed map of ScaffoldDS interfaces
@@ -52,7 +53,7 @@ func (s *Scaffold) Init(config *config.Config) {
 
 }
 
-func (s *Scaffold) Populate(templateRepoPath *string) error {
+func (s *Scaffold) Populate(templateRepoPath *string, localFS afero.Fs) error {
 
 	if templateRepoPath == nil {
 		orgName := s.Config.GetSettings().GitHub.Organization
@@ -81,9 +82,6 @@ func (s *Scaffold) Populate(templateRepoPath *string) error {
 	if err != nil {
 		return fmt.Errorf("Failed parsing required templates %w", err)
 	}
-
-	// setup local file system root
-	localFS := filesys.SetBasePath(s.Config.GetString(prompt.PRJ_DIR))
 
 	// build out directories and call any hooks
 	if err = s.buildStructure(dirStructure, localFS); err != nil {

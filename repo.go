@@ -6,8 +6,10 @@ import (
 	"github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/mykelswitzer/progenitor/pkg/prompt"
-	"github.com/mykelswitzer/progenitor/pkg/scaffold"
+	_ "github.com/mykelswitzer/progenitor/pkg/scaffold"
 	"github.com/pkg/errors"
+
+	"github.com/spf13/afero"
 )
 
 const BRANCH_MAIN = "main"
@@ -56,12 +58,12 @@ func setupRepo(cfg *config.Config) error {
 
 }
 
-func commitCodeToRepo(cfg *config.Config, s *scaffold.Scaffold) error {
+func commitCodeToRepo(cfg *config.Config, directory string, fileSys afero.Fs) error {
 
 	//ctx := context.Background()
 	token := cfg.GetSettings().GitHub.Token
 
-	err := repo.AddAll(token, s.BaseDir.Name, s.Fs)
+	err := repo.AddAll(token, directory, fileSys)
 	if err != nil {
 		return err
 	}
