@@ -11,13 +11,13 @@ import (
 	"strings"
 	txttmpl "text/template"
 
-	_ "github.com/mykelswitzer/progenitor/internal/filesys"
+	"github.com/mykelswitzer/progenitor/internal/filesys"
 	rp "github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	str "github.com/mykelswitzer/progenitor/pkg/strings"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
-	"github.com/spf13/afero"
+	_ "github.com/spf13/afero"
 )
 
 type TemplateData interface {
@@ -84,14 +84,14 @@ func getFileSystemHandle(token string, templatePath string) (http.FileSystem, er
 	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
 }
 
-func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string][]string, []string) {
+func readFileSystem(remoteFS http.FileSystem, skipTemplates []string) (map[string][]string, []string) {
 
 	var (
 		dirs      = map[string][]string{}
 		tmplPaths = []string{}
 	)
 
-	walker := fsutil.Walk(fs, "")
+	walker := fsutil.Walk(remoteFS, "")
 	for walker.Step() {
 
 		if err := walker.Err(); err != nil {
@@ -101,10 +101,12 @@ func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.F
 		filePath := walker.Path()
 
 		switch walker.Stat().IsDir() {
-		case true: // if it's a directory we need to add it to the dir path
+		case true:
+			// if it's a directory we need to add it to the dir path
 			dirs = mapDirs(dirs, filePath)
 
-		default: // if it's a file we need to add it to the templates
+		default:
+			// if it's a file we need to add it to the templates
 			tmplPaths = mapFiles(tmplPaths, skipTemplates, filePath)
 
 		}
@@ -115,7 +117,6 @@ func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.F
 
 // getParentDirFromPath retrieves the parent directory of the final element in a file path.
 func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
-
 	dirName = filepath.Base(filePath)
 	parent = ""
 	if strings.Contains(filePath, "/") {
@@ -140,7 +141,6 @@ func mapDirs(dirs map[string][]string, filePath string) map[string][]string {
 }
 
 func populateStructureFromMap(dirMap map[string][]string, rootKey string) (Dir, error) {
-
 	if _, ok := dirMap[rootKey]; !ok {
 		return Dir{}, fmt.Errorf("DirMap missing root key: %s", rootKey)
 	}
@@ -164,4 +164,18 @@ func mapFiles(tmplPaths []string, skipTemplates []string, filePath string) []str
 	}
 
 	return tmplPaths
+}
+
+func populateTemplatesFromMap(tmplPaths []string, remoteFS http.FileSystem) (map[string]*txttmpl.Template, error) {
+
+	templates := map[string]*txttmpl.Template{}
+	for _, tmplPath := range tmplPaths {
+		tmpl, err := filesys.TmplParse(remoteFS, templateFunctions(), nil, tmplPath)
+		if err != nil {
+			return templates, fmt.Errorf("Unable to parse template %s %w", tmplPath, err)
+		}
+		templates[tmplPath] = tmpl
+	}
+	return templates, nil
+
 }

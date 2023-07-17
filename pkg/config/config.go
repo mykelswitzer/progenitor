@@ -74,9 +74,9 @@ func (c *Config) IsSet(key string) bool {
 	return false
 }
 
-// func (c *Config) GetInputs() map[string]interface{} {
-// 	return c.inputs
-// }
+func (c *Config) GetInputs() map[string]interface{} {
+	return c.inputs
+}
 
 func (c *Config) GetSettings() *Settings {
 	return c.settings

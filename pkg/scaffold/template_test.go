@@ -17,7 +17,7 @@ func TestMapDirs(t *testing.T) {
 		{
 			TestPath: "internal",
 			ExpectRes: map[string][]string{
-				"": []string{"internal"},
+				"":         []string{"internal"},
 				"internal": []string{},
 			},
 		},
@@ -25,13 +25,13 @@ func TestMapDirs(t *testing.T) {
 			TestPath: "internal/app",
 			ExpectRes: map[string][]string{
 				"internal": []string{"app"},
-				"app": []string{},
+				"app":      []string{},
 			},
 		},
 		{
 			TestPath: "internal/db/migrations",
 			ExpectRes: map[string][]string{
-				"db": []string{"migrations"},
+				"db":         []string{"migrations"},
 				"migrations": []string{},
 			},
 		},
@@ -57,14 +57,15 @@ func TestPopulateStructureFromMap(t *testing.T) {
 	dbDir.AddSubDirs(Dir{Name: "migrations"})
 
 	internalDir := Dir{Name: "internal"}
-	internalDir.AddSubDirs(dbDir)
+	internalDir.AddSubDirs(dbDir, Dir{Name: "app"})
 
 	baseDir := Dir{Name: ""}
 	baseDir.AddSubDirs(internalDir)
 
 	testData := map[string][]string{
 		"":           []string{"internal"},
-		"internal":   []string{"db"},
+		"internal":   []string{"db", "app"},
+		"app":        []string{},
 		"db":         []string{"migrations"},
 		"migrations": []string{},
 	}

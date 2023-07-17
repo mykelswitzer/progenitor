@@ -28,10 +28,10 @@ type Scaffolds []ScaffoldDS
 // Scaffold is a common struct that all template systems
 // rely on to run the various scaffolding commands
 type Scaffold struct {
-	Source        ScaffoldDS
+	Source        ScaffoldDS // eventually remove
 	Config        *config.Config
-	BaseDir       Dir
-	Fs            afero.Fs
+	BaseDir       Dir      // eventually remove
+	Fs            afero.Fs // eventually remove
 	SkipTemplates []string
 	ProcessHooks  map[string]func(*Scaffold) error
 }
@@ -45,28 +45,37 @@ func (s *Scaffold) Populate(templateRepoPath *string) error {
 		templateRepoPath = &tmplFP
 	}
 
-	fsh, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
+	// spin up connection to read remote templates
+	remoteFS, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
 	if err != nil {
 		return fmt.Errorf("Failed initializing git filesystem: %w", err)
 	}
 
-	_, tmplPaths := readFileSystem(fsh, s.SkipTemplates, s.Fs) //dirs
+	// read remote templates into directories and template files
+	dirMap, tmplPaths := readFileSystem(remoteFS, s.SkipTemplates)
 
-	if err = s.buildStructure(); err != nil {
+	// prepare directories for writing
+	dirStructure, err := populateStructureFromMap(dirMap, "")
+	if err != nil {
+		return fmt.Errorf("Failed parsing directory structure %w", err)
+	}
+
+	// prepare templates for writing
+	templates, err := populateTemplatesFromMap(tmplPaths, remoteFS)
+	if err != nil {
+		return fmt.Errorf("Failed parsing required templates %w", err)
+	}
+
+	// setup local file system root
+	localFS := filesys.SetBasePath(s.Config.GetString(prompt.PRJ_DIR))
+
+	// build out directories and call any hooks
+	if err = s.buildStructure(dirStructure, localFS); err != nil {
 		return err
 	}
 
-	templates := map[string]*txttmpl.Template{}
-	for _, tmplPath := range tmplPaths {
-		tmpl, err := filesys.TmplParse(fsh, templateFunctions(), nil, tmplPath)
-		if err != nil {
-			werr := fmt.Errorf("Unable to parse template %s %w", tmplPath, err)
-			log.Println(werr)
-		}
-		templates[tmplPath] = tmpl
-	}
-
-	if err = s.buildFiles(templates); err != nil {
+	// build out files and call any hooks
+	if err = s.buildFiles(templates, localFS); err != nil {
 		return err
 	}
 
@@ -75,9 +84,9 @@ func (s *Scaffold) Populate(templateRepoPath *string) error {
 
 // buildStructure is responsible for creating the project
 // folder structure in the local directory
-func (s *Scaffold) buildStructure() error {
+func (s *Scaffold) buildStructure(scaffoldDir Dir, localFS afero.Fs) error {
 
-	err := createDirs(s.BaseDir.SubDirs, s.Fs)
+	err := createDirs(scaffoldDir.SubDirs, localFS)
 	if err != nil {
 		return err
 	}
@@ -94,9 +103,9 @@ func (s *Scaffold) buildStructure() error {
 
 // buildFiles sources the templates from the repo, then executes them to
 // build the project files in the local directory
-func (s *Scaffold) buildFiles(templates map[string]*txttmpl.Template) error {
+func (s *Scaffold) buildFiles(templates map[string]*txttmpl.Template, localFS afero.Fs) error {
 
-	if err := s.populateFiles(templates); err != nil {
+	if err := s.createFiles(templates, localFS); err != nil {
 		return err
 	}
 
@@ -112,9 +121,9 @@ func (s *Scaffold) buildFiles(templates map[string]*txttmpl.Template) error {
 
 // populateFiles ranges over the templates and passes in the data
 // and executes the template
-func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
+func (s *Scaffold) createFiles(templates map[string]*txttmpl.Template, localFS afero.Fs) error {
 
-	data := s.Source.GetData(s.Config)
+	data := s.Config.GetInputs()
 
 	for path, tmpl := range templates {
 		f, err := filesys.OpenFileForWriting(s.Fs, trimSuffix(path))
