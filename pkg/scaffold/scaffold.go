@@ -1,13 +1,13 @@
 package scaffold
 
 import (
+	"fmt"
 	"log"
 	txttmpl "text/template"
 
 	"github.com/mykelswitzer/progenitor/internal/filesys"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	"github.com/mykelswitzer/progenitor/pkg/prompt"
-	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )
 
@@ -38,7 +38,6 @@ type Scaffold struct {
 
 func (s *Scaffold) Populate(templateRepoPath *string) error {
 
-	//
 	if templateRepoPath == nil {
 		orgName := s.Config.GetSettings().GitHub.Organization
 		projName := s.Config.GetString("projectType")
@@ -46,12 +45,12 @@ func (s *Scaffold) Populate(templateRepoPath *string) error {
 		templateRepoPath = &tmplFP
 	}
 
-	fs, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
+	fsh, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
 	if err != nil {
-		return errors.Wrap(err, "Failed initializing git filesystem")
+		return fmt.Errorf("Failed initializing git filesystem: %w", err)
 	}
 
-	_, tmplPaths := readFileSystem(fs, s.SkipTemplates, s.Fs) //dirs
+	_, tmplPaths := readFileSystem(fsh, s.SkipTemplates, s.Fs) //dirs
 
 	if err = s.buildStructure(); err != nil {
 		return err
@@ -59,9 +58,9 @@ func (s *Scaffold) Populate(templateRepoPath *string) error {
 
 	templates := map[string]*txttmpl.Template{}
 	for _, tmplPath := range tmplPaths {
-		tmpl, err := filesys.TmplParse(fs, templateFunctions(), nil, tmplPath)
+		tmpl, err := filesys.TmplParse(fsh, templateFunctions(), nil, tmplPath)
 		if err != nil {
-			werr := errors.Wrapf(err, "Unable to parse template %s", tmplPath)
+			werr := fmt.Errorf("Unable to parse template %s %w", tmplPath, err)
 			log.Println(werr)
 		}
 		templates[tmplPath] = tmpl
@@ -120,13 +119,13 @@ func (s *Scaffold) populateFiles(templates map[string]*txttmpl.Template) error {
 	for path, tmpl := range templates {
 		f, err := filesys.OpenFileForWriting(s.Fs, trimSuffix(path))
 		if err != nil {
-			return errors.Wrap(err, "Unable to open file for writing")
+			return fmt.Errorf("Unable to open file for writing %w", err)
 		}
 		log.Println("Executing template", tmpl)
 		// see https://pkg.go.dev/text/template#Template.Execute
 		err = tmpl.Execute(f, data)
 		if err != nil {
-			return errors.Wrap(err, "Unable to execute template")
+			return fmt.Errorf("Unable to execute template %w", err)
 		}
 	}
 

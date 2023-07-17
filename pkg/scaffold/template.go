@@ -15,7 +15,6 @@ import (
 	rp "github.com/mykelswitzer/progenitor/internal/repo"
 	"github.com/mykelswitzer/progenitor/pkg/config"
 	str "github.com/mykelswitzer/progenitor/pkg/strings"
-	_ "github.com/pkg/errors"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	"github.com/spf13/afero"
@@ -85,7 +84,7 @@ func getFileSystemHandle(token string, templatePath string) (http.FileSystem, er
 	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
 }
 
-func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string]*Dir, []string) {
+func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.Fs) (map[string][]string, []string) {
 
 	var (
 		dirs      = map[string][]string{}
@@ -103,19 +102,32 @@ func readFileSystem(fs http.FileSystem, skipTemplates []string, basePath afero.F
 
 		switch walker.Stat().IsDir() {
 		case true: // if it's a directory we need to add it to the dir path
-			dirs = collectDirs(dirs, filePath)
+			dirs = mapDirs(dirs, filePath)
 
 		default: // if it's a file we need to add it to the templates
-			tmplPaths = collectFiles(tmplPaths, skipTemplates, filePath)
+			tmplPaths = mapFiles(tmplPaths, skipTemplates, filePath)
 
 		}
 	}
 
-	return nil, nil
+	return dirs, tmplPaths
 }
 
-func collectDirs(dirs map[string][]string, filePath string) map[string][]string {
+// getParentDirFromPath retrieves the parent directory of the final element in a file path.
+func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
+
+	dirName = filepath.Base(filePath)
+	parent = ""
+	if strings.Contains(filePath, "/") {
+		parent = filepath.Base(strings.Replace(filePath, "/"+dirName, "", 1))
+	}
+
+	return dirName, parent
+}
+
+func mapDirs(dirs map[string][]string, filePath string) map[string][]string {
 	dirName, parent := getDirAndParentFromPath(filePath)
+	dirs[dirName] = []string{}
 
 	_, ok := dirs[parent]
 	if !ok {
@@ -123,26 +135,33 @@ func collectDirs(dirs map[string][]string, filePath string) map[string][]string 
 	} else {
 		dirs[parent] = append(dirs[parent], dirName)
 	}
+
 	return dirs
 }
 
-func collectFiles(tmplPaths []string, skipTemplates []string, filePath string) []string {
+func populateStructureFromMap(dirMap map[string][]string, rootKey string) (Dir, error) {
+
+	if _, ok := dirMap[rootKey]; !ok {
+		return Dir{}, fmt.Errorf("DirMap missing root key: %s", rootKey)
+	}
+
+	newDir := Dir{Name: rootKey}
+	for _, dir := range dirMap[rootKey] {
+		subDir, err := populateStructureFromMap(dirMap, dir)
+		if err != nil {
+			return Dir{}, fmt.Errorf("Error running populateStructureFromMap with root key: %s %w", rootKey, err)
+		}
+		newDir.AddSubDirs(subDir)
+	}
+
+	return newDir, nil
+}
+
+func mapFiles(tmplPaths []string, skipTemplates []string, filePath string) []string {
 	if stringInSlice(filePath, skipTemplates) == false {
 		log.Println("Fetching template: ", trimSuffix(filePath))
 		tmplPaths = append(tmplPaths, filePath)
 	}
 
 	return tmplPaths
-}
-
-// getParentDirFromPath retrieves the parent directory of the final element in a file path.
-func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
-
-	dirName = filepath.Base(filePath)
-	parent  = ""
-	if strings.Contains(filePath, "/") {
-		parent = filepath.Base(strings.Replace(filePath, "/"+dirName, "", 1))
-	}
-
-	return dirName, parent
 }

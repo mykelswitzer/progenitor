@@ -6,36 +6,39 @@ import (
 	"testing"
 )
 
-type CollectDirsTestData struct {
+type MapDirsTestData struct {
 	TestPath  string
 	ExpectRes map[string][]string
 }
 
-func TestCollectDirs(t *testing.T) {
+func TestMapDirs(t *testing.T) {
 
-	testTable := []CollectDirsTestData{
+	testTable := []MapDirsTestData{
 		{
 			TestPath: "internal",
 			ExpectRes: map[string][]string{
 				"": []string{"internal"},
+				"internal": []string{},
 			},
 		},
 		{
 			TestPath: "internal/app",
 			ExpectRes: map[string][]string{
 				"internal": []string{"app"},
+				"app": []string{},
 			},
 		},
 		{
 			TestPath: "internal/db/migrations",
 			ExpectRes: map[string][]string{
 				"db": []string{"migrations"},
+				"migrations": []string{},
 			},
 		},
 	}
 
 	for _, test := range testTable {
-		res := collectDirs(map[string][]string{}, test.TestPath)
+		res := mapDirs(map[string][]string{}, test.TestPath)
 		if !reflect.DeepEqual(res, test.ExpectRes) {
 			for k, v := range res {
 				fmt.Println("Result", k, "value is", v)
@@ -43,14 +46,42 @@ func TestCollectDirs(t *testing.T) {
 			for k, v := range test.ExpectRes {
 				fmt.Println("Expected Result", k, "value is", v)
 			}
-			t.Errorf("ParseDir failed")
+			t.Errorf("mapDirs failed")
 		}
 	}
 }
 
+func TestPopulateStructureFromMap(t *testing.T) {
+
+	dbDir := Dir{Name: "db"}
+	dbDir.AddSubDirs(Dir{Name: "migrations"})
+
+	internalDir := Dir{Name: "internal"}
+	internalDir.AddSubDirs(dbDir)
+
+	baseDir := Dir{Name: ""}
+	baseDir.AddSubDirs(internalDir)
+
+	testData := map[string][]string{
+		"":           []string{"internal"},
+		"internal":   []string{"db"},
+		"db":         []string{"migrations"},
+		"migrations": []string{},
+	}
+
+	res, err := populateStructureFromMap(testData, "")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if !reflect.DeepEqual(res, baseDir) {
+		t.Errorf("populateStructureFromMap failed")
+	}
+
+}
+
 type PathTestData struct {
-	TestPath  string
-	ExpectDir string
+	TestPath     string
+	ExpectDir    string
 	ExpectParent string
 }
 
@@ -80,7 +111,7 @@ func TestGetDirAndParentFromPath(t *testing.T) {
 	for _, v := range testTable {
 		dir, parent := getDirAndParentFromPath(v.TestPath)
 		if dir != v.ExpectDir || parent != v.ExpectParent {
-			t.Errorf("GetDirAndParentFromPath(%s) = %s,%s ; want %s,%s", v.TestPath, dir, parent, v.ExpectDir, v.ExpectParent)
+			t.Errorf("getDirAndParentFromPath(%s) = %s,%s ; want %s,%s", v.TestPath, dir, parent, v.ExpectDir, v.ExpectParent)
 		}
 	}
 }
