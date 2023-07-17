@@ -12,8 +12,8 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/prompt"
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 
-	_ "github.com/mykelswitzer/progenitor/templates/initialize"
 	_ "github.com/mykelswitzer/progenitor/templates/gentemplate"
+	_ "github.com/mykelswitzer/progenitor/templates/initialize"
 
 	"github.com/urfave/cli/v2"
 )
@@ -46,20 +46,19 @@ var genTemplate = &cli.Command{
 	},
 }
 
-
 func cliCommands(cfg *config.Config, scaffolds scaffold.Scaffolds) []*cli.Command {
-  var commands []*cli.Command
-  for _, s := range scaffolds {
-    cmd := &cli.Command{
-      Name:   s.GetName(),
-      Usage:  s.GetDescription(),
-      Action: func(c *cli.Context) error {
-        return generate(cfg, s)
-      },
-    }
-    commands = append(commands, cmd)
-  }
-  return commands
+	var commands []*cli.Command
+	for _, s := range scaffolds {
+		cmd := &cli.Command{
+			Name:  s.GetName(),
+			Usage: s.GetDescription(),
+			Action: func(c *cli.Context) error {
+				return generate(cfg, s)
+			},
+		}
+		commands = append(commands, cmd)
+	}
+	return commands
 }
 
 func Execute(cfg *config.Config, scaffolds scaffold.Scaffolds) {
@@ -86,8 +85,8 @@ copy pasta you used to do.
 
 // default prompts we should ask for all generated projects
 var defaultPrompts []prompt.PromptFunc = []prompt.PromptFunc{
-  prompt.ProjectName,
-  prompt.ProjectDir,
+	prompt.ProjectName,
+	prompt.ProjectDir,
 }
 
 func buildPrompts(scaffoldPrompts []prompt.PromptFunc) []prompt.PromptFunc {
@@ -99,10 +98,10 @@ func buildPrompts(scaffoldPrompts []prompt.PromptFunc) []prompt.PromptFunc {
 func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 
 	var err error
-  
-  cfg.Set("projectType", s.GetName())
-	
-  prompts := buildPrompts(s.GetPrompts())
+
+	cfg.Set("projectType", s.GetName())
+
+	prompts := buildPrompts(s.GetPrompts())
 	for _, p := range prompts {
 		if err := p(cfg); err != nil {
 			return handleError(err)
@@ -127,7 +126,7 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-  // NOTE: need to move this into like a plugin
+	// NOTE: need to move this into like a plugin
 	// moved to here, note that this assumes that all projects will store
 	// the terraform code in a /terraform folder in the root directory
 	// of the project... while this appears true at this time, it may not

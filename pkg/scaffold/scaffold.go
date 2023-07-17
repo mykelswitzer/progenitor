@@ -3,6 +3,7 @@ package scaffold
 import (
 	"fmt"
 	"log"
+	"runtime/debug"
 	txttmpl "text/template"
 
 	"github.com/mykelswitzer/progenitor/internal/filesys"
@@ -36,6 +37,18 @@ type Scaffold struct {
 
 func (s *Scaffold) Init(*config.Config) {
 	s.Config = config
+
+	version := "(undetermined)"
+	if mf, ok := debug.ReadBuildInfo(); ok {
+		for _, m := range mf.Deps {
+			if strings.HasSuffix(m.Path, "progenitor-tmpl-go-grpc") {
+				version = m.Version
+				break
+			}
+		}
+	}
+	s.Config.Set("Version", version)
+
 }
 
 func (s *Scaffold) Populate(templateRepoPath *string) error {
