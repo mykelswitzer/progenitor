@@ -13,22 +13,22 @@ import (
 
 type stringBuilder = strings.Builder
 
-func String(s any) (string, error) {
-	v := reflect.ValueOf(s)
-	switch v.Kind() {
-	case reflect.String:
-		return cast.ToString(s), nil
-	default:
-		return "", errors.New("parse error")
-	}
-}
+// func String(s any) (string, error) {
+// 	v := reflect.ValueOf(s)
+// 	switch v.Kind() {
+// 	case reflect.String:
+// 		return cast.ToString(s), nil
+// 	default:
+// 		return "", errors.New("parse error")
+// 	}
+// }
 
-func ToCamel(i any) string {
+func ToCamel(s string) string {
 
-	s, err := String(i)
-	if err != nil {
-		return err.Error()
-	}
+	// s, err := String(i)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
 	if s == "" {
 		return s
@@ -44,12 +44,12 @@ func ToCamel(i any) string {
 }
 
 // Formats string into acceptable go package name
-func ToPackage(i any) string {
+func ToPackage(s string) string {
 
-	s, err := String(i)
-	if err != nil {
-		return err.Error()
-	}
+	// s, err := String(i)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
 	if s == "" {
 		return s
@@ -59,12 +59,12 @@ func ToPackage(i any) string {
 }
 
 // Converts a string to Pascal case
-func ToPascal(i any) string {
+func ToPascal(s string) string {
 
-	s, err := String(i)
-	if err != nil {
-		return err.Error()
-	}
+	// s, err := String(i)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
 	if s == "" {
 		return s
@@ -82,12 +82,12 @@ func ToPascal(i any) string {
 	return strings.Title(s)
 }
 
-func ToPlural(i any) string {
+func ToPlural(s string) string {
 
-	s, err := String(i)
-	if err != nil {
-		return err.Error()
-	}
+	// s, err := String(i)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
 	var singular string = s
 	var prefix string = ""
@@ -108,12 +108,12 @@ func ToPlural(i any) string {
 }
 
 // Formats string into acceptable go package name
-func ToSnakeCase(i any) string {
+func ToSnakeCase(s string) string {
 
-	s, err := String(i)
-	if err != nil {
-		return err.Error()
-	}
+	// s, err := String(i)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
 	if s == "" {
 		return s
