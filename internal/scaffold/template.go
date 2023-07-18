@@ -21,9 +21,8 @@ import (
 	_ "github.com/spf13/afero"
 )
 
-
 const TMPLSFX string = ".tmpl"
- 
+
 type tmplParser struct {
 	*txttmpl.Template
 	txttmpl.FuncMap
@@ -73,9 +72,6 @@ func parseFiles(fs http.FileSystem, parse func(name string, content string) erro
 	}
 	return nil, nil
 }
-
-
-
 
 func trimSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)

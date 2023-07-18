@@ -105,6 +105,7 @@ func (s *Scaffold) buildStructure(scaffoldDir Dir, localFS afero.Fs) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -143,6 +144,7 @@ func (s *Scaffold) buildFiles(templates map[string]*txttmpl.Template, localFS af
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -152,7 +154,7 @@ func (s *Scaffold) createFiles(templates map[string]*txttmpl.Template, localFS a
 
 	data := s.Config.GetInputs()
 
-	for k,v := range data {
+	for k, v := range data {
 		fmt.Println(k, "=", v)
 	}
 
