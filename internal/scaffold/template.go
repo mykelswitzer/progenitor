@@ -1,7 +1,9 @@
 package scaffold
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,19 +14,68 @@ import (
 	txttmpl "text/template"
 
 	"github.com/mykelswitzer/progenitor/internal/filesys"
-	rp "github.com/mykelswitzer/progenitor/internal/repo"
-	"github.com/mykelswitzer/progenitor/pkg/config"
+	"github.com/mykelswitzer/progenitor/internal/repo"
 	str "github.com/mykelswitzer/progenitor/pkg/strings"
 	"github.com/posener/gitfs"
 	"github.com/posener/gitfs/fsutil"
 	_ "github.com/spf13/afero"
 )
 
-type TemplateData interface {
-	Init(config *config.Config) TemplateData
-}
 
 const TMPLSFX string = ".tmpl"
+ 
+type tmplParser struct {
+	*txttmpl.Template
+	txttmpl.FuncMap
+}
+
+// TmplParse parses templates from the given filesystem according to the
+// given paths. If tmpl is not nil, the templates will be added to it.
+// paths must contain at least one path. All paths must exist in the
+// given filesystem.
+func tmplParse(fs http.FileSystem, funcs txttmpl.FuncMap, tmpl *txttmpl.Template, paths ...string) (*txttmpl.Template, error) {
+	t := tmplParser{Template: tmpl, FuncMap: funcs}
+	_, err := parseFiles(fs, t.parse, paths...)
+	return t.Template, err
+}
+
+func (t *tmplParser) parse(name, content string) error {
+	var err error
+	if t.Template == nil {
+		t.Template = txttmpl.New(name)
+	} else {
+		t.Template = t.New(name)
+	}
+	if t.FuncMap != nil {
+		t.Funcs(t.FuncMap)
+	}
+	t.Template, err = t.Parse(content)
+	return err
+}
+
+func parseFiles(fs http.FileSystem, parse func(name string, content string) error, paths ...string) (map[string]*txttmpl.Template, error) {
+	if len(paths) == 0 {
+		return nil, errors.New("no paths provided")
+	}
+	buf := bytes.NewBuffer(nil)
+	for _, path := range paths {
+		f, err := fs.Open(strings.Trim(path, "/"))
+		if err != nil {
+			return nil, fmt.Errorf("opening template %s %w", path, err)
+		}
+		name := filepath.Base(path)
+		buf.Reset()
+		buf.ReadFrom(f)
+		err = parse(name, buf.String())
+		if err != nil {
+			return nil, fmt.Errorf("opening template %s %w", path, err)
+		}
+	}
+	return nil, nil
+}
+
+
+
 
 func trimSuffix(path string) string {
 	return strings.TrimSuffix(path, TMPLSFX)
@@ -80,7 +131,7 @@ func getScaffoldTemplatePath(orgName string, tmplName string, withVersion bool) 
 
 func getFileSystemHandle(token string, templatePath string) (http.FileSystem, error) {
 	ctx := context.Background()
-	oauth := rp.GithubAuth(token, ctx)
+	oauth := repo.GithubAuth(token, ctx)
 	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
 }
 
@@ -115,19 +166,8 @@ func readFileSystem(remoteFS http.FileSystem, skipTemplates []string) (map[strin
 	return dirs, tmplPaths
 }
 
-// getParentDirFromPath retrieves the parent directory of the final element in a file path.
-func getDirAndParentFromPath(filePath string) (dirName string, parent string) {
-	dirName = filepath.Base(filePath)
-	parent = ""
-	if strings.Contains(filePath, "/") {
-		parent = filepath.Base(strings.Replace(filePath, "/"+dirName, "", 1))
-	}
-
-	return dirName, parent
-}
-
 func mapDirs(dirs map[string][]string, filePath string) map[string][]string {
-	dirName, parent := getDirAndParentFromPath(filePath)
+	dirName, parent := filesys.GetDirAndParentFromPath(filePath)
 	dirs[dirName] = []string{}
 
 	_, ok := dirs[parent]
@@ -170,7 +210,7 @@ func populateTemplatesFromMap(tmplPaths []string, remoteFS http.FileSystem) (map
 
 	templates := map[string]*txttmpl.Template{}
 	for _, tmplPath := range tmplPaths {
-		tmpl, err := filesys.TmplParse(remoteFS, templateFunctions(), nil, tmplPath)
+		tmpl, err := tmplParse(remoteFS, templateFunctions(), nil, tmplPath)
 		if err != nil {
 			return templates, fmt.Errorf("Unable to parse template %s %w", tmplPath, err)
 		}

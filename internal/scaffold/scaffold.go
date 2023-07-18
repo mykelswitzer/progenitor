@@ -26,14 +26,14 @@ func (s *Scaffold) Init(config *config.Config) {
 	version := "(undetermined)"
 	if mf, ok := debug.ReadBuildInfo(); ok {
 		for _, m := range mf.Deps {
-			if strings.HasSuffix(m.Path, "progenitor-tmpl-go-grpc") {
+			templateName := "progenitor-tmpl-" + config.GetString("projectType")
+			if strings.HasSuffix(m.Path, templateName) {
 				version = m.Version
 				break
 			}
 		}
 	}
 	s.Config.Set("Version", version)
-
 }
 
 func (s *Scaffold) Populate(templateRepoPath *string, localFS afero.Fs) error {
@@ -79,6 +79,16 @@ func (s *Scaffold) Populate(templateRepoPath *string, localFS afero.Fs) error {
 	return nil
 }
 
+type Dir struct {
+	Name    string
+	SubDirs []Dir
+}
+
+func (d *Dir) AddSubDirs(subdirs ...Dir) *Dir {
+	d.SubDirs = append(d.SubDirs, subdirs...)
+	return d
+}
+
 // buildStructure is responsible for creating the project
 // folder structure in the local directory
 func (s *Scaffold) buildStructure(scaffoldDir Dir, localFS afero.Fs) error {
@@ -95,6 +105,26 @@ func (s *Scaffold) buildStructure(scaffoldDir Dir, localFS afero.Fs) error {
 			return err
 		}
 	}
+	return nil
+}
+
+// createDirs recursively reads the project map from the
+// scaffold and creates the directories as needed locally
+func createDirs(dirs []Dir, parent afero.Fs) error {
+
+	for _, dir := range dirs {
+		if err := parent.MkdirAll(dir.Name, 0777); err != nil {
+			return fmt.Errorf("Failed to create dir %w", err)
+		}
+		if len(dir.SubDirs) > 0 {
+			parentDir := afero.NewBasePathFs(parent, dir.Name)
+			err := createDirs(dir.SubDirs, parentDir)
+			if err != nil {
+				return fmt.Errorf("Failed to create dir %w", err)
+			}
+		}
+	}
+
 	return nil
 }
 
