@@ -139,6 +139,10 @@ func (s *Scaffold) createFiles(templates map[string]*txttmpl.Template, localFS a
 
 	data := s.Config.GetInputs()
 
+	for k,v := range data {
+		fmt.Println(k, "=", v)
+	}
+
 	for path, tmpl := range templates {
 		f, err := filesys.OpenFileForWriting(localFS, trimSuffix(path))
 		if err != nil {
