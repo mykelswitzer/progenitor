@@ -1,16 +1,35 @@
 package strings
 
 import (
+	"errors"
+	"reflect"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	pl "github.com/gertd/go-pluralize"
+	"github.com/spf13/cast"
 )
 
 type stringBuilder = strings.Builder
 
-func ToCamel(s string) string {
+func String(s any) (string, error) {
+	v := reflect.ValueOf(s)
+	switch v.Kind() {
+	case reflect.String:
+		return cast.ToString(s), nil
+	default:
+		return "", errors.New("parse error")
+	}
+}
+
+func ToCamel(i any) string {
+
+	s, err := String(i)
+	if err != nil {
+		return err.Error()
+	}
+
 	if s == "" {
 		return s
 	}
@@ -25,7 +44,13 @@ func ToCamel(s string) string {
 }
 
 // Formats string into acceptable go package name
-func ToPackage(s string) string {
+func ToPackage(i any) string {
+
+	s, err := String(i)
+	if err != nil {
+		return err.Error()
+	}
+
 	if s == "" {
 		return s
 	}
@@ -34,7 +59,13 @@ func ToPackage(s string) string {
 }
 
 // Converts a string to Pascal case
-func ToPascal(s string) string {
+func ToPascal(i any) string {
+
+	s, err := String(i)
+	if err != nil {
+		return err.Error()
+	}
+
 	if s == "" {
 		return s
 	}
@@ -51,7 +82,12 @@ func ToPascal(s string) string {
 	return strings.Title(s)
 }
 
-func ToPlural(s string) string {
+func ToPlural(i any) string {
+
+	s, err := String(i)
+	if err != nil {
+		return err.Error()
+	}
 
 	var singular string = s
 	var prefix string = ""
@@ -72,7 +108,13 @@ func ToPlural(s string) string {
 }
 
 // Formats string into acceptable go package name
-func ToSnakeCase(s string) string {
+func ToSnakeCase(i any) string {
+
+	s, err := String(i)
+	if err != nil {
+		return err.Error()
+	}
+
 	if s == "" {
 		return s
 	}
