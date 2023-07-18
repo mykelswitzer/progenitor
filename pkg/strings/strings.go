@@ -1,14 +1,14 @@
 package strings
 
 import (
-	"errors"
-	"reflect"
+	_ "errors"
+	_ "reflect"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	pl "github.com/gertd/go-pluralize"
-	"github.com/spf13/cast"
+	_ "github.com/spf13/cast"
 )
 
 type stringBuilder = strings.Builder
