@@ -114,9 +114,9 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 	
-	skip := s.GetSkipTemplates(cfg)
-	hooks := s.GetProcessHooks(cfg)
-	s.Init(cfg, skip, hooks)
+	s.Init(cfg)
+	s.SetSkipTemplates(cfg)
+	s.SetProcessHooks(cfg)
 
 	// setup local file system root
 	localFS := filesys.SetBasePath(cfg.GetString(prompt.PRJ_DIR))

@@ -11,12 +11,12 @@ import (
 // implements to serve as the datasource for populating
 // the scaffold and running the commands against
 type ScaffoldDS interface {
-	Init(*config.Config, []string, map[string]func(*Scaffold) error)
+	Init(*config.Config)
 	GetName() string
 	GetDescription() string
 	GetPrompts() []prompt.PromptFunc
-	GetSkipTemplates(*config.Config) []string
-	GetProcessHooks(*config.Config) map[string]func(*Scaffold) error
+	SetSkipTemplates(*config.Config)
+	SetProcessHooks(*config.Config)
 	Populate(*string, afero.Fs) error
 }
 
