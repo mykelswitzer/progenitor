@@ -114,7 +114,7 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	s.Init(cfg)
+	s.Init(cfg, s.GetSkipTemplates(), s.GetProcessHooks())
 
 	// setup local file system root
 	localFS := filesys.SetBasePath(cfg.GetString(prompt.PRJ_DIR))

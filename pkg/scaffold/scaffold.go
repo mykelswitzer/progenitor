@@ -11,7 +11,7 @@ import (
 // implements to serve as the datasource for populating
 // the scaffold and running the commands against
 type ScaffoldDS interface {
-	Init(*config.Config)
+	Init(*config.Config, []string, map[string]func(*Scaffold) error)
 	GetName() string
 	GetDescription() string
 	GetPrompts() []prompt.PromptFunc

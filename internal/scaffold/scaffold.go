@@ -21,8 +21,10 @@ type Scaffold struct {
 	ProcessHooks  map[string]func(*Scaffold) error
 }
 
-func (s *Scaffold) Init(config *config.Config) {
+func (s *Scaffold) Init(config *config.Config, skip []string, hooks map[string]func(*Scaffold) error) {
 	s.Config = config
+	s.SkipTemplates = skip
+	s.ProcessHooks = hooks
 
 	version := "(undetermined)"
 	if mf, ok := debug.ReadBuildInfo(); ok {
