@@ -15,8 +15,8 @@ type ScaffoldDS interface {
 	GetName() string
 	GetDescription() string
 	GetPrompts() []prompt.PromptFunc
-	GetSkipTemplates() []string
-	GetProcessHooks() map[string]func(*Scaffold) error
+	GetSkipTemplates(*config.Config) []string
+	GetProcessHooks(*config.Config) map[string]func(*Scaffold) error
 	Populate(*string, afero.Fs) error
 }
 
