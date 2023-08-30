@@ -1,8 +1,8 @@
 package filesys
 
 import (
-	"fmt"
-	"reflect"
+	_ "fmt"
+	_"reflect"
 	"testing"
 )
 

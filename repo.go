@@ -17,8 +17,10 @@ const BRANCH_MAIN = "main"
 func setupRepo(cfg *config.Config) error {
 
 	ctx := context.Background()
-	token := cfg.GetSettings().GitHub.Token
-
+	token, err := cfg.GetSettings().GitHub.Token(context.Background())
+	if err != nil {
+		return errors.Wrap(err, "failed getting token to access git filesystem")
+	}
 	// r here is the remote github repo
 	r, err := repo.New(
 		ctx,
@@ -60,10 +62,12 @@ func setupRepo(cfg *config.Config) error {
 
 func commitCodeToRepo(cfg *config.Config, directory string, fileSys afero.Fs) error {
 
-	//ctx := context.Background()
-	token := cfg.GetSettings().GitHub.Token
+	token, err := cfg.GetSettings().GitHub.Token(context.Background())
+	if err != nil {
+		return errors.Wrap(err, "failed getting token to access git filesystem")
+	}
 
-	err := repo.AddAll(token, directory, fileSys)
+	err = repo.AddAll(token, directory, fileSys)
 	if err != nil {
 		return err
 	}

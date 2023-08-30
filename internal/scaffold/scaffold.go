@@ -1,6 +1,7 @@
 package scaffold
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"runtime/debug"
@@ -45,8 +46,13 @@ func (s *Scaffold) Populate(templateRepoPath *string, localFS afero.Fs) error {
 		templateRepoPath = &tmplFP
 	}
 
+	token, err := s.Config.GetSettings().GitHub.Token(context.Background())
+	if err != nil {
+		return fmt.Errorf("Failed getting token to access git filesystem: %w", err)
+	}
+
 	// spin up connection to read remote templates
-	remoteFS, err := getFileSystemHandle(s.Config.GetSettings().GitHub.Token, *templateRepoPath)
+	remoteFS, err := getFileSystemHandle(token, *templateRepoPath)
 	if err != nil {
 		return fmt.Errorf("Failed initializing git filesystem: %w", err)
 	}

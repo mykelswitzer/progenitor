@@ -7,7 +7,6 @@ import (
 	"github.com/mykelswitzer/progenitor/pkg/scaffold"
 	"log"
 	"os"
-
 	// add imports for your templates below
 	//
 )

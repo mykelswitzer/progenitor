@@ -22,21 +22,20 @@ import (
 
 func New(ctx context.Context, ghs config.GitHubSettings, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
-	var client *github.Client
-
-	if ghs.UseCreds() {
-		client = GitHubCredsAuth(ctx, ghs.Creds.PAT)
-	}
-
-	if ghs.UseApp() {
-		app := ghs.App
-		client = GitHubAppAuth(ctx context.Context, app.ID, app.InstallationID, []byte(app.Key))
+	client, err := ghs.Client(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create a client to access git")
 	}
 
 	mainBranch := "main"
 
-	r := &github.Repository{Name: &name, Private: &private, Description: &description, AutoInit: &autoInit, MasterBranch: &mainBranch}
-	repo, _, err := client.Repositories.Create(ctx, githubSettings.Organization, r)
+	r := &github.Repository{
+		Name: &name, 
+		Private: &private, 
+		Description: &description, 
+		AutoInit: &autoInit, 
+		MasterBranch: &mainBranch}
+	repo, _, err := client.Repositories.Create(ctx, ghs.Organization, r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create the repo")
 	}
@@ -103,31 +102,31 @@ func CreateBranch(token string, repo *git.Repository, name string) error {
 
 }
 
-func RequireBranchPRApproval(ctx context.Context, token string, repoName string, branchName string) error {
-	oauth := GithubAuth(token, ctx)
-	client := GithubClient(oauth)
+// func RequireBranchPRApproval(ctx context.Context, token string, repoName string, branchName string) error {
+// 	oauth := GithubAuth(token, ctx)
+// 	client := GithubClient(oauth)
 
-	allowDeletions := false
-	preq := &github.ProtectionRequest{
-		RequiredPullRequestReviews: &github.PullRequestReviewsEnforcementRequest{
-			RequireCodeOwnerReviews:      true,
-			RequiredApprovingReviewCount: 2,
-		},
-		AllowDeletions: &allowDeletions,
-	}
+// 	allowDeletions := false
+// 	preq := &github.ProtectionRequest{
+// 		RequiredPullRequestReviews: &github.PullRequestReviewsEnforcementRequest{
+// 			RequireCodeOwnerReviews:      true,
+// 			RequiredApprovingReviewCount: 2,
+// 		},
+// 		AllowDeletions: &allowDeletions,
+// 	}
 
-	_, _, err := client.Repositories.UpdateBranchProtection(ctx, "mykelswitzer", repoName, branchName, preq)
+// 	_, _, err := client.Repositories.UpdateBranchProtection(ctx, "mykelswitzer", repoName, branchName, preq)
 
-	return errors.Wrap(err, "failed to setup pr approval requirements for branch "+branchName)
-}
+// 	return errors.Wrap(err, "failed to setup pr approval requirements for branch "+branchName)
+// }
 
-func SetDefaultBranch(ctx context.Context, token string, repoName string, branchName string) error {
+// func SetDefaultBranch(ctx context.Context, token string, repoName string, branchName string) error {
 
-	oauth := GithubAuth(token, ctx)
-	client := GithubClient(oauth)
-	_, _, err := client.Repositories.Edit(ctx, "mykelswitzer", repoName, &github.Repository{DefaultBranch: &branchName})
-	return errors.Wrap(err, "failed to set default branch as  "+branchName)
-}
+// 	oauth := GithubAuth(token, ctx)
+// 	client := GithubClient(oauth)
+// 	_, _, err := client.Repositories.Edit(ctx, "mykelswitzer", repoName, &github.Repository{DefaultBranch: &branchName})
+// 	return errors.Wrap(err, "failed to set default branch as  "+branchName)
+// }
 
 func AddAll(token string, directory string, fs afero.Fs) error {
 

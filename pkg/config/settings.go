@@ -14,43 +14,6 @@ type Settings struct {
 	Branches BranchSettings `yaml:"branches,omitempty"`
 	Teams    StringList     `yaml:"teams,omitempty"`
 }
-
-type GitHubSettings struct {
-	Organization string      `yaml:"organization,omitempty"`
-	Creds		 GitHubCreds `yaml:"creds,omitempty"`
-	App          GitHubApp   `yaml:"app,omitempty"`
-}
-
-func (s *GitHubSettings) IsDefined() bool {
-	return s.Organization!="" && (s.Creds.IsDefined() || s.App.IsDefined())
-}
-
-func (s *GitHubSettings) UseCreds() bool {
-	return s.Creds.IsDefined()
-}
-
-func (s *GitHubSettings) UseApp() bool {
-	return s.App.IsDefined()
-}
-
-type GitHubApp struct {
-	ID        	 int64 `yaml:"id,omitempty"`
-	Key       	 string `yaml:"key,omitempty"`
-	Installation int64 `yaml:"installation,omitempty"`
-}
-
-func (s *GitHubApp) IsDefined() bool {
-	return s.ID!=0 || s.Key!="" || s.Installation!=0
-}
-
-type GitHubCreds struct {
-	PAT        	 string `yaml:"pat,omitempty"`
-}
-
-func (s *GitHubCreds) IsDefined() bool {
-	return s.PAT!=""
-}
-
 type BranchSettings struct {
 	Default string `yaml:"default,omitempty"`
 }

@@ -127,7 +127,7 @@ func getScaffoldTemplatePath(orgName string, tmplName string, withVersion bool) 
 
 func getFileSystemHandle(token string, templatePath string) (http.FileSystem, error) {
 	ctx := context.Background()
-	oauth := repo.GithubAuth(token, ctx)
+	oauth := repo.OAuthClient(ctx, token)
 	return gitfs.New(ctx, templatePath, gitfs.OptClient(oauth))
 }
 
