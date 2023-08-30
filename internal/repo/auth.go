@@ -2,8 +2,8 @@ package repo
 
 import (
 	"context"
-	"net/http"
 	"golang.org/x/oauth2"
+	"net/http"
 )
 
 func OAuthClient(ctx context.Context, token string) *http.Client {

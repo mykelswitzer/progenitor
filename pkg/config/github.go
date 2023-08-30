@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pkg/errors"
-	"github.com/google/go-github/v53/github"
 	jwt "github.com/golang-jwt/jwt/v4"
+	"github.com/google/go-github/v53/github"
+	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 )
 
@@ -69,7 +69,6 @@ func (s *GitHubSettings) UseApp() bool {
 	return s.App.IsDefined()
 }
 
-
 type GitHubCreds struct {
 	PAT string `yaml:"pat,omitempty"`
 }
@@ -84,7 +83,6 @@ func (c GitHubCreds) Auth(ctx context.Context) *github.Client {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: c.PAT})
 	return github.NewClient(oauth2.NewClient(ctx, ts))
 }
-
 
 type GitHubApp struct {
 	ID           int64  `yaml:"id,omitempty"`

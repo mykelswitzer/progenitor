@@ -30,10 +30,10 @@ func New(ctx context.Context, ghs config.GitHubSettings, name string, private bo
 	mainBranch := "main"
 
 	r := &github.Repository{
-		Name: &name, 
-		Private: &private, 
-		Description: &description, 
-		AutoInit: &autoInit, 
+		Name:         &name,
+		Private:      &private,
+		Description:  &description,
+		AutoInit:     &autoInit,
 		MasterBranch: &mainBranch}
 	repo, _, err := client.Repositories.Create(ctx, ghs.Organization, r)
 	if err != nil {
