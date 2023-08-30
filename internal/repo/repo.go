@@ -20,10 +20,18 @@ import (
 	"github.com/spf13/afero"
 )
 
-func New(ctx context.Context, githubSettings config.GitHubSettings, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
+func New(ctx context.Context, ghs config.GitHubSettings, name string, private bool, description string, autoInit bool) (*github.Repository, error) {
 
-	oauth := GithubAuth(githubSettings.Token, ctx)
-	client := GithubClient(oauth)
+	var client *github.Client
+
+	if ghs.UseCreds() {
+		client = GitHubCredsAuth(ctx, ghs.Creds.PAT)
+	}
+
+	if ghs.UseApp() {
+		app := ghs.App
+		client = GitHubAppAuth(ctx context.Context, app.ID, app.InstallationID, []byte(app.Key))
+	}
 
 	mainBranch := "main"
 
