@@ -109,12 +109,17 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		}
 	}
 
-	err = setupRepo(cfg)
-	if err != nil {
-		log.Println(err.Error())
-		return err
+	log.Println(cfg.GetBool(prompt.UseRemoteRepo))
+	os.Exit(0)
+
+	if cfg.GetBool(prompt.UseRemoteRepo) {
+		err = setupRepo(cfg)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
-	
+
 	s.Init(cfg)
 	s.SetSkipTemplates(cfg)
 	s.SetProcessHooks(cfg)
@@ -127,9 +132,11 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
-		log.Println(err.Error())
-		return err
+	if cfg.GetBool(prompt.UseRemoteRepo) {
+		if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
 
 	// NOTE: need to move this into like a plugin
