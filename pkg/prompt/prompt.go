@@ -92,3 +92,24 @@ func ProjectDir(cfg *config.Config) error {
 	cfg.Set(PRJ_DIR, dir)
 	return nil
 }
+
+const UseRemoteRepo = "useRemoteRepo"
+
+func UseRemoteRepository(cfg *config.Config) error {
+
+	prompt := promptui.Select{
+		Label: "Would you like to use a remote repository? If yes, a remote repository will be created using the provided credentials in progenitor.yml and the local repository will be pushed to the remote repository.",
+		Items: []string{"Yes", "No"},
+	}
+
+	_, result, err := prompt.Run()
+	if err != nil {
+		return errors.Wrap(err, "Error in executing remote repository prompt")
+	}
+
+	boolResult := map[string]bool{"Yes": true, "No": false}[result]
+	cfg.Set(UseRemoteRepo, boolResult)
+
+	return nil
+
+}

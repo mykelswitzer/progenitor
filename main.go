@@ -84,9 +84,10 @@ copy pasta you used to do.
 }
 
 // default prompts we should ask for all generated projects
-var defaultPrompts []prompt.PromptFunc = []prompt.PromptFunc{
+var defaultPrompts = []prompt.PromptFunc{
 	prompt.ProjectName,
 	prompt.ProjectDir,
+	prompt.UseRemoteRepository,
 }
 
 func buildPrompts(scaffoldPrompts []prompt.PromptFunc) []prompt.PromptFunc {
