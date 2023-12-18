@@ -109,9 +109,6 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		}
 	}
 
-	log.Println(cfg.GetBool(prompt.UseRemoteRepo))
-	os.Exit(0)
-
 	if cfg.GetBool(prompt.UseRemoteRepo) {
 		err = setupRepo(cfg)
 		if err != nil {
