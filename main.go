@@ -84,9 +84,10 @@ copy pasta you used to do.
 }
 
 // default prompts we should ask for all generated projects
-var defaultPrompts []prompt.PromptFunc = []prompt.PromptFunc{
+var defaultPrompts = []prompt.PromptFunc{
 	prompt.ProjectName,
 	prompt.ProjectDir,
+	prompt.UseRemoteRepository,
 }
 
 func buildPrompts(scaffoldPrompts []prompt.PromptFunc) []prompt.PromptFunc {
@@ -108,12 +109,14 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		}
 	}
 
-	err = setupRepo(cfg)
-	if err != nil {
-		log.Println(err.Error())
-		return err
+	if cfg.GetBool(prompt.UseRemoteRepo) {
+		err = setupRepo(cfg)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
-	
+
 	s.Init(cfg)
 	s.SetSkipTemplates(cfg)
 	s.SetProcessHooks(cfg)
@@ -126,9 +129,11 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		return err
 	}
 
-	if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
-		log.Println(err.Error())
-		return err
+	if cfg.GetBool(prompt.UseRemoteRepo) {
+		if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
+			log.Println(err.Error())
+			return err
+		}
 	}
 
 	// NOTE: need to move this into like a plugin

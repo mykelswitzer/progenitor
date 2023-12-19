@@ -1,7 +1,8 @@
 # What are your organization's github settings
 github:
-  organization: 
-  token: 
+  organization: TODO
+  creds:
+    pat: TODO
 
 # Optional: If you don't use main as the default branch, create another one
 # branches:
