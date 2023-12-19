@@ -33,7 +33,7 @@ func BoolPrompt(label string, configFld string, config *config.Config) error {
 	return nil
 }
 
-const PRJ_NAME = "projectName"
+const CfgKeyProjectName = "projectName"
 
 func ProjectName(cfg *config.Config) error {
 
@@ -58,11 +58,11 @@ func ProjectName(cfg *config.Config) error {
 		return errors.Wrap(err, "Error in executing project name prompt")
 	}
 
-	cfg.Set(PRJ_NAME, strings.ToLower(name))
+	cfg.Set(CfgKeyProjectName, strings.ToLower(name))
 	return nil
 }
 
-const PRJ_DIR = "projectDir"
+const CfgKeyProjectDir = "projectDir"
 
 func ProjectDir(cfg *config.Config) error {
 
@@ -89,11 +89,11 @@ func ProjectDir(cfg *config.Config) error {
 		return errors.Wrap(err, "Error in executing project directory prompt")
 	}
 
-	cfg.Set(PRJ_DIR, dir)
+	cfg.Set(CfgKeyProjectDir, dir)
 	return nil
 }
 
-const UseRemoteRepo = "useRemoteRepo"
+const CfgKeyUseRemoteRepo = "useRemoteRepo"
 
 func UseRemoteRepository(cfg *config.Config) error {
 
@@ -108,7 +108,7 @@ func UseRemoteRepository(cfg *config.Config) error {
 	}
 
 	boolResult := map[string]bool{"Yes": true, "No": false}[result]
-	cfg.Set(UseRemoteRepo, boolResult)
+	cfg.Set(CfgKeyUseRemoteRepo, boolResult)
 
 	return nil
 

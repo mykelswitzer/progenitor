@@ -109,7 +109,7 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		}
 	}
 
-	if cfg.GetBool(prompt.UseRemoteRepo) {
+	if cfg.GetBool(prompt.CfgKeyUseRemoteRepo) {
 		err = setupRepo(cfg)
 		if err != nil {
 			log.Println(err.Error())
@@ -122,15 +122,15 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 	s.SetProcessHooks(cfg)
 
 	// setup local file system root
-	localFS := filesys.SetBasePath(cfg.GetString(prompt.PRJ_DIR))
+	localFS := filesys.SetBasePath(cfg.GetString(prompt.CfgKeyProjectDir))
 
 	if err = s.Populate(nil, localFS); err != nil {
 		log.Println(err.Error())
 		return err
 	}
 
-	if cfg.GetBool(prompt.UseRemoteRepo) {
-		if err = commitCodeToRepo(cfg, cfg.GetString(prompt.PRJ_DIR), localFS); err != nil {
+	if cfg.GetBool(prompt.CfgKeyUseRemoteRepo) {
+		if err = commitCodeToRepo(cfg, cfg.GetString(prompt.CfgKeyProjectDir), localFS); err != nil {
 			log.Println(err.Error())
 			return err
 		}
@@ -150,7 +150,7 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 			log.Println(err.Error())
 			return err
 		}
-		tfDir := filepath.Join(base, cfg.GetString(prompt.PRJ_DIR), "terraform")
+		tfDir := filepath.Join(base, cfg.GetString(prompt.CfgKeyProjectDir), "terraform")
 
 		if err := terraform.Run(tfDir); err != nil {
 			log.Println(err.Error())

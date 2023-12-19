@@ -26,9 +26,9 @@ func setupRepo(cfg *config.Config) error {
 		ctx,
 		cfg.GetSettings().GitHub,
 		// cfg.GetString(config.CFG_PRJ_TEAM),
-		cfg.GetString(prompt.PRJ_NAME),
+		cfg.GetString(prompt.CfgKeyProjectName),
 		true,
-		" service for "+cfg.GetString(prompt.PRJ_NAME),
+		" service for "+cfg.GetString(prompt.CfgKeyProjectName),
 		true,
 	)
 	if err != nil {
@@ -41,7 +41,7 @@ func setupRepo(cfg *config.Config) error {
 	// github create, which is remote only, largely  because the github library is
 	// mostly around github setting, and less about actually working with git...
 	//lr
-	_, err = repo.Clone(ctx, token, cfg.GetString(prompt.PRJ_DIR), r)
+	_, err = repo.Clone(ctx, token, cfg.GetString(prompt.CfgKeyProjectDir), r)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func setupRepo(cfg *config.Config) error {
 	// 	return err
 	// }
 
-	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_MAIN)
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_ProjectName), BRANCH_MAIN)
 	// if err != nil {
 	// 	return err
 	// }
@@ -72,12 +72,12 @@ func commitCodeToRepo(cfg *config.Config, directory string, fileSys afero.Fs) er
 		return err
 	}
 
-	// err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// err = repo.SetDefaultBranch(ctx, token, cfg.GetString(config.CFG_ProjectName), BRANCH_DEV)
 	// if err != nil {
 	// 	return err
 	// }
 
-	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_PRJ_NAME), BRANCH_DEV)
+	// err = repo.RequireBranchPRApproval(ctx, token, cfg.GetString(config.CFG_ProjectName), BRANCH_DEV)
 	// if err != nil {
 	// 	return err
 	// }
