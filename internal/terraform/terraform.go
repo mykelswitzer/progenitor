@@ -46,11 +46,11 @@ func Run(tfCfg config.TerraformSettings, tfDir string) error {
 			log.Println("Creating Terraform workspace: ", s)
 			err := tf.WorkspaceNew(context.Background(), s)
 			if err != nil {
-				return err
+				log.Println("WARNING: ", err.Error())
 			}
 		}
 
-		log.Println(fmt.Sprintf("Applying Terraform plan to '%s' environment", tfCfg.Workspaces[0]))
+		log.Println("Applying Terraform plan to environment: ", tfCfg.Workspaces[0])
 		err = tf.WorkspaceSelect(context.Background(), tfCfg.Workspaces[0])
 		if err != nil {
 			return err
