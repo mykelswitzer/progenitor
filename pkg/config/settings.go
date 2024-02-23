@@ -10,9 +10,10 @@ import (
 )
 
 type Settings struct {
-	GitHub   GitHubSettings `yaml:"github,omitempty"`
-	Branches BranchSettings `yaml:"branches,omitempty"`
-	Teams    StringList     `yaml:"teams,omitempty"`
+	GitHub    GitHubSettings    `yaml:"github,omitempty"`
+	Branches  BranchSettings    `yaml:"branches,omitempty"`
+	Teams     StringList        `yaml:"teams,omitempty"`
+	Terraform TerraformSettings `yaml:"terraform,omitempty"`
 }
 type BranchSettings struct {
 	Default string `yaml:"default,omitempty"`

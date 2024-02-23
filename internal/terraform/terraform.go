@@ -2,8 +2,11 @@ package terraform
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os/exec"
+
+	"github.com/mykelswitzer/progenitor/pkg/config"
 
 	"github.com/hashicorp/terraform-exec/tfexec"
 	"github.com/pkg/errors"
@@ -21,8 +24,7 @@ func isInstalled() (string, error) {
 }
 
 // Run chains together all the steps to run the newly generated project's Terraform
-func Run(tfDir string) error {
-	awsEnvs := []string{"mykelswitzer-prod", "mykelswitzer-stg", "mykelswitzer-dev"}
+func Run(tfCfg config.TerraformSettings, tfDir string) error {
 	installedPath, err := isInstalled()
 	if err != nil {
 		return errors.New("Could not find Terraform installed on PATH")
@@ -38,18 +40,21 @@ func Run(tfDir string) error {
 		return err
 	}
 
-	for _, s := range awsEnvs {
-		log.Println("Creating Terraform workspace: ", s)
-		err := tf.WorkspaceNew(context.Background(), s)
+	if tfCfg.IsDefined() {
+		// awsEnvs := []string{"mykelswitzer-prod", "mykelswitzer-stg", "mykelswitzer-dev"}
+		for _, s := range tfCfg.Workspaces {
+			log.Println("Creating Terraform workspace: ", s)
+			err := tf.WorkspaceNew(context.Background(), s)
+			if err != nil {
+				return err
+			}
+		}
+
+		log.Println(fmt.Sprintf("Applying Terraform plan to '%s' environment", tfCfg.Workspaces[0]))
+		err = tf.WorkspaceSelect(context.Background(), tfCfg.Workspaces[0])
 		if err != nil {
 			return err
 		}
-	}
-
-	log.Println("Applying Terraform plan to 'mykelswitzer-dev' environment")
-	err = tf.WorkspaceSelect(context.Background(), awsEnvs[2])
-	if err != nil {
-		return err
 	}
 
 	err = tf.Apply(context.Background())

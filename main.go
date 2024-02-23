@@ -152,7 +152,7 @@ func generate(cfg *config.Config, s scaffold.ScaffoldDS) error {
 		}
 		tfDir := filepath.Join(base, cfg.GetString(prompt.CfgKeyProjectDir), "terraform")
 
-		if err := terraform.Run(tfDir); err != nil {
+		if err := terraform.Run(cfg.GetSettings().Terraform, tfDir); err != nil {
 			log.Println(err.Error())
 			return err
 		}
