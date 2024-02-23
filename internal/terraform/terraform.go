@@ -2,7 +2,6 @@ package terraform
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os/exec"
 
